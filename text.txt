@@ -1,0 +1,477 @@
+/* acordes */
+
+position: absolute;
+width: 812px;
+height: 63px;
+left: 383px;
+top: 574px;
+
+
+
+/* Acordes: */
+
+position: absolute;
+width: 84px;
+height: 24px;
+left: 383px;
+top: 574px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #000000;
+
+
+
+/* Rectangle 8 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 812px;
+height: 33px;
+left: 383px;
+top: 604px;
+
+border: 1px solid #C06060;
+border-radius: 11px;
+
+
+/* image 5 */
+
+position: absolute;
+width: 17px;
+height: 15px;
+left: 1166px;
+top: 613px;
+
+background: url(image.png);
+
+
+/* nome */
+
+position: absolute;
+width: 812px;
+height: 64px;
+left: 383px;
+top: 48px;
+
+
+
+/* Nome: */
+
+position: absolute;
+width: 62px;
+height: 24px;
+left: 383px;
+top: 48px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #000000;
+
+
+
+/* Rectangle 2 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 812px;
+height: 33px;
+left: 383px;
+top: 79px;
+
+border: 1px solid #C06060;
+border-radius: 11px;
+
+
+/* Nome do perfume */
+
+position: absolute;
+width: 138px;
+height: 19px;
+left: 392px;
+top: 86px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 19px;
+
+color: #9C9C9C;
+
+
+
+/* marca */
+
+position: absolute;
+width: 812px;
+height: 64px;
+left: 383px;
+top: 143px;
+
+
+
+/* Marca: */
+
+position: absolute;
+width: 65px;
+height: 24px;
+left: 383px;
+top: 143px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #000000;
+
+
+
+/* Rectangle 7 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 812px;
+height: 33px;
+left: 383px;
+top: 174px;
+
+border: 1px solid #C06060;
+border-radius: 11px;
+
+
+/* Marca do perfume */
+
+position: absolute;
+width: 140px;
+height: 19px;
+left: 392px;
+top: 181px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 19px;
+
+color: #9C9C9C;
+
+
+
+/* perfumista */
+
+position: absolute;
+width: 812px;
+height: 64px;
+left: 383px;
+top: 669px;
+
+
+
+/* Perfumista: */
+
+position: absolute;
+width: 108px;
+height: 24px;
+left: 383px;
+top: 669px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #000000;
+
+
+
+/* Rectangle 9 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 812px;
+height: 33px;
+left: 383px;
+top: 700px;
+
+border: 1px solid #C06060;
+border-radius: 11px;
+
+
+/* Nome do perfumista */
+
+position: absolute;
+width: 155px;
+height: 19px;
+left: 392px;
+top: 707px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 19px;
+
+color: #9C9C9C;
+
+
+
+/* review */
+
+position: absolute;
+width: 812px;
+height: 460px;
+left: 383px;
+top: 895px;
+
+
+
+/* Review: */
+
+position: absolute;
+width: 74px;
+height: 24px;
+left: 383px;
+top: 895px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #000000;
+
+
+
+/* Rectangle 11 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 812px;
+height: 33px;
+left: 383px;
+top: 925px;
+
+border: 1px solid #C06060;
+border-radius: 11px;
+
+
+/* Rectangle 12 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 812px;
+height: 388px;
+left: 383px;
+top: 967px;
+
+border: 1px solid #C06060;
+border-radius: 11px;
+
+
+/* Título */
+
+position: absolute;
+width: 43px;
+height: 19px;
+left: 393px;
+top: 933px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 19px;
+
+color: #9C9C9C;
+
+
+
+/* Review */
+
+position: absolute;
+width: 55px;
+height: 19px;
+left: 393px;
+top: 976px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 19px;
+
+color: #9C9C9C;
+
+
+
+/* descricao */
+
+position: absolute;
+width: 812px;
+height: 99px;
+left: 383px;
+top: 764px;
+
+
+
+/* Descrição: */
+
+position: absolute;
+width: 100px;
+height: 24px;
+left: 383px;
+top: 764px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #000000;
+
+
+
+/* Rectangle 10 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 812px;
+height: 68px;
+left: 383px;
+top: 795px;
+
+border: 1px solid #C06060;
+border-radius: 11px;
+
+
+/* Descreva brevemente o cheiro do perfume */
+
+position: absolute;
+width: 323px;
+height: 19px;
+left: 393px;
+top: 802px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 19px;
+
+color: #9C9C9C;
+
+
+
+/* botoes */
+
+position: absolute;
+width: 273px;
+height: 50px;
+left: 922px;
+top: 1393px;
+
+
+
+/* add */
+
+position: absolute;
+width: 129px;
+height: 50px;
+left: 1066px;
+top: 1393px;
+
+
+
+/* Rectangle 53 */
+
+position: absolute;
+width: 129px;
+height: 50px;
+left: 1066px;
+top: 1393px;
+
+background: #C06060;
+border-radius: 8px;
+
+
+/* Adicionar */
+
+position: absolute;
+width: 98px;
+height: 27px;
+left: 1082px;
+top: 1404px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 22px;
+line-height: 27px;
+/* idêntico à altura da caixa */
+
+color: #FFFFFF;
+
+
+
+/* cancel */
+
+position: absolute;
+width: 129px;
+height: 50px;
+left: 922px;
+top: 1393px;
+
+
+
+/* Rectangle 54 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 129px;
+height: 50px;
+left: 922px;
+top: 1393px;
+
+border: 2px solid #C06060;
+border-radius: 8px;
+
+
+/* Cancelar */
+
+position: absolute;
+width: 93px;
+height: 27px;
+left: 940px;
+top: 1404px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 22px;
+line-height: 27px;
+/* idêntico à altura da caixa */
+
+color: #C06060;
+
