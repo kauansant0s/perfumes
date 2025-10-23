@@ -1,19 +1,10 @@
 // script-form.js
 
-// Notas importadas de notas.js
 const notas = window.dadosNotas.notas;
-
-// IDs dos selects
 const ids = ["topo", "coracao", "fundo"];
+const tomInstances = {};
 
-// Função que ativa o Tom Select
-function ativarTomSelect(id) {
-  const select = document.getElementById(id);
-
-  // Garante que não seja recriado várias vezes
-  if (select.dataset.tomselectAtivo === "true") return;
-
-  // Adiciona as opções se ainda não tiver
+function criarOptions(select) {
   if (select.options.length <= 1) {
     notas.forEach((nota) => {
       const option = document.createElement("option");
@@ -22,8 +13,24 @@ function ativarTomSelect(id) {
       select.appendChild(option);
     });
   }
+}
 
-  // Inicializa o Tom Select
+function ativarTomSelect(id) {
+  const originalSelect = document.getElementById(id);
+
+  // se já tem um TomSelect ativo, só foca
+  if (tomInstances[id]) {
+    tomInstances[id].focus();
+    return;
+  }
+
+  // salva atributos originais
+  const estiloOriginal = originalSelect.getAttribute("style") || "";
+  const classesOriginais = originalSelect.className;
+
+  criarOptions(originalSelect);
+
+  // inicializa TomSelect
   const tom = new TomSelect(`#${id}`, {
     maxItems: null,
     create: false,
@@ -32,25 +39,49 @@ function ativarTomSelect(id) {
     plugins: ["remove_button"],
   });
 
-  select.dataset.tomselectAtivo = "true";
+  tomInstances[id] = tom;
+  requestAnimationFrame(() => tom.focus());
 
-  // Foca automaticamente no campo de busca
-  setTimeout(() => tom.focus(), 50);
-
-  // Remove quando clicar fora
-  document.addEventListener("click", (e) => {
+  // fecha ao clicar fora
+  const fechar = (e) => {
     if (!tom.wrapper.contains(e.target)) {
-      tom.destroy(); // Remove TomSelect
-      select.dataset.tomselectAtivo = "false";
+      tom.destroy();
+      tomInstances[id] = null;
+
+      // remove qualquer HTML residual e recria o select limpo
+      const velhoWrapper = document.querySelector(`.ts-wrapper[id="${id}-ts-wrapper"]`);
+      const antigoSelect = document.getElementById(id);
+      const novoSelect = document.createElement("select");
+
+      novoSelect.id = id;
+      novoSelect.className = classesOriginais;
+      if (estiloOriginal) novoSelect.setAttribute("style", estiloOriginal);
+
+      // adiciona o "Selecione"
+      const optionDefault = document.createElement("option");
+      optionDefault.value = "";
+      optionDefault.textContent = "Selecione";
+      novoSelect.appendChild(optionDefault);
+
+      antigoSelect.replaceWith(novoSelect);
+      adicionarEvento(novoSelect, id);
+
+      document.removeEventListener("mousedown", fechar);
     }
-  }, { once: true });
+  };
+
+  document.addEventListener("mousedown", fechar);
 }
 
-// Ativa TomSelect ao clicar no select
+function adicionarEvento(select, id) {
+  select.addEventListener("focus", () => ativarTomSelect(id));
+  select.addEventListener("mousedown", (e) => {
+    if (tomInstances[id]) e.preventDefault();
+  });
+}
+
+// inicializa
 ids.forEach((id) => {
   const select = document.getElementById(id);
-  select.addEventListener("mousedown", (e) => {
-    e.preventDefault(); // Evita abrir o select padrão
-    ativarTomSelect(id);
-  });
+  adicionarEvento(select, id);
 });
