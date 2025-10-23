@@ -11,23 +11,66 @@
   <div id="container">
 
     <!-- Parte da foto -->
-    <div id="foto-area">
-      <label for="foto" id="quadrado">
-        Foto do perfume
-      </label>
+    <div id="foto-coluna">
+      <div id="foto-area">
+        <label for="foto" id="quadrado">
+          Foto do perfume
+        </label>
 
-      <input type="file" id="foto" name="foto" accept="image/*" style="display: none;">
+        <input type="file" id="foto" name="foto" accept="image/*" style="display: none;">
 
-      <!-- Opções abaixo da foto -->
-      <div id="opcoesfoto">
-        <input type="radio" id="tenho" name="status" value="tenho">
-        <label for="tenho">Tenho</label>
+        <!-- Opções abaixo da foto -->
+        <div id="opcoesfoto">
+          <input type="radio" id="tenho" name="status" value="tenho">
+          <label for="tenho">Tenho</label>
 
-        <input type="radio" id="ja-tive" name="status" value="ja-tive">
-        <label for="ja-tive">Já tive</label>
+          <input type="radio" id="ja-tive" name="status" value="ja-tive">
+          <label for="ja-tive">Já tive</label>
 
-        <input type="radio" id="quero-ter" name="status" value="quero-ter">
-        <label for="quero-ter">Quero ter</label>
+          <input type="radio" id="quero-ter" name="status" value="quero-ter">
+          <label for="quero-ter">Quero ter</label>
+        </div>
+
+        <!-- Avaliação -->
+        <div id="avaliacao" style="display:none;">
+          <h3>Avaliação</h3>
+
+          <div class="linha-avaliacao">
+            <label>Cheiro:</label>
+            <div class="estrelas" data-id="cheiro"></div>
+          </div>
+
+          <div class="linha-avaliacao">
+            <label>Projeção:</label>
+            <div class="estrelas" data-id="projecao"></div>
+          </div>
+
+          <div class="linha-avaliacao">
+            <label>Fixação:</label>
+            <div class="estrelas" data-id="fixacao"></div>
+          </div>
+
+          <div class="linha-avaliacao">
+            <label>Versatilidade:</label>
+            <div class="estrelas" data-id="versatilidade"></div>
+          </div>
+
+          <p class="media">Média: <span id="media">0</span></p>
+
+          <hr>
+
+          <label>Clima (Frio → Calor):</label>
+          <input type="range" min="0" max="100" value="50" class="slider"><br>
+
+          <label>Ambiente (Fechado → Aberto):</label>
+          <input type="range" min="0" max="100" value="50" class="slider"><br>
+
+          <label>Gênero (Fem. → Masc.):</label>
+          <input type="range" min="0" max="100" value="50" class="slider"><br>
+
+          <label>Hora (Dia → Noite):</label>
+          <input type="range" min="0" max="100" value="50" class="slider"><br>
+        </div>
       </div>
     </div>
 

@@ -30,6 +30,12 @@ body {
     align-items: flex-start;
     gap: 40px;
 }
+#foto-coluna {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
 #info-perfume{
     width: 90%;
 }
@@ -102,4 +108,42 @@ select{
     height: 35px;
     color: #C06060;
     background: transparent;
+}
+#avaliacao {
+  padding: 10px;
+  display: none;
+  max-width: 235px;
+}
+#avaliacao hr {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 15px 0;
+}
+.linha-avaliacao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.linha-avaliacao label {
+  min-width: 90px;
+}
+.estrelas {
+  display: inline-flex;
+  align-items: center;
+}
+.estrelas svg {
+  width: 120px;
+  height: 22px;
+  cursor: pointer;
+  display: inline-block;
+}
+.estrelas polygon {
+  transition: fill 0.1s;
+}
+.slider {
+  width: 100%;
+  max-width: 215px;
+  margin: 6px 0 10px 0;
 }
