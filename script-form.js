@@ -1,5 +1,3 @@
-// script-form.js
-
 const notas = window.dadosNotas.notas;
 const ids = ["topo", "coracao", "fundo"];
 const tomInstances = {};
@@ -90,10 +88,30 @@ ids.forEach((id) => {
 document.querySelectorAll('input[name="status"]').forEach(radio => {
   radio.addEventListener('change', e => {
     const avaliacao = document.getElementById('avaliacao');
+    
     if (e.target.value === 'tenho' || e.target.value === 'ja-tive') {
+      // Mostra o container
       avaliacao.style.display = 'block';
+      
+      // Adiciona classe para estado inicial (tudo escondido)
+      avaliacao.classList.add('animando');
+      
+      // Remove no próximo frame para iniciar a animação
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          avaliacao.classList.remove('animando');
+          avaliacao.classList.add('show');
+        });
+      });
     } else {
-      avaliacao.style.display = 'none';
+      avaliacao.classList.remove('show');
+      avaliacao.classList.add('animando');
+      
+      // Esconde após a animação reversa
+      setTimeout(() => {
+        avaliacao.style.display = 'none';
+        avaliacao.classList.remove('animando');
+      }, 500);
     }
   });
 });
@@ -125,11 +143,20 @@ function criarEstrelas(container) {
   function atualizar(valor) {
     const estrelas = svg.querySelectorAll("polygon");
     
+    // Arredonda para 0.5
+    const valorArredondado = Math.round(valor * 2) / 2;
+    
+    // Atualiza o texto da nota ao lado (em tempo real)
+    const spanNota = container.querySelector('.nota-valor');
+    if (spanNota) {
+      spanNota.textContent = valorArredondado.toFixed(1);
+    }
+    
     // Limpa gradientes antigos
     defs.innerHTML = "";
     
     estrelas.forEach((star, i) => {
-      const preenchimento = Math.min(1, Math.max(0, valor - i));
+      const preenchimento = Math.min(1, Math.max(0, valorArredondado - i));
       
       if (preenchimento === 0) {
         star.setAttribute("fill", "#ccc");
@@ -161,15 +188,8 @@ function criarEstrelas(container) {
   });
 
   svg.addEventListener("click", () => {
-    valorSelecionado = valorTemporario;
+    valorSelecionado = Math.round(valorTemporario * 2) / 2;
     container.dataset.valor = valorSelecionado.toFixed(1);
-    
-    // Atualiza o texto da nota ao lado
-    const spanNota = container.querySelector('.nota-valor');
-    if (spanNota) {
-      spanNota.textContent = valorSelecionado.toFixed(1);
-    }
-    
     atualizarMedia();
   });
 
@@ -183,7 +203,7 @@ function criarEstrelas(container) {
   const spanNota = document.createElement('span');
   spanNota.className = 'nota-valor';
   spanNota.textContent = '0.0';
-  spanNota.style.marginLeft = '10px';
+  spanNota.style.marginLeft = '6px';
   spanNota.style.fontWeight = '600';
   spanNota.style.color = '#000';
   spanNota.style.display = 'inline-block';

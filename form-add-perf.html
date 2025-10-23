@@ -33,43 +33,71 @@
 
         <!-- Avaliação -->
         <div id="avaliacao" style="display:none;">
-          <h3>Avaliação</h3>
+          <div class="avaliacao-estrelas">
+            <h3>Avaliação</h3>
 
-          <div class="linha-avaliacao">
-            <label>Cheiro:</label>
-            <div class="estrelas" data-id="cheiro"></div>
+            <div class="linha-avaliacao">
+              <label>Cheiro:</label>
+              <div class="estrelas" data-id="cheiro"></div>
+            </div>
+
+            <div class="linha-avaliacao">
+              <label>Projeção:</label>
+              <div class="estrelas" data-id="projecao"></div>
+            </div>
+
+            <div class="linha-avaliacao">
+              <label>Fixação:</label>
+              <div class="estrelas" data-id="fixacao"></div>
+            </div>
+
+            <div class="linha-avaliacao">
+              <label>Versatilidade:</label>
+              <div class="estrelas" data-id="versatilidade"></div>
+            </div>
+
+            <p class="media">Média: <span id="media">0</span></p>
           </div>
-
-          <div class="linha-avaliacao">
-            <label>Projeção:</label>
-            <div class="estrelas" data-id="projecao"></div>
-          </div>
-
-          <div class="linha-avaliacao">
-            <label>Fixação:</label>
-            <div class="estrelas" data-id="fixacao"></div>
-          </div>
-
-          <div class="linha-avaliacao">
-            <label>Versatilidade:</label>
-            <div class="estrelas" data-id="versatilidade"></div>
-          </div>
-
-          <p class="media">Média: <span id="media">0</span></p>
 
           <hr>
 
-          <label>Clima (Frio → Calor):</label>
-          <input type="range" min="0" max="100" value="50" class="slider"><br>
+          <div class="avaliacao-sliders">
+            <div class="slider-container">
+              <label>Clima:</label>
+              <div class="slider-wrapper">
+                <span class="slider-label-left">Frio</span>
+                <input type="range" min="0" max="100" value="50" class="slider slider-clima">
+                <span class="slider-label-right">Calor</span>
+              </div>
+            </div>
 
-          <label>Ambiente (Fechado → Aberto):</label>
-          <input type="range" min="0" max="100" value="50" class="slider"><br>
+            <div class="slider-container">
+              <label>Ambiente:</label>
+              <div class="slider-wrapper">
+                <span class="slider-label-left">Informal</span>
+                <input type="range" min="0" max="100" value="50" class="slider slider-ambiente">
+                <span class="slider-label-right">Formal</span>
+              </div>
+            </div>
 
-          <label>Gênero (Fem. → Masc.):</label>
-          <input type="range" min="0" max="100" value="50" class="slider"><br>
+            <div class="slider-container">
+              <label>Gênero:</label>
+              <div class="slider-wrapper">
+                <span class="slider-label-left">Masc.</span>
+                <input type="range" min="0" max="100" value="50" class="slider slider-genero">
+                <span class="slider-label-right">Fem.</span>
+              </div>
+            </div>
 
-          <label>Hora (Dia → Noite):</label>
-          <input type="range" min="0" max="100" value="50" class="slider"><br>
+            <div class="slider-container">
+              <label>Hora:</label>
+              <div class="slider-wrapper">
+                <span class="slider-label-left">Noite</span>
+                <input type="range" min="0" max="100" value="50" class="slider slider-hora">
+                <span class="slider-label-right">Dia</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
