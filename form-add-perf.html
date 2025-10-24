@@ -17,7 +17,7 @@
           Foto do perfume
         </label>
 
-        <input type="file" id="foto" name="foto" accept="image/*" style="display: none;">
+        <input type="file" id="foto" name="foto" accept="image/*" style="display: none;" required>
 
         <!-- Opções abaixo da foto -->
         <div id="opcoesfoto">
@@ -52,7 +52,7 @@
             </div>
 
             <div class="linha-avaliacao">
-              <label>Versatilidade:</label>
+              <label>Versatilidade: </label>
               <div class="estrelas" data-id="versatilidade"></div>
             </div>
 
@@ -107,12 +107,12 @@
 
       <div>
         <label for="nome">Nome:</label><br>
-        <input type="text" id="nome" class="campo" name="nome" placeholder="Nome do perfume">
+        <input type="text" id="nome" class="campo" name="nome" placeholder="Nome do perfume" required>
       </div>
 
       <div>
         <label for="marca">Marca:</label><br>
-        <input type="text" id="marca" class="campo" name="marca" placeholder="Marca do perfume">
+        <input type="text" id="marca" class="campo" name="marca" placeholder="Marca do perfume" required>
       </div>
 
       <fieldset id="notas">

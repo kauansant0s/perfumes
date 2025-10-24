@@ -1,3 +1,5 @@
+// script-form.js
+
 const notas = window.dadosNotas.notas;
 const ids = ["topo", "coracao", "fundo"];
 const tomInstances = {};
@@ -92,6 +94,7 @@ document.querySelectorAll('input[name="status"]').forEach(radio => {
     if (e.target.value === 'tenho' || e.target.value === 'ja-tive') {
       // Mostra o container
       avaliacao.style.display = 'block';
+      avaliacao.classList.remove('fechando');
       
       // Adiciona classe para estado inicial (tudo escondido)
       avaliacao.classList.add('animando');
@@ -104,14 +107,15 @@ document.querySelectorAll('input[name="status"]').forEach(radio => {
         });
       });
     } else {
+      // Animação reversa ao fechar
       avaliacao.classList.remove('show');
-      avaliacao.classList.add('animando');
+      avaliacao.classList.add('fechando');
       
       // Esconde após a animação reversa
       setTimeout(() => {
         avaliacao.style.display = 'none';
-        avaliacao.classList.remove('animando');
-      }, 500);
+        avaliacao.classList.remove('fechando');
+      }, 600);
     }
   });
 });
