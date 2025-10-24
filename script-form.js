@@ -1,5 +1,3 @@
-// script-form.js
-
 const notas = window.dadosNotas.notas;
 const ids = ["topo", "coracao", "fundo"];
 const tomInstances = {};
@@ -235,4 +233,5 @@ function atualizarMedia() {
   } else {
     document.getElementById('media').textContent = '0';
   }
+
 }
