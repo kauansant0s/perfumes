@@ -1,6 +1,10 @@
+// script-form.js
+import { salvarPerfume, uploadFotoPerfume } from './firebase-config.js';
+
 const notas = window.dadosNotas.notas;
 const ids = ["topo", "coracao", "fundo"];
-const tomInstances = {};
+window.tomInstances = {}; // Torna global para acessar no submit
+const tomInstances = window.tomInstances;
 
 function criarOptions(select) {
   if (select.options.length <= 1) {
@@ -35,6 +39,10 @@ function ativarTomSelect(id) {
     sortField: { field: "text", direction: "asc" },
     placeholder: "Pesquise uma nota...",
     plugins: ["remove_button"],
+    onItemAdd: function() {
+      this.setTextboxValue(''); // Limpa o texto digitado ao adicionar
+      this.refreshOptions();
+    }
   });
 
   tomInstances[id] = tom;
@@ -43,11 +51,13 @@ function ativarTomSelect(id) {
   // fecha ao clicar fora
   const fechar = (e) => {
     if (!tom.wrapper.contains(e.target)) {
+      // Salva os valores selecionados antes de destruir
+      const valoresSelecionados = tom.getValue();
+      
       tom.destroy();
       tomInstances[id] = null;
 
-      // remove qualquer HTML residual e recria o select limpo
-      const velhoWrapper = document.querySelector(`.ts-wrapper[id="${id}-ts-wrapper"]`);
+      // Recria o select e adiciona as opções selecionadas
       const antigoSelect = document.getElementById(id);
       const novoSelect = document.createElement("select");
 
@@ -55,11 +65,22 @@ function ativarTomSelect(id) {
       novoSelect.className = classesOriginais;
       if (estiloOriginal) novoSelect.setAttribute("style", estiloOriginal);
 
-      // adiciona o "Selecione"
+      // Adiciona o "Selecione"
       const optionDefault = document.createElement("option");
       optionDefault.value = "";
       optionDefault.textContent = "Selecione";
       novoSelect.appendChild(optionDefault);
+
+      // Adiciona as opções que foram selecionadas
+      if (Array.isArray(valoresSelecionados)) {
+        valoresSelecionados.forEach(valor => {
+          const option = document.createElement("option");
+          option.value = valor;
+          option.textContent = valor;
+          option.selected = true;
+          novoSelect.appendChild(option);
+        });
+      }
 
       antigoSelect.replaceWith(novoSelect);
       adicionarEvento(novoSelect, id);
@@ -233,5 +254,154 @@ function atualizarMedia() {
   } else {
     document.getElementById('media').textContent = '0';
   }
-
 }
+
+// Handler do formulário
+document.getElementById('info-perfume').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const submitButton = document.getElementById('adicionar');
+  submitButton.disabled = true;
+  submitButton.textContent = 'Salvando...';
+  
+  try {
+    // Coleta dados do formulário
+    const perfumeData = {
+      nome: document.getElementById('nome').value,
+      marca: document.getElementById('marca').value,
+      notas: {
+        topo: Array.from(document.getElementById('topo').selectedOptions).map(opt => opt.value).filter(v => v),
+        coracao: Array.from(document.getElementById('coracao').selectedOptions).map(opt => opt.value).filter(v => v),
+        fundo: Array.from(document.getElementById('fundo').selectedOptions).map(opt => opt.value).filter(v => v)
+      },
+      acordes: document.getElementById('acordes').value,
+      perfumista: document.getElementById('perfumista').value,
+      descricao: document.getElementById('descricao').value,
+      review: {
+        titulo: document.getElementById('titulo').value,
+        texto: document.getElementById('review').value
+      },
+      status: document.querySelector('input[name="status"]:checked')?.value || '',
+      dataCriacao: new Date().toISOString()
+    };
+    
+    // Se marcou "tenho" ou "já tive", adiciona avaliações
+    if (perfumeData.status === 'tenho' || perfumeData.status === 'ja-tive') {
+      perfumeData.avaliacoes = {
+        cheiro: parseFloat(document.querySelector('[data-id="cheiro"]').dataset.valor || 0),
+        projecao: parseFloat(document.querySelector('[data-id="projecao"]').dataset.valor || 0),
+        fixacao: parseFloat(document.querySelector('[data-id="fixacao"]').dataset.valor || 0),
+        versatilidade: parseFloat(document.querySelector('[data-id="versatilidade"]').dataset.valor || 0),
+        media: parseFloat(document.getElementById('media').textContent || 0)
+      };
+      
+      perfumeData.caracteristicas = {
+        clima: document.querySelector('.slider-clima').value,
+        ambiente: document.querySelector('.slider-ambiente').value,
+        genero: document.querySelector('.slider-genero').value,
+        hora: document.querySelector('.slider-hora').value
+      };
+    }
+    
+    // Upload da foto se existir
+    const fotoInput = document.getElementById('foto');
+    const fotoURL = document.getElementById('foto-url').value.trim();
+    
+    if (fotoInput.files.length > 0) {
+      // Faz upload do arquivo
+      perfumeData.fotoURL = await uploadFotoPerfume(fotoInput.files[0]);
+    } else if (fotoURL) {
+      // Usa a URL fornecida
+      perfumeData.fotoURL = fotoURL;
+    }
+    
+    // Salva no Firebase
+    const id = await salvarPerfume(perfumeData);
+    
+    alert('Perfume salvo com sucesso!');
+    
+    // Limpa o formulário
+    document.getElementById('info-perfume').reset();
+    document.getElementById('avaliacao').style.display = 'none';
+    document.getElementById('preview-foto').style.display = 'none';
+    document.getElementById('texto-foto').style.display = 'block';
+    document.getElementById('foto-url').value = '';
+    document.querySelectorAll('.estrelas').forEach(el => {
+      el.dataset.valor = 0;
+      el.querySelector('.nota-valor').textContent = '0.0';
+    });
+    
+  } catch (error) {
+    console.error('Erro ao salvar:', error);
+    alert('Erro ao salvar perfume. Verifique o console.');
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = 'Adicionar';
+  }
+});
+
+// Botão cancelar
+document.getElementById('cancelar').addEventListener('click', () => {
+  if (confirm('Deseja cancelar? Todos os dados serão perdidos.')) {
+    window.location.reload();
+  }
+});
+
+// Sistema de upload de foto
+const modal = document.getElementById('modal-foto');
+const quadrado = document.getElementById('quadrado');
+const preview = document.getElementById('preview-foto');
+const textoFoto = document.getElementById('texto-foto');
+const containerUrl = document.getElementById('container-url');
+const fotoInput = document.getElementById('foto');
+const fotoUrlInput = document.getElementById('foto-url');
+
+// Abrir modal ao clicar no quadrado
+quadrado.addEventListener('click', () => {
+  modal.style.display = 'flex';
+});
+
+// Fechar modal
+document.getElementById('btn-cancelar-modal').addEventListener('click', () => {
+  modal.style.display = 'none';
+});
+
+// Opção: Upload de arquivo
+document.getElementById('btn-upload').addEventListener('click', () => {
+  modal.style.display = 'none';
+  fotoInput.click();
+});
+
+// Opção: Link da imagem
+document.getElementById('btn-link').addEventListener('click', () => {
+  modal.style.display = 'none';
+  containerUrl.style.display = 'block';
+  fotoUrlInput.focus();
+});
+
+// Preview ao selecionar arquivo
+fotoInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      preview.src = event.target.result;
+      preview.style.display = 'block';
+      textoFoto.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// Confirmar URL
+document.getElementById('btn-confirmar-url').addEventListener('click', () => {
+  const url = fotoUrlInput.value.trim();
+  if (url) {
+    preview.src = url;
+    preview.style.display = 'block';
+    textoFoto.style.display = 'none';
+    containerUrl.style.display = 'none';
+  } else {
+    alert('Por favor, cole um link válido!');
+  }
+});
