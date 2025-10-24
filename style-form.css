@@ -59,6 +59,11 @@ body {
     border: 1px solid #C06060;
     border-radius: 8px;
     height: 30px;
+    overflow: hidden;
+}
+.camponotas option:checked {
+    background: #C06060;
+    color: white;
 }
 #notas{
     width: 90%;

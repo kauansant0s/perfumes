@@ -26,9 +26,10 @@ function ativarTomSelect(id) {
     return;
   }
 
-  // salva atributos originais
+  // salva atributos originais e valores selecionados
   const estiloOriginal = originalSelect.getAttribute("style") || "";
   const classesOriginais = originalSelect.className;
+  const valoresAnteriores = Array.from(originalSelect.selectedOptions).map(opt => opt.value).filter(v => v);
 
   criarOptions(originalSelect);
 
@@ -45,6 +46,11 @@ function ativarTomSelect(id) {
     }
   });
 
+  // Define valores anteriores se existirem
+  if (valoresAnteriores.length > 0) {
+    tom.setValue(valoresAnteriores);
+  }
+
   tomInstances[id] = tom;
   requestAnimationFrame(() => tom.focus());
 
@@ -57,30 +63,31 @@ function ativarTomSelect(id) {
       tom.destroy();
       tomInstances[id] = null;
 
-      // Recria o select e adiciona as opções selecionadas
+      // Recria o select
       const antigoSelect = document.getElementById(id);
       const novoSelect = document.createElement("select");
 
       novoSelect.id = id;
       novoSelect.className = classesOriginais;
+      novoSelect.setAttribute("multiple", "multiple");
       if (estiloOriginal) novoSelect.setAttribute("style", estiloOriginal);
 
-      // Adiciona o "Selecione"
+      // Adiciona TODAS as notas disponíveis
       const optionDefault = document.createElement("option");
       optionDefault.value = "";
       optionDefault.textContent = "Selecione";
       novoSelect.appendChild(optionDefault);
 
-      // Adiciona as opções que foram selecionadas
-      if (Array.isArray(valoresSelecionados)) {
-        valoresSelecionados.forEach(valor => {
-          const option = document.createElement("option");
-          option.value = valor;
-          option.textContent = valor;
+      notas.forEach(nota => {
+        const option = document.createElement("option");
+        option.value = nota;
+        option.textContent = nota;
+        // Marca como selecionada se estava nos valores
+        if (Array.isArray(valoresSelecionados) && valoresSelecionados.includes(nota)) {
           option.selected = true;
-          novoSelect.appendChild(option);
-        });
-      }
+        }
+        novoSelect.appendChild(option);
+      });
 
       antigoSelect.replaceWith(novoSelect);
       adicionarEvento(novoSelect, id);
