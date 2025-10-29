@@ -7,24 +7,54 @@ window.tomInstances = {}; // Torna global para acessar no submit
 const tomInstances = window.tomInstances;
 
 function criarOptions(select) {
-  if (select.options.length <= 1) {
-    notas.forEach((nota) => {
-      const option = document.createElement("option");
-      option.value = nota;
-      option.textContent = nota;
-      select.appendChild(option);
-    });
-  }
+  console.log('criarOptions chamado, options atuais:', select.options.length);
+  
+  // Remove todas as options existentes
+  select.innerHTML = '';
+  
+  // Adiciona a opção padrão
+  const optionDefault = document.createElement("option");
+  optionDefault.value = "";
+  optionDefault.textContent = "Selecione";
+  select.appendChild(optionDefault);
+  
+  // Adiciona todas as notas
+  notas.forEach((nota) => {
+    const option = document.createElement("option");
+    option.value = nota;
+    option.textContent = nota;
+    select.appendChild(option);
+  });
+  
+  console.log('Options adicionadas:', select.options.length);
 }
 
 function ativarTomSelect(id) {
+  console.log('ativarTomSelect chamado para:', id);
   const originalSelect = document.getElementById(id);
+  console.log('Select encontrado:', originalSelect);
 
   // se já tem um TomSelect ativo, só foca
   if (tomInstances[id]) {
+    console.log('TomSelect já ativo, focando');
     tomInstances[id].focus();
     return;
   }
+
+  // Verifica se o select já foi "tomselected" anteriormente e limpa
+  if (originalSelect.tomselect) {
+    console.log('Destruindo TomSelect anterior');
+    originalSelect.tomselect.destroy();
+  }
+  
+  console.log('Classes antes de limpar:', originalSelect.className);
+
+  // Remove classes residuais
+  originalSelect.classList.remove('tomselected', 'ts-hidden-accessible');
+  originalSelect.style.display = '';
+  originalSelect.removeAttribute('tabindex');
+  
+  console.log('Classes depois de limpar:', originalSelect.className);
 
   // salva atributos originais e valores selecionados
   const estiloOriginal = originalSelect.getAttribute("style") || "";
@@ -32,6 +62,8 @@ function ativarTomSelect(id) {
   const valoresAnteriores = Array.from(originalSelect.selectedOptions).map(opt => opt.value).filter(v => v);
 
   criarOptions(originalSelect);
+
+  console.log('Iniciando TomSelect...');
 
   // inicializa TomSelect
   const tom = new TomSelect(`#${id}`, {
@@ -43,8 +75,14 @@ function ativarTomSelect(id) {
     onItemAdd: function() {
       this.setTextboxValue(''); // Limpa o texto digitado ao adicionar
       this.refreshOptions();
+    },
+    onDropdownOpen: function(dropdown) {
+      console.log('Dropdown aberto!', dropdown);
     }
   });
+
+  console.log('TomSelect criado:', tom);
+  console.log('Dropdown:', tom.dropdown);
 
   // Define valores anteriores se existirem
   if (valoresAnteriores.length > 0) {
@@ -100,15 +138,39 @@ function ativarTomSelect(id) {
 }
 
 function adicionarEvento(select, id) {
-  select.addEventListener("focus", () => ativarTomSelect(id));
+  console.log('Adicionando evento para:', id);
+  
+  select.addEventListener("focus", () => {
+    console.log('Focus em:', id);
+    ativarTomSelect(id);
+  });
+  
+  select.addEventListener("click", (e) => {
+    console.log('Click em:', id);
+    if (!tomInstances[id]) {
+      ativarTomSelect(id);
+    }
+  });
+  
   select.addEventListener("mousedown", (e) => {
-    if (tomInstances[id]) e.preventDefault();
+    if (tomInstances[id]) {
+      e.preventDefault();
+    }
   });
 }
 
 // inicializa
 ids.forEach((id) => {
   const select = document.getElementById(id);
+  
+  // Adiciona uma opção inicial para mostrar o select corretamente
+  const optionInicial = document.createElement('option');
+  optionInicial.value = '';
+  optionInicial.textContent = 'Clique para selecionar notas';
+  optionInicial.disabled = true;
+  optionInicial.selected = true;
+  select.appendChild(optionInicial);
+  
   adicionarEvento(select, id);
 });
 
@@ -333,9 +395,22 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
     document.getElementById('preview-foto').style.display = 'none';
     document.getElementById('texto-foto').style.display = 'block';
     document.getElementById('foto-url').value = '';
+    document.getElementById('container-url').style.display = 'none';
+    
+    // Limpa as notas selecionadas
+    ['topo', 'coracao', 'fundo'].forEach(id => {
+      const select = document.getElementById(id);
+      Array.from(select.options).forEach(opt => opt.selected = false);
+    });
+    
+    // Limpa as estrelas
     document.querySelectorAll('.estrelas').forEach(el => {
       el.dataset.valor = 0;
       el.querySelector('.nota-valor').textContent = '0.0';
+      // Reseta visualmente as estrelas
+      const svg = el.querySelector('svg');
+      const estrelas = svg.querySelectorAll('polygon');
+      estrelas.forEach(star => star.setAttribute('fill', '#ccc'));
     });
     
   } catch (error) {

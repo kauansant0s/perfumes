@@ -60,16 +60,60 @@ body {
     border-radius: 8px;
     height: 30px;
     overflow: hidden;
+    background: transparent;
+    appearance: auto;
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
 }
 .camponotas option:checked {
     background: #C06060;
     color: white;
+}
+.label-nota {
+    font-size: 14px;
+}
+
+/* Corrige o dropdown do TomSelect */
+.ts-dropdown {
+    position: absolute !important;
+    z-index: 10000 !important;
+    background: white !important;
+    border: 1px solid #C06060 !important;
+    border-radius: 8px !important;
+    max-height: 300px !important;
+    overflow-y: auto !important;
+}
+
+.ts-dropdown .option {
+    padding: 8px 12px !important;
+    cursor: pointer !important;
+}
+
+.ts-dropdown .option:hover,
+.ts-dropdown .option.active {
+    background: #C0606020 !important;
+}
+
+.ts-control {
+    border: 1px solid #C06060 !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+}
+
+.ts-wrapper.multi .ts-control > div {
+    background: #C06060 !important;
+    color: white !important;
+    border-radius: 4px !important;
+    padding: 3px 8px !important;
+    margin: 2px !important;
 }
 #notas{
     width: 90%;
     border: 1px solid #C06060;
     border-radius: 8px;
     margin-bottom: 10px;
+    overflow: visible;
+    position: relative;
 }
 input[type="text"],
 select{
