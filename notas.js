@@ -961,6 +961,7 @@ window.dadosNotas = {
     "Limoeiro",
     "Limonada",
     "Limoncello",
+    "Limão",
     "Limão Caviar",
     "Limão Cristalizado",
     "Limão Hatkora",

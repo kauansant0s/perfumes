@@ -4,6 +4,44 @@ import { salvarPerfume, uploadFotoPerfume } from './firebase-config.js';
 const notas = window.dadosNotas.notas;
 const ids = ["topo", "coracao", "fundo"];
 
+// Lista de acordes
+const acordes = [
+  'Abaunilhado', 'Aldeídico', 'Alcoólico', 'Almiscarado', 'Ambarado',
+  'Amadeirado', 'Animálico', 'Aquático', 'Aromático', 'Atalcado',
+  'Chipre', 'Cítrico', 'Couro', 'Cremoso', 'Esfumaçado',
+  'Especiado', 'Floral', 'Floral Amarelo', 'Floral Branco', 'Fougère',
+  'Fresco', 'Frutado', 'Frutal', 'Gourmand', 'Lactônico',
+  'Metálico', 'Oriental', 'Terroso', 'Tropical', 'Verde'
+];
+
+// Popular select de acordes
+const acordesSelect = document.getElementById('acordes');
+acordes.sort(); // Ordena alfabeticamente
+acordes.forEach(acorde => {
+  const option = document.createElement('option');
+  option.value = acorde;
+  option.textContent = acorde;
+  acordesSelect.appendChild(option);
+});
+
+// Inicializa TomSelect para acordes (igual às notas)
+const acordesInstance = new TomSelect('#acordes', {
+  maxItems: null,
+  create: false,
+  sortField: { field: "text", direction: "asc" },
+  placeholder: "Pesquise e selecione acordes...",
+  plugins: ["remove_button"],
+  dropdownParent: 'body',
+  onItemAdd: function() {
+    this.setTextboxValue('');
+    this.refreshOptions();
+  }
+});
+
+// Força a largura do wrapper do TomSelect de acordes
+acordesInstance.wrapper.style.width = '93%';
+acordesInstance.wrapper.style.marginBottom = '10px';
+
 // Inicializa TomSelect SIMPLES - só uma vez, sem destruir
 ids.forEach((id) => {
   const select = document.getElementById(id);
@@ -26,7 +64,11 @@ ids.forEach((id) => {
     sortField: { field: "text", direction: "asc" },
     placeholder: "Pesquise e selecione notas...",
     plugins: ["remove_button"],
-    dropdownParent: 'body', // IMPORTANTE: força dropdown aparecer no body
+    dropdownParent: 'body',
+    onItemAdd: function() {
+      this.setTextboxValue(''); // Limpa o texto após adicionar
+      this.refreshOptions();
+    },
     onInitialize: function() {
       console.log('TomSelect inicializado para:', id);
       console.log('Número de opções:', this.options);
@@ -189,7 +231,7 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
         coracao: Array.from(document.getElementById('coracao').selectedOptions).map(opt => opt.value).filter(v => v),
         fundo: Array.from(document.getElementById('fundo').selectedOptions).map(opt => opt.value).filter(v => v)
       },
-      acordes: document.getElementById('acordes').value,
+      acordes: Array.from(document.getElementById('acordes').selectedOptions).map(opt => opt.value).filter(v => v),
       perfumista: document.getElementById('perfumista').value,
       descricao: document.getElementById('descricao').value,
       review: {

@@ -47,7 +47,7 @@ body {
     height: 28px;
     margin-bottom: 10px;
 }
-#acordes{
+ #acordes {
     width: 93%;
     border: 1px solid #C06060;
     border-radius: 8px;
@@ -321,4 +321,11 @@ select{
   color: #000000;
   min-width: 40px;
   text-align: center;
+}
+.ts-wrapper .ts-control input {
+  color: #000 !important;
+}
+
+.ts-dropdown .option {
+  color: #000 !important;
 }
