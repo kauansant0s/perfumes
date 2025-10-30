@@ -18,7 +18,7 @@
           <img id="preview-foto" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:32px;">
         </div>
 
-        <input type="file" id="foto" name="foto" accept="image/*" style="display: none;">
+        <input type="file" id="foto" name="foto" accept="image/*" style="display: none;" required>
         
         <!-- Modal para escolher método de upload -->
         <div id="modal-foto" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
@@ -133,12 +133,12 @@
 
       <div>
         <label for="nome">Nome:</label><br>
-        <input type="text" id="nome" class="campo" name="nome" placeholder="Nome do perfume">
+        <input type="text" id="nome" class="campo" name="nome" placeholder="Nome do perfume" required>
       </div>
 
       <div>
         <label for="marca">Marca:</label><br>
-        <input type="text" id="marca" class="campo" name="marca" placeholder="Marca do perfume">
+        <input type="text" id="marca" class="campo" name="marca" placeholder="Marca do perfume" required>
       </div>
 
       <fieldset id="notas">
@@ -169,13 +169,13 @@
 
       <div>
         <label for="perfumista">Perfumista:</label><br>
-        <input type="text" id="perfumista" class="campo" name="perfumista" placeholder="Nome do perfumista">
+        <input type="text" id="perfumista" class="campo" name="perfumista" placeholder="Nome do perfumista" required>
       </div>
 
-      <div>
+      <!-- <div>
         <label for="descricao">Descrição:</label><br>
         <textarea id="descricao" class="campotexto" name="descricao" rows="3" placeholder="Descreva brevemente o cheiro do perfume"></textarea>
-      </div>
+      </div> -->
 
       <div>
         <label for="review">Review:</label><br>

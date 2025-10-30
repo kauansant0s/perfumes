@@ -3,20 +3,13 @@ import { salvarPerfume, uploadFotoPerfume } from './firebase-config.js';
 
 const notas = window.dadosNotas.notas;
 const ids = ["topo", "coracao", "fundo"];
-window.tomInstances = {}; // Torna global para acessar no submit
-const tomInstances = window.tomInstances;
 
-function criarOptions(select) {
-  console.log('criarOptions chamado, options atuais:', select.options.length);
+// Inicializa TomSelect SIMPLES - só uma vez, sem destruir
+ids.forEach((id) => {
+  const select = document.getElementById(id);
   
-  // Remove todas as options existentes
+  // Limpa o select
   select.innerHTML = '';
-  
-  // Adiciona a opção padrão
-  const optionDefault = document.createElement("option");
-  optionDefault.value = "";
-  optionDefault.textContent = "Selecione";
-  select.appendChild(optionDefault);
   
   // Adiciona todas as notas
   notas.forEach((nota) => {
@@ -26,152 +19,25 @@ function criarOptions(select) {
     select.appendChild(option);
   });
   
-  console.log('Options adicionadas:', select.options.length);
-}
-
-function ativarTomSelect(id) {
-  console.log('ativarTomSelect chamado para:', id);
-  const originalSelect = document.getElementById(id);
-  console.log('Select encontrado:', originalSelect);
-
-  // se já tem um TomSelect ativo, só foca
-  if (tomInstances[id]) {
-    console.log('TomSelect já ativo, focando');
-    tomInstances[id].focus();
-    return;
-  }
-
-  // Verifica se o select já foi "tomselected" anteriormente e limpa
-  if (originalSelect.tomselect) {
-    console.log('Destruindo TomSelect anterior');
-    originalSelect.tomselect.destroy();
-  }
-  
-  console.log('Classes antes de limpar:', originalSelect.className);
-
-  // Remove classes residuais
-  originalSelect.classList.remove('tomselected', 'ts-hidden-accessible');
-  originalSelect.style.display = '';
-  originalSelect.removeAttribute('tabindex');
-  
-  console.log('Classes depois de limpar:', originalSelect.className);
-
-  // salva atributos originais e valores selecionados
-  const estiloOriginal = originalSelect.getAttribute("style") || "";
-  const classesOriginais = originalSelect.className;
-  const valoresAnteriores = Array.from(originalSelect.selectedOptions).map(opt => opt.value).filter(v => v);
-
-  criarOptions(originalSelect);
-
-  console.log('Iniciando TomSelect...');
-
-  // inicializa TomSelect
-  const tom = new TomSelect(`#${id}`, {
+  // Inicializa TomSelect e MANTÉM (não destrói nunca)
+  const tomInstance = new TomSelect(`#${id}`, {
     maxItems: null,
     create: false,
     sortField: { field: "text", direction: "asc" },
-    placeholder: "Pesquise uma nota...",
+    placeholder: "Pesquise e selecione notas...",
     plugins: ["remove_button"],
-    onItemAdd: function() {
-      this.setTextboxValue(''); // Limpa o texto digitado ao adicionar
-      this.refreshOptions();
+    dropdownParent: 'body', // IMPORTANTE: força dropdown aparecer no body
+    onInitialize: function() {
+      console.log('TomSelect inicializado para:', id);
+      console.log('Número de opções:', this.options);
     },
-    onDropdownOpen: function(dropdown) {
-      console.log('Dropdown aberto!', dropdown);
-    }
-  });
-
-  console.log('TomSelect criado:', tom);
-  console.log('Dropdown:', tom.dropdown);
-
-  // Define valores anteriores se existirem
-  if (valoresAnteriores.length > 0) {
-    tom.setValue(valoresAnteriores);
-  }
-
-  tomInstances[id] = tom;
-  requestAnimationFrame(() => tom.focus());
-
-  // fecha ao clicar fora
-  const fechar = (e) => {
-    if (!tom.wrapper.contains(e.target)) {
-      // Salva os valores selecionados antes de destruir
-      const valoresSelecionados = tom.getValue();
-      
-      tom.destroy();
-      tomInstances[id] = null;
-
-      // Recria o select
-      const antigoSelect = document.getElementById(id);
-      const novoSelect = document.createElement("select");
-
-      novoSelect.id = id;
-      novoSelect.className = classesOriginais;
-      novoSelect.setAttribute("multiple", "multiple");
-      if (estiloOriginal) novoSelect.setAttribute("style", estiloOriginal);
-
-      // Adiciona TODAS as notas disponíveis
-      const optionDefault = document.createElement("option");
-      optionDefault.value = "";
-      optionDefault.textContent = "Selecione";
-      novoSelect.appendChild(optionDefault);
-
-      notas.forEach(nota => {
-        const option = document.createElement("option");
-        option.value = nota;
-        option.textContent = nota;
-        // Marca como selecionada se estava nos valores
-        if (Array.isArray(valoresSelecionados) && valoresSelecionados.includes(nota)) {
-          option.selected = true;
-        }
-        novoSelect.appendChild(option);
-      });
-
-      antigoSelect.replaceWith(novoSelect);
-      adicionarEvento(novoSelect, id);
-
-      document.removeEventListener("mousedown", fechar);
-    }
-  };
-
-  document.addEventListener("mousedown", fechar);
-}
-
-function adicionarEvento(select, id) {
-  console.log('Adicionando evento para:', id);
-  
-  select.addEventListener("focus", () => {
-    console.log('Focus em:', id);
-    ativarTomSelect(id);
-  });
-  
-  select.addEventListener("click", (e) => {
-    console.log('Click em:', id);
-    if (!tomInstances[id]) {
-      ativarTomSelect(id);
+    onDropdownOpen: function() {
+      console.log('Dropdown aberto para:', id);
+      console.log('Dropdown element:', this.dropdown);
     }
   });
   
-  select.addEventListener("mousedown", (e) => {
-    if (tomInstances[id]) {
-      e.preventDefault();
-    }
-  });
-}
-
-// inicializa
-ids.forEach((id) => {
-  const select = document.getElementById(id);
-  
-  // Adiciona uma opção inicial para mostrar o select corretamente
-  const optionInicial = document.createElement('option');
-  optionInicial.value = '';
-  optionInicial.textContent = 'Clique para selecionar notas';
-  optionInicial.disabled = true;
-  optionInicial.selected = true;
-  select.appendChild(optionInicial);
-  
-  adicionarEvento(select, id);
+  console.log('TomSelect criado para', id, '- Total de notas:', tomInstance.options);
 });
 
 // Mostrar campo de avaliação quando selecionar "Tenho" ou "Já tive"
@@ -180,14 +46,10 @@ document.querySelectorAll('input[name="status"]').forEach(radio => {
     const avaliacao = document.getElementById('avaliacao');
     
     if (e.target.value === 'tenho' || e.target.value === 'ja-tive') {
-      // Mostra o container
       avaliacao.style.display = 'block';
       avaliacao.classList.remove('fechando');
-      
-      // Adiciona classe para estado inicial (tudo escondido)
       avaliacao.classList.add('animando');
       
-      // Remove no próximo frame para iniciar a animação
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           avaliacao.classList.remove('animando');
@@ -195,11 +57,9 @@ document.querySelectorAll('input[name="status"]').forEach(radio => {
         });
       });
     } else {
-      // Animação reversa ao fechar
       avaliacao.classList.remove('show');
       avaliacao.classList.add('fechando');
       
-      // Esconde após a animação reversa
       setTimeout(() => {
         avaliacao.style.display = 'none';
         avaliacao.classList.remove('fechando');
@@ -218,11 +78,9 @@ function criarEstrelas(container) {
   svg.setAttribute("viewBox", "0 0 120 24");
   svg.style.display = "block";
   
-  // Cria defs para gradientes
   const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
   svg.appendChild(defs);
 
-  // Cria as 5 estrelas
   for (let i = 0; i < total; i++) {
     const star = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
     star.setAttribute("points", "12,2 15,9 23,9 17,14 19,22 12,18 5,22 7,14 1,9 9,9");
@@ -234,17 +92,13 @@ function criarEstrelas(container) {
 
   function atualizar(valor) {
     const estrelas = svg.querySelectorAll("polygon");
-    
-    // Arredonda para 0.5
     const valorArredondado = Math.round(valor * 2) / 2;
     
-    // Atualiza o texto da nota ao lado (em tempo real)
     const spanNota = container.querySelector('.nota-valor');
     if (spanNota) {
       spanNota.textContent = valorArredondado.toFixed(1);
     }
     
-    // Limpa gradientes antigos
     defs.innerHTML = "";
     
     estrelas.forEach((star, i) => {
@@ -255,7 +109,6 @@ function criarEstrelas(container) {
       } else if (preenchimento === 1) {
         star.setAttribute("fill", "#FFD700");
       } else {
-        // Cria gradiente para estrela parcial
         const gradId = `grad-${container.dataset.id}-${i}`;
         const grad = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
         grad.setAttribute("id", gradId);
@@ -291,7 +144,6 @@ function criarEstrelas(container) {
 
   container.appendChild(svg);
   
-  // Adiciona span para mostrar a nota
   const spanNota = document.createElement('span');
   spanNota.className = 'nota-valor';
   spanNota.textContent = '0.0';
@@ -302,19 +154,14 @@ function criarEstrelas(container) {
   spanNota.style.minWidth = '30px';
   container.appendChild(spanNota);
   
-  // Inicializa com valor zero
   atualizar(0);
 }
 
-// Cria estrelas para todos os campos
 document.querySelectorAll('.estrelas').forEach(criarEstrelas);
 
-// Atualiza média automaticamente
 function atualizarMedia() {
   const elementos = document.querySelectorAll('.estrelas');
   const valores = Array.from(elementos).map(el => parseFloat(el.dataset.valor || 0));
-  
-  // Só calcula se todas as 4 notas foram dadas (valor > 0)
   const todasPreenchidas = valores.every(v => v > 0);
   
   if (todasPreenchidas) {
@@ -334,7 +181,6 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
   submitButton.textContent = 'Salvando...';
   
   try {
-    // Coleta dados do formulário
     const perfumeData = {
       nome: document.getElementById('nome').value,
       marca: document.getElementById('marca').value,
@@ -354,7 +200,6 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       dataCriacao: new Date().toISOString()
     };
     
-    // Se marcou "tenho" ou "já tive", adiciona avaliações
     if (perfumeData.status === 'tenho' || perfumeData.status === 'ja-tive') {
       perfumeData.avaliacoes = {
         cheiro: parseFloat(document.querySelector('[data-id="cheiro"]').dataset.valor || 0),
@@ -372,46 +217,19 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       };
     }
     
-    // Upload da foto se existir
     const fotoInput = document.getElementById('foto');
     const fotoURL = document.getElementById('foto-url').value.trim();
     
     if (fotoInput.files.length > 0) {
-      // Faz upload do arquivo
       perfumeData.fotoURL = await uploadFotoPerfume(fotoInput.files[0]);
     } else if (fotoURL) {
-      // Usa a URL fornecida
       perfumeData.fotoURL = fotoURL;
     }
     
-    // Salva no Firebase
     const id = await salvarPerfume(perfumeData);
     
     alert('Perfume salvo com sucesso!');
-    
-    // Limpa o formulário
-    document.getElementById('info-perfume').reset();
-    document.getElementById('avaliacao').style.display = 'none';
-    document.getElementById('preview-foto').style.display = 'none';
-    document.getElementById('texto-foto').style.display = 'block';
-    document.getElementById('foto-url').value = '';
-    document.getElementById('container-url').style.display = 'none';
-    
-    // Limpa as notas selecionadas
-    ['topo', 'coracao', 'fundo'].forEach(id => {
-      const select = document.getElementById(id);
-      Array.from(select.options).forEach(opt => opt.selected = false);
-    });
-    
-    // Limpa as estrelas
-    document.querySelectorAll('.estrelas').forEach(el => {
-      el.dataset.valor = 0;
-      el.querySelector('.nota-valor').textContent = '0.0';
-      // Reseta visualmente as estrelas
-      const svg = el.querySelector('svg');
-      const estrelas = svg.querySelectorAll('polygon');
-      estrelas.forEach(star => star.setAttribute('fill', '#ccc'));
-    });
+    window.location.reload();
     
   } catch (error) {
     console.error('Erro ao salvar:', error);
@@ -438,30 +256,25 @@ const containerUrl = document.getElementById('container-url');
 const fotoInput = document.getElementById('foto');
 const fotoUrlInput = document.getElementById('foto-url');
 
-// Abrir modal ao clicar no quadrado
 quadrado.addEventListener('click', () => {
   modal.style.display = 'flex';
 });
 
-// Fechar modal
 document.getElementById('btn-cancelar-modal').addEventListener('click', () => {
   modal.style.display = 'none';
 });
 
-// Opção: Upload de arquivo
 document.getElementById('btn-upload').addEventListener('click', () => {
   modal.style.display = 'none';
   fotoInput.click();
 });
 
-// Opção: Link da imagem
 document.getElementById('btn-link').addEventListener('click', () => {
   modal.style.display = 'none';
   containerUrl.style.display = 'block';
   fotoUrlInput.focus();
 });
 
-// Preview ao selecionar arquivo
 fotoInput.addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (file) {
@@ -475,7 +288,6 @@ fotoInput.addEventListener('change', (e) => {
   }
 });
 
-// Confirmar URL
 document.getElementById('btn-confirmar-url').addEventListener('click', () => {
   const url = fotoUrlInput.value.trim();
   if (url) {
