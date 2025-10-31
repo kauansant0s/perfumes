@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    background: #3c423e;
+    font-family: 'Inter';
+    margin-left: 70px;
+    margin-right: 70px;
+    margin-top: 50px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Área da foto */
+.foto-area {
+    display: flex;
+    justify-content: center;
+}
+
+.quadrado-foto {
+    background: #d9d9d9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.quadrado-foto:hover {
+    background: #d9d9d9c5;
+}
+
+.texto-foto {
+    color: #666;
+    font-size: 14px;
+    text-align: center;
+}
+
+#preview-foto {
+    display: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Formulário */
+#form-criar-conta {
+    width: 120%;
+}
+
+.campo-grupo {
+    margin-bottom: 20px;
+}
+
+.campo-grupo label {
+    display: block;
+    margin-bottom: -18px;
+    color: #000000;
+    font-size: 16px;
+}
+
+.campo-texto {
+    width: 100%;
+    border: 1px solid #C06060;
+    border-radius: 8px;
+    height: 35px;
+    padding: 0 12px;
+    background: transparent;
+    color: #fff;
+    font-size: 14px;
+    font-family: 'Inter';
+    box-sizing: border-box;
+}
+
+.campo-texto:focus {
+    outline: none;
+    border-color: #d69191;
+}
+
+.campo-texto::placeholder {
+    color: #999;
+}
+
+/* Botão */
+.btn-criar {
+    width: 20%;
+    height: 45px;
+    background: #C06060;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Inter';
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-criar:hover {
+    background: #a85050;
+}
+
+.btn-criar:disabled {
+    background: #999;
+    cursor: not-allowed;
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="style-criar-conta.css">
+  <title>Criar Conta</title>
+</head>
+<body>
+  <div class="container">
+    <div class="foto-area">
+      <div class="quadrado-foto" id="quadrado-foto">
+        <span class="texto-foto" id="texto-foto">Carregar foto</span>
+        <img id="preview-foto">
+      </div>
+      <input type="file" id="foto-perfil" accept="image/*" style="display: none;">
+    </div>
+
+    <form id="form-criar-conta">
+      <div class="campo-grupo">
+        <label for="nome">Nome:</label><br>
+        <input type="text" id="nome" name="nome" class="campo-texto" required>
+      </div>
+
+      <div class="campo-grupo">
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" class="campo-texto" required>
+      </div>
+
+      <div class="campo-grupo">
+        <label for="senha">Senha:</label><br>
+        <input type="password" id="senha" name="senha" class="campo-texto" required>
+      </div>
+
+      <div class="campo-grupo">
+        <label for="confirmar-senha">Confirmar senha:</label><br>
+        <input type="password" id="confirmar-senha" name="confirmar-senha" class="campo-texto" required>
+      </div>
+
+      <button type="submit" class="btn-criar">Criar conta</button>
+    </form>
+  </div>
+
+  <script type="module" src="script-criar-conta.js"></script>
+</body>
+</html>

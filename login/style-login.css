@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    background: #3c423e;
+    font-family: 'Inter';
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    padding: 0 20px;
+}
+
+h1 {
+    color: #fff;
+    font-size: 36px;
+    font-weight: 400;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+#form-login {
+    width: 100%;
+}
+
+.campo-grupo {
+    margin-bottom: 20px;
+}
+
+.campo-grupo label {
+    display: block;
+    margin-bottom: -10px;
+    color: #000;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.campo-texto {
+    width: 100%;
+    border: 1px solid #C06060;
+    border-radius: 8px;
+    height: 40px;
+    padding: 0 15px;
+    background: transparent;
+    color: #fff;
+    font-size: 16px;
+    font-family: 'Inter';
+    box-sizing: border-box;
+}
+
+.campo-texto:focus {
+    outline: none;
+    border-color: #d69191;
+}
+
+.campo-texto::placeholder {
+    color: #999;
+}
+
+/* Botões */
+.botoes {
+    display: flex;
+    gap: 15px;
+    margin-top: 40px;
+    justify-content: center;
+}
+
+.btn-entrar,
+.btn-criar-conta {
+    height: 45px;
+    padding: 0 20px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 300;
+    font-family: 'Inter';
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-entrar {
+    background: #C06060;
+    border: none;
+    color: #fff;
+}
+
+.btn-entrar:hover {
+    background: #a85050;
+}
+
+.btn-entrar:disabled {
+    background: #999;
+    cursor: not-allowed;
+}
+
+.btn-criar-conta {
+    background: transparent;
+    border: 2px solid #C06060;
+    color: #C06060;
+}
+
+.btn-criar-conta:hover {
+    background: #C0606020;
+}
