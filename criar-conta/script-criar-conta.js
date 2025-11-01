@@ -102,8 +102,8 @@ document.getElementById('form-criar-conta').addEventListener('submit', async (e)
 
     alert('Conta criada com sucesso!');
     
-    // Redireciona para a página principal (ajuste conforme necessário)
-    window.location.href = 'index.html';
+    // Redireciona para a página de login
+    window.location.href = '../login/login.html';
 
   } catch (error) {
     console.error('Erro ao criar conta:', error);

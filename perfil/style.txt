@@ -1,0 +1,788 @@
+/* perfil */
+
+position: relative;
+width: 1440px;
+height: 1024px;
+
+background: #596A5E;
+
+
+/* nome e foto */
+
+position: absolute;
+width: 175px;
+height: 198px;
+left: 105px;
+top: 63px;
+
+
+
+/* Line 2 */
+
+position: absolute;
+width: 175px;
+height: 0px;
+left: 105px;
+top: 261px;
+
+border: 1px solid #000000;
+
+
+/* profile-picture-smiling-male-employee-posing-workplace-close-up-headshot-portrait-smiling-caucasian-businessman-look-190961990 1 */
+
+position: absolute;
+width: 152px;
+height: 152px;
+left: 117px;
+top: 63px;
+
+background: url(profile-picture-smiling-male-employee-posing-workplace-close-up-headshot-portrait-smiling-caucasian-businessman-look-190961990.png);
+border-radius: 22px;
+
+
+/* Kauan */
+
+position: absolute;
+width: 71px;
+height: 29px;
+left: 157px;
+top: 232px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 29px;
+/* idêntico à altura da caixa */
+
+color: #000000;
+
+
+
+/* assinatura */
+
+position: absolute;
+width: 294px;
+height: 195px;
+left: 46px;
+top: 419px;
+
+
+
+/* Line 3 */
+
+position: absolute;
+width: 294px;
+height: 0px;
+left: 46px;
+top: 614px;
+
+border: 1px solid #000000;
+
+
+/* God of Fire */
+
+position: absolute;
+width: 84px;
+height: 19px;
+left: 151px;
+top: 586px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 19px;
+
+color: #000000;
+
+
+
+/* Assinatura atual */
+
+position: absolute;
+width: 182px;
+height: 29px;
+left: 102px;
+top: 419px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 29px;
+/* idêntico à altura da caixa */
+
+color: #000000;
+
+
+
+/* sem-titulo-2-a32beb18257b4a9a0917226212304490-640-0 2 */
+
+position: absolute;
+width: 100px;
+height: 100px;
+left: 143px;
+top: 462px;
+
+background: url(sem-titulo-2-a32beb18257b4a9a0917226212304490-640-0.png);
+border-radius: 17px;
+
+
+/* Line 4 */
+
+position: absolute;
+width: 898px;
+height: 0px;
+left: 395px;
+top: 63px;
+
+border: 1px solid #A4A4A4;
+transform: rotate(-90deg);
+
+
+/* top 5 */
+
+position: absolute;
+width: 612px;
+height: 102px;
+left: 430px;
+top: 63px;
+
+
+
+/* Top 5: */
+
+position: absolute;
+width: 94px;
+height: 39px;
+left: 430px;
+top: 110px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 32px;
+line-height: 39px;
+/* idêntico à altura da caixa */
+
+color: #000000;
+
+
+
+/* Line 5 */
+
+position: absolute;
+width: 503px;
+height: 0px;
+left: 539px;
+top: 165px;
+
+border: 1px solid #000000;
+
+
+/* Rectangle 20 */
+
+position: absolute;
+width: 89px;
+height: 89px;
+left: 546px;
+top: 63px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Ellipse 10 */
+
+position: absolute;
+width: 40px;
+height: 40px;
+left: 655px;
+top: 90px;
+
+background: #D9D9D9;
+
+
+/* + */
+
+position: absolute;
+width: 22px;
+height: 31px;
+left: 664px;
+top: 88px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 32px;
+line-height: 39px;
+
+color: #000000;
+
+
+
+/* sem-titulo-2-a32beb18257b4a9a0917226212304490-640-0 1 */
+
+position: absolute;
+width: 89px;
+height: 89px;
+left: 546px;
+top: 63px;
+
+background: url(sem-titulo-2-a32beb18257b4a9a0917226212304490-640-0.png);
+border-radius: 11px;
+
+
+/* tenho */
+
+position: absolute;
+width: 649px;
+height: 62px;
+left: 430px;
+top: 247px;
+
+
+
+/* Tenho: */
+
+position: absolute;
+width: 77px;
+height: 29px;
+left: 430px;
+top: 263px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 29px;
+/* idêntico à altura da caixa */
+
+color: #000000;
+
+
+
+/* Line 6 */
+
+position: absolute;
+width: 518px;
+height: 0px;
+left: 561px;
+top: 309px;
+
+border: 1px solid #000000;
+
+
+/* image 15 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 561px;
+top: 247px;
+
+background: url(image.png);
+border-radius: 11px;
+
+
+/* -1158317409 1 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 628px;
+top: 247px;
+
+background: url(-1158317409.jpg);
+border-radius: 11px;
+
+
+/* image 16 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 695px;
+top: 247px;
+
+background: url(image.png);
+border-radius: 11px;
+
+
+/* social.71571 1 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 762px;
+top: 247px;
+
+background: url(social.71571.jpg);
+border-radius: 11px;
+
+
+/* D_NQ_NP_855943-MLB81053922695_112024-O 1 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 896px;
+top: 247px;
+
+background: url(D_NQ_NP_855943-MLB81053922695_112024-O.png);
+border-radius: 11px;
+
+
+/* ERBA 1 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 830px;
+top: 247px;
+
+background: url(ERBA.png);
+border-radius: 11px;
+
+
+/* Rectangle 57 */
+
+position: absolute;
+width: 29px;
+height: 29px;
+left: 963px;
+top: 263px;
+
+background: #C06060;
+border-radius: 28px;
+
+
+/* image 18 */
+
+position: absolute;
+width: 24px;
+height: 24px;
+left: 966px;
+top: 266px;
+
+background: url(image.png);
+
+
+/* ja tive */
+
+position: absolute;
+width: 649px;
+height: 62px;
+left: 430px;
+top: 372px;
+
+
+
+/* Já tive: */
+
+position: absolute;
+width: 82px;
+height: 29px;
+left: 430px;
+top: 388px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 29px;
+/* idêntico à altura da caixa */
+
+color: #000000;
+
+
+
+/* image 17 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 561px;
+top: 372px;
+
+background: url(image.png);
+border-radius: 11px;
+
+
+/* Line 7 */
+
+position: absolute;
+width: 518px;
+height: 0px;
+left: 561px;
+top: 434px;
+
+border: 1px solid #000000;
+
+
+/* Rectangle 56 */
+
+position: absolute;
+width: 29px;
+height: 29px;
+left: 626px;
+top: 384px;
+
+background: #C06060;
+border-radius: 28px;
+
+
+/* image 12 */
+
+position: absolute;
+width: 24px;
+height: 24px;
+left: 629px;
+top: 387px;
+
+background: url(image.png);
+
+
+/* quero ter */
+
+position: absolute;
+width: 649px;
+height: 62px;
+left: 430px;
+top: 497px;
+
+
+
+/* Quero ter: */
+
+position: absolute;
+width: 114px;
+height: 29px;
+left: 430px;
+top: 513px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 29px;
+/* idêntico à altura da caixa */
+
+color: #000000;
+
+
+
+/* Line 8 */
+
+position: absolute;
+width: 518px;
+height: 0px;
+left: 561px;
+top: 559px;
+
+border: 1px solid #000000;
+
+
+/* Rectangle 39 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 561px;
+top: 497px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Rectangle 40 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 829px;
+top: 497px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Rectangle 41 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 695px;
+top: 497px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Rectangle 42 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 963px;
+top: 497px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Rectangle 43 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 628px;
+top: 497px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Rectangle 44 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 896px;
+top: 497px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Rectangle 45 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 762px;
+top: 497px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Ver todos */
+
+position: absolute;
+width: 38px;
+height: 34px;
+left: 1031px;
+top: 507px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 17px;
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+opacity: 0.38;
+
+
+/* todos */
+
+position: absolute;
+width: 649px;
+height: 62px;
+left: 430px;
+top: 622px;
+
+
+
+/* Todos: */
+
+position: absolute;
+width: 77px;
+height: 29px;
+left: 430px;
+top: 638px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 29px;
+/* idêntico à altura da caixa */
+
+color: #000000;
+
+
+
+/* Line 9 */
+
+position: absolute;
+width: 518px;
+height: 0px;
+left: 561px;
+top: 684px;
+
+border: 1px solid #000000;
+
+
+/* Rectangle 46 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 561px;
+top: 622px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Rectangle 47 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 829px;
+top: 622px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Rectangle 48 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 695px;
+top: 622px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Rectangle 49 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 963px;
+top: 622px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Rectangle 50 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 628px;
+top: 622px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Rectangle 51 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 896px;
+top: 622px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Rectangle 52 */
+
+position: absolute;
+width: 54px;
+height: 54px;
+left: 762px;
+top: 622px;
+
+background: #D9D9D9;
+border-radius: 11px;
+
+
+/* Ver todos */
+
+position: absolute;
+width: 38px;
+height: 34px;
+left: 1031px;
+top: 632px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 17px;
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+opacity: 0.38;
+
+
+/* Group 19 */
+
+position: absolute;
+width: 161px;
+height: 54px;
+left: 112px;
+top: 907px;
+
+
+
+/* Cadastrar perfume */
+
+position: absolute;
+width: 161px;
+height: 22px;
+left: 112px;
+top: 939px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 18px;
+line-height: 22px;
+/* idêntico à altura da caixa */
+
+color: #000000;
+
+
+
+/* Rectangle 55 */
+
+position: absolute;
+width: 29px;
+height: 29px;
+left: 178px;
+top: 907px;
+
+background: #C06060;
+border-radius: 6px;
+
+
+/* image 11 */
+
+position: absolute;
+width: 24px;
+height: 24px;
+left: 181px;
+top: 910px;
+
+background: url(image.png);

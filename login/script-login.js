@@ -16,9 +16,17 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // Botão criar conta
-document.getElementById('btn-criar-conta').addEventListener('click', () => {
-  window.location.href = '..\\criar-conta\\criar-conta.html';
-});
+const btnCriarConta = document.getElementById('btn-criar-conta');
+console.log('Botão encontrado:', btnCriarConta);
+
+if (btnCriarConta) {
+  btnCriarConta.addEventListener('click', () => {
+    console.log('Botão clicado!');
+    window.location.href = '../criar-conta/criar-conta.html';
+  });
+} else {
+  console.error('Botão não encontrado!');
+}
 
 // Login
 document.getElementById('form-login').addEventListener('submit', async (e) => {
@@ -36,10 +44,9 @@ document.getElementById('form-login').addEventListener('submit', async (e) => {
     const user = userCredential.user;
 
     console.log('Login realizado:', user);
-    alert('Login realizado com sucesso!');
 
-    // Redireciona para a página principal (ajuste conforme necessário)
-    window.location.href = 'index.html';
+    // Redireciona para a página de perfil
+    window.location.href = '../perfil/perfil.html';
 
   } catch (error) {
     console.error('Erro ao fazer login:', error);

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="style-perfil.css">
+  <title>Perfil</title>
+</head>
+<body>
+  <div class="container">
+    <!-- Lado Esquerdo -->
+    <aside class="sidebar">
+      <div class="foto-usuario">
+        <img id="foto-perfil" src="" alt="Foto de perfil">
+      </div>
+      
+      <h2 id="nome-usuario">Carregando...</h2>
+      
+      <div class="assinatura-atual">
+        <h3>Assinatura atual</h3>
+        <div id="perfume-assinatura">
+          <div class="perfume-placeholder">
+            <span>Nenhum perfume selecionado</span>
+          </div>
+          <p id="nome-assinatura">-</p>
+        </div>
+      </div>
+      
+      <button id="btn-cadastrar" class="btn-cadastrar">
+        <span class="icon-mais">+</span>
+        Cadastrar perfume
+      </button>
+    </aside>
+
+    <!-- Lado Direito -->
+    <main class="conteudo">
+      <!-- Top 5 -->
+      <section class="secao-perfumes">
+        <h2>Top 5:</h2>
+        <div class="lista-perfumes" id="top5">
+          <button class="btn-adicionar-perfume">+</button>
+        </div>
+      </section>
+
+      <!-- Tenho -->
+      <section class="secao-perfumes">
+        <h2>Tenho:</h2>
+        <div class="lista-perfumes" id="tenho">
+          <!-- Perfumes serão carregados aqui -->
+        </div>
+      </section>
+
+      <!-- Já tive -->
+      <section class="secao-perfumes">
+        <h2>Já tive:</h2>
+        <div class="lista-perfumes" id="ja-tive">
+          <button class="btn-adicionar-perfume" data-tipo="ja-tive">+</button>
+        </div>
+      </section>
+
+      <!-- Quero ter -->
+      <section class="secao-perfumes">
+        <h2>Quero ter:</h2>
+        <div class="lista-perfumes" id="quero-ter">
+          <button class="btn-adicionar-perfume" data-tipo="quero-ter">+</button>
+        </div>
+      </section>
+
+      <!-- Todos -->
+      <section class="secao-perfumes">
+        <h2>Todos:</h2>
+        <div class="lista-perfumes" id="todos">
+          <!-- Todos os perfumes -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal para adicionar perfume -->
+  <div id="modal-adicionar" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h3 id="modal-titulo">Adicionar perfume</h3>
+      
+      <div id="lista-perfumes-modal">
+        <!-- Lista de perfumes será carregada aqui -->
+      </div>
+      
+      <button id="btn-cadastrar-novo" class="btn-cadastrar-novo">
+        + Cadastrar novo perfume
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal para Top 5 (apenas selecionar) -->
+  <div id="modal-top5" class="modal">
+    <div class="modal-content">
+      <span class="close-top5">&times;</span>
+      <h3>Adicionar ao Top 5</h3>
+      
+      <div id="lista-perfumes-top5">
+        <!-- Lista de perfumes cadastrados -->
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="script-perfil.js"></script>
+</body>
+</html>

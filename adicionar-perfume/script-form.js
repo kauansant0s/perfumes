@@ -10,7 +10,7 @@ const acordes = [
   'Amadeirado', 'Animálico', 'Aquático', 'Aromático', 'Atalcado',
   'Chipre', 'Cítrico', 'Couro', 'Cremoso', 'Esfumaçado',
   'Especiado', 'Floral', 'Floral Amarelo', 'Floral Branco', 'Fougère',
-  'Fresco', 'Frutado', 'Frutal', 'Gourmand', 'Lactônico',
+  'Fresco', 'Frutado', 'Gourmand', 'Lactônico',
   'Metálico', 'Oriental', 'Terroso', 'Tropical', 'Verde'
 ];
 
@@ -233,7 +233,6 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       },
       acordes: Array.from(document.getElementById('acordes').selectedOptions).map(opt => opt.value).filter(v => v),
       perfumista: document.getElementById('perfumista').value,
-      descricao: document.getElementById('descricao').value,
       review: {
         titulo: document.getElementById('titulo').value,
         texto: document.getElementById('review').value

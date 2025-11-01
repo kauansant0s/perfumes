@@ -1,0 +1,323 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    background: #596A5E;
+    font-family: 'Inter';
+    margin: 0;
+    padding: 40px;
+    color: #000;
+}
+
+.container {
+    display: flex;
+    gap: 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-left: 60px;
+}
+
+/* Sidebar Esquerda */
+.sidebar {
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.foto-usuario {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #d9d9d9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.foto-usuario img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#nome-usuario {
+    font-size: 24px;
+    font-weight: 400;
+    margin: 0;
+    text-align: center;
+    color: #000;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+    width: 100%;
+}
+
+.assinatura-atual {
+    width: 100%;
+    text-align: center;
+}
+
+.assinatura-atual h3 {
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 15px;
+    color: #000;
+}
+
+#perfume-assinatura {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.perfume-placeholder,
+.perfume-mini {
+    width: 120px;
+    height: 120px;
+    background: #d9d9d9;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.perfume-placeholder:hover,
+.perfume-mini:hover {
+    background: #d9d9d9c5;
+}
+
+.perfume-placeholder span {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    padding: 10px;
+}
+
+.perfume-mini img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#nome-assinatura {
+    font-size: 14px;
+    color: #000;
+    margin: 0;
+    border-bottom: 2px solid #000;
+    padding-bottom: 8px;
+    width: 100%;
+}
+
+.btn-cadastrar {
+    width: 100%;
+    padding: 12px 20px;
+    background: transparent;
+    border: 2px solid #C06060;
+    border-radius: 8px;
+    color: #C06060;
+    font-size: 16px;
+    font-family: 'Inter';
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.btn-cadastrar:hover {
+    background: #C0606020;
+}
+
+.icon-mais {
+    font-size: 20px;
+}
+
+/* Conteúdo Principal */
+.conteudo {
+    flex: 1;
+}
+
+.secao-perfumes {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #000;
+}
+
+.secao-perfumes:last-child {
+    border-bottom: none;
+}
+
+.secao-perfumes h2 {
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 15px;
+    color: #000;
+}
+
+.lista-perfumes {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.perfume-card {
+    width: 70px;
+    height: 70px;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.perfume-card:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s;
+}
+
+.perfume-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.btn-adicionar-perfume {
+    width: 25px;
+    height: 25px;
+    background: #C06060;
+    border: none;
+    border-radius: 15px;
+    color: #fff;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.btn-adicionar-perfume:hover {
+    background: #a85050;
+}
+
+.btn-ver-todos {
+    padding: 8px 20px;
+    background: transparent;
+    border: 2px solid #000;
+    border-radius: 8px;
+    color: #000;
+    font-size: 14px;
+    font-family: 'Inter';
+    cursor: pointer;
+}
+
+.btn-ver-todos:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.close,
+.close-top5 {
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #666;
+}
+
+.close:hover,
+.close-top5:hover {
+    color: #000;
+}
+
+#modal-titulo {
+    margin: 0 0 20px 0;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+#lista-perfumes-modal,
+#lista-perfumes-top5 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.perfume-modal-card {
+    cursor: pointer;
+    text-align: center;
+}
+
+.perfume-modal-card:hover {
+    opacity: 0.8;
+}
+
+.perfume-modal-img {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #f0f0f0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.perfume-modal-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.perfume-modal-nome {
+    font-size: 12px;
+    color: #333;
+}
+
+.btn-cadastrar-novo {
+    width: 100%;
+    padding: 12px;
+    background: #C06060;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-family: 'Inter';
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-cadastrar-novo:hover {
+    background: #a85050;
+}
