@@ -110,23 +110,28 @@ export async function uploadFotoPerfume(file, userId) {
 export async function salvarPreferenciasUsuario(userId, preferencias) {
   try {
     const preferencesRef = doc(db, "userPreferences", userId);
-    await updateDoc(preferencesRef, {
-      ...preferencias,
-      dataAtualizacao: serverTimestamp()
-    }).catch(async (error) => {
-      // Se o documento não existe, cria um novo
+    
+    // Tenta atualizar primeiro
+    try {
+      await updateDoc(preferencesRef, {
+        ...preferencias,
+        dataAtualizacao: serverTimestamp()
+      });
+      console.log("Preferências atualizadas!");
+    } catch (error) {
+      // Se não existe, cria o documento com setDoc
       if (error.code === 'not-found') {
-        await addDoc(collection(db, "userPreferences"), {
+        await setDoc(preferencesRef, {
           userId: userId,
           ...preferencias,
-          dataCriacao: serverTimestamp()
+          dataCriacao: serverTimestamp(),
+          dataAtualizacao: serverTimestamp()
         });
+        console.log("Preferências criadas!");
       } else {
         throw error;
       }
-    });
-    
-    console.log("Preferências salvas!");
+    }
   } catch (error) {
     console.error("Erro ao salvar preferências:", error);
     throw error;
