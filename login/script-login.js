@@ -1,31 +1,18 @@
 // script-login.js
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-
-// Configuração do Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyCWuG4gVnf6r2JVBJX4k6a5kwM_Jf3cw8c",
-  authDomain: "meus-pefumes.firebaseapp.com",
-  projectId: "meus-pefumes",
-  storageBucket: "meus-pefumes.firebasestorage.app",
-  messagingSenderId: "5138203233",
-  appId: "1:5138203233:web:b684d4397c4ffefa572020"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+import { auth } from '../firebase-config.js';
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 // Botão criar conta
 const btnCriarConta = document.getElementById('btn-criar-conta');
-console.log('Botão encontrado:', btnCriarConta);
 
 if (btnCriarConta) {
-  btnCriarConta.addEventListener('click', () => {
-    console.log('Botão clicado!');
+  btnCriarConta.addEventListener('click', (e) => {
+    e.preventDefault();
+    console.log('Navegando para criar conta...');
     window.location.href = '../criar-conta/criar-conta.html';
   });
 } else {
-  console.error('Botão não encontrado!');
+  console.error('Botão criar conta não encontrado!');
 }
 
 // Login
@@ -43,7 +30,7 @@ document.getElementById('form-login').addEventListener('submit', async (e) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, senha);
     const user = userCredential.user;
 
-    console.log('Login realizado:', user);
+    console.log('Login realizado:', user.email);
 
     // Redireciona para a página de perfil
     window.location.href = '../perfil/perfil.html';
@@ -68,6 +55,9 @@ document.getElementById('form-login').addEventListener('submit', async (e) => {
         break;
       case 'auth/too-many-requests':
         mensagem += 'Muitas tentativas. Tente novamente mais tarde.';
+        break;
+      case 'auth/invalid-credential':
+        mensagem += 'Email ou senha incorretos.';
         break;
       default:
         mensagem += error.message;
