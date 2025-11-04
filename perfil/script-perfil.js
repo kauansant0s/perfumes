@@ -33,55 +33,83 @@ onAuthStateChanged(auth, async (user) => {
     }
     
     try {
-      console.log('Carregando preferências...');
+      console.log('=== Iniciando carregamento de dados ===');
+      
+      console.log('1. Carregando preferências...');
       await carregarPreferencias();
+      console.log('✅ Preferências carregadas');
       
-      console.log('Carregando perfumes...');
+      console.log('2. Carregando perfumes...');
       await carregarPerfumes();
+      console.log('✅ Perfumes carregados');
       
-      console.log('✅ Tudo carregado!');
+      console.log('=== ✅ TUDO CARREGADO COM SUCESSO! ===');
     } catch (error) {
-      console.error('❌ Erro ao carregar dados:', error);
-      alert('Erro ao carregar dados. Verifique o console (F12).');
+      console.error('=== ❌ ERRO AO CARREGAR DADOS ===');
+      console.error('Erro completo:', error);
+      console.error('Stack:', error.stack);
+      
+      // Remove o "Carregando..." e mostra erro
+      document.getElementById('nome-usuario').textContent = 'Erro ao carregar';
+      alert('Erro ao carregar dados. Abra o Console (F12) e me envie os erros em vermelho.');
     }
   } else {
-    console.log('Usuário não autenticado, redirecionando...');
+    console.log('❌ Usuário não autenticado, redirecionando para login...');
     window.location.href = '../login/login.html';
   }
 });
 
 async function carregarPreferencias() {
   try {
+    console.log('  → Buscando preferências do usuário:', usuarioAtual.uid);
     preferenciasUsuario = await buscarPreferenciasUsuario(usuarioAtual.uid);
-    console.log('Preferências carregadas:', preferenciasUsuario);
+    console.log('  → Preferências recebidas:', preferenciasUsuario);
     
     if (preferenciasUsuario) {
       if (preferenciasUsuario.assinaturaAtual) {
+        console.log('  → Carregando assinatura atual:', preferenciasUsuario.assinaturaAtual);
         carregarAssinaturaAtual(preferenciasUsuario.assinaturaAtual);
+      } else {
+        console.log('  → Sem assinatura salva');
+      }
+      
+      if (preferenciasUsuario.top5) {
+        console.log('  → Top 5 salvo:', preferenciasUsuario.top5);
       }
     } else {
-      console.log('Nenhuma preferência salva ainda');
+      console.log('  → Nenhuma preferência salva, criando objeto vazio');
       preferenciasUsuario = { top5: [] };
     }
   } catch (error) {
-    console.error('Erro ao carregar preferências:', error);
+    console.error('  ❌ Erro ao carregar preferências:', error);
     preferenciasUsuario = { top5: [] };
+    throw error;
   }
 }
 
 async function carregarPerfumes() {
   try {
-    console.log('Buscando perfumes para usuário:', usuarioAtual.uid);
+    console.log('  → Buscando perfumes do usuário:', usuarioAtual.uid);
     perfumesData = await buscarPerfumes(usuarioAtual.uid);
-    console.log('✅ Perfumes carregados:', perfumesData.length);
+    console.log('  → Perfumes recebidos:', perfumesData.length, 'perfume(s)');
     
+    if (perfumesData.length > 0) {
+      console.log('  → Lista de perfumes:');
+      perfumesData.forEach((p, i) => {
+        console.log(`     ${i+1}. ${p.nome} (${p.marca}) - Status: ${p.status}`);
+      });
+    } else {
+      console.log('  → Nenhum perfume cadastrado ainda');
+    }
+    
+    console.log('  → Renderizando perfumes nas seções...');
     renderizarPerfumes();
     
     if (preferenciasUsuario?.top5 && preferenciasUsuario.top5.length > 0) {
-      console.log('Renderizando Top 5 existente');
+      console.log('  → Renderizando Top 5 existente:', preferenciasUsuario.top5);
       renderizarTop5(preferenciasUsuario.top5);
     } else {
-      console.log('Nenhum Top 5 salvo, criando botão +');
+      console.log('  → Criando botão + para Top 5');
       const secaoTop5 = document.getElementById('top5');
       if (secaoTop5) {
         secaoTop5.innerHTML = '';
@@ -101,7 +129,7 @@ async function carregarPerfumes() {
       }
     }
   } catch (error) {
-    console.error('❌ Erro ao carregar perfumes:', error);
+    console.error('  ❌ Erro ao carregar perfumes:', error);
     throw error;
   }
 }
@@ -230,17 +258,37 @@ async function definirAssinaturaAtual(perfume) {
   container.appendChild(miniCard);
   container.appendChild(nome);
   
+  // IMPORTANTE: Preserva o top5 existente ao salvar assinatura
   try {
-    await salvarPreferenciasUsuario(usuarioAtual.uid, {
-      assinaturaAtual: {
-        id: perfume.id,
-        nome: perfume.nome,
-        fotoURL: perfume.fotoURL
-      }
-    });
-    console.log('Assinatura salva!');
+    const novaAssinatura = {
+      id: perfume.id,
+      nome: perfume.nome,
+      fotoURL: perfume.fotoURL
+    };
+    
+    // Se já tem preferências, preserva o top5
+    const dadosParaSalvar = preferenciasUsuario?.top5 
+      ? { 
+          assinaturaAtual: novaAssinatura,
+          top5: preferenciasUsuario.top5  // Preserva o top5
+        }
+      : { 
+          assinaturaAtual: novaAssinatura 
+        };
+    
+    console.log('Salvando preferências:', dadosParaSalvar);
+    await salvarPreferenciasUsuario(usuarioAtual.uid, dadosParaSalvar);
+    
+    // Atualiza localmente
+    if (!preferenciasUsuario) {
+      preferenciasUsuario = {};
+    }
+    preferenciasUsuario.assinaturaAtual = novaAssinatura;
+    
+    console.log('✅ Assinatura salva no Firestore!');
   } catch (error) {
-    console.error('Erro ao salvar assinatura:', error);
+    console.error('❌ Erro ao salvar assinatura:', error);
+    alert('Erro ao salvar assinatura: ' + error.message);
   }
 }
 
@@ -372,9 +420,18 @@ async function abrirModalTop5() {
           const novoTop5 = [...top5Atual, perfume.id];
           
           try {
-            await salvarPreferenciasUsuario(usuarioAtual.uid, {
-              top5: novoTop5
-            });
+            // IMPORTANTE: Preserva a assinatura ao salvar top5
+            const dadosParaSalvar = preferenciasUsuario?.assinaturaAtual 
+              ? { 
+                  top5: novoTop5,
+                  assinaturaAtual: preferenciasUsuario.assinaturaAtual  // Preserva assinatura
+                }
+              : { 
+                  top5: novoTop5 
+                };
+            
+            console.log('Salvando top5:', dadosParaSalvar);
+            await salvarPreferenciasUsuario(usuarioAtual.uid, dadosParaSalvar);
             
             if (!preferenciasUsuario) {
               preferenciasUsuario = { top5: [] };

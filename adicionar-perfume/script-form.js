@@ -61,6 +61,43 @@ const acordesInstance = new TomSelect('#acordes', {
 acordesInstance.wrapper.style.width = '93%';
 acordesInstance.wrapper.style.marginBottom = '10px';
 
+// Sistema de autocomplete para marcas
+function inicializarAutocompleteMarca() {
+  const inputMarca = document.getElementById('marca');
+  const datalistMarca = document.createElement('datalist');
+  datalistMarca.id = 'marcas-list';
+  
+  // Adiciona todas as marcas no datalist
+  marcasDisponiveis.forEach(marca => {
+    const option = document.createElement('option');
+    option.value = marca;
+    datalistMarca.appendChild(option);
+  });
+  
+  document.body.appendChild(datalistMarca);
+  inputMarca.setAttribute('list', 'marcas-list');
+  
+  console.log('Autocomplete de marcas inicializado com', marcasDisponiveis.length, 'marcas');
+}
+
+// Função para atualizar a lista de marcas
+function atualizarListaMarcas() {
+  const datalistMarca = document.getElementById('marcas-list');
+  if (datalistMarca) {
+    // Limpa opções antigas
+    datalistMarca.innerHTML = '';
+    
+    // Adiciona marcas atualizadas
+    marcasDisponiveis.forEach(marca => {
+      const option = document.createElement('option');
+      option.value = marca;
+      datalistMarca.appendChild(option);
+    });
+    
+    console.log('Lista de marcas atualizada:', marcasDisponiveis.length, 'marcas');
+  }
+}
+
 // Inicializa TomSelect para notas
 ids.forEach((id) => {
   const select = document.getElementById(id);
@@ -256,6 +293,14 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       },
       status: document.querySelector('input[name="status"]:checked')?.value || ''
     };
+    
+    // Salva a marca se for nova
+    if (perfumeData.marca && !marcasDisponiveis.includes(perfumeData.marca)) {
+      await salvarMarca(perfumeData.marca);
+      marcasDisponiveis.push(perfumeData.marca);
+      marcasDisponiveis.sort();
+      console.log('Nova marca adicionada:', perfumeData.marca);
+    }
     
     if (perfumeData.status === 'tenho' || perfumeData.status === 'ja-tive') {
       perfumeData.avaliacoes = {
