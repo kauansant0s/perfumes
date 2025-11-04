@@ -24,7 +24,20 @@
         <button type="submit" class="btn-entrar">Entrar</button>
         <button type="button" class="btn-criar-conta" id="btn-criar-conta">Criar conta</button>
       </div>
+      
+      <a href="#" id="link-esqueci-senha" class="link-esqueci-senha">Esqueci minha senha</a>
     </form>
+  </div>
+
+  <!-- Modal de recuperação de senha -->
+  <div id="modal-recuperar-senha" class="modal-recuperar" style="display:none;">
+    <div class="modal-recuperar-content">
+      <span class="close-recuperar">&times;</span>
+      <h2>Recuperar senha</h2>
+      <p>Digite seu email para receber o link de recuperação:</p>
+      <input type="email" id="email-recuperacao" class="campo-texto" placeholder="seu@email.com" required>
+      <button id="btn-enviar-recuperacao" class="btn-recuperar">Enviar link</button>
+    </div>
   </div>
 
   <script type="module" src="script-login.js"></script>

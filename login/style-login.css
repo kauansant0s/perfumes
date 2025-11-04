@@ -67,8 +67,9 @@ h1 {
 .botoes {
     display: flex;
     gap: 15px;
-    margin-top: 40px;
+    margin-top: 30px;
     justify-content: center;
+    margin-bottom: 0;
 }
 
 .btn-entrar,
@@ -106,4 +107,93 @@ h1 {
 
 .btn-criar-conta:hover {
     background: #C0606020;
+}
+
+/* Link esqueci senha - ABAIXO E CENTRALIZADO */
+.link-esqueci-senha {
+    display: block;
+    text-align: center;
+    color: #C06060 !important;
+    font-size: 14px;
+    text-decoration: none;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.link-esqueci-senha:hover {
+    text-decoration: underline;
+    color: #d69191 !important;
+}
+
+/* Modal de recuperação */
+.modal-recuperar {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-recuperar-content {
+    background: #3c423e;
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 400px;
+    width: 90%;
+    border: 2px solid #C06060;
+}
+
+.modal-recuperar-content h2 {
+    color: #fff;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.modal-recuperar-content p {
+    color: #ccc;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.close-recuperar {
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #C06060;
+    line-height: 20px;
+}
+
+.close-recuperar:hover {
+    color: #d69191;
+}
+
+.btn-recuperar {
+    width: 100%;
+    height: 45px;
+    background: #C06060;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Inter';
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-recuperar:hover {
+    background: #a85050;
+}
+
+.btn-recuperar:disabled {
+    background: #999;
+    cursor: not-allowed;
 }

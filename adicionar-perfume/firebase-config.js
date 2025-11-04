@@ -1,6 +1,6 @@
 // firebase-config.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, serverTimestamp, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
@@ -21,6 +21,43 @@ const auth = getAuth(app);
 
 // Exporta instâncias
 export { app, db, storage, auth };
+
+// Funções para manipular marcas
+export async function buscarMarcas() {
+  try {
+    const querySnapshot = await getDocs(collection(db, "marcas"));
+    const marcas = [];
+    querySnapshot.forEach((doc) => {
+      marcas.push(doc.data().nome);
+    });
+    return marcas.sort();
+  } catch (error) {
+    console.error("Erro ao buscar marcas:", error);
+    return [];
+  }
+}
+
+export async function salvarMarca(nomeMarca) {
+  try {
+    // Verifica se já existe
+    const q = query(
+      collection(db, "marcas"),
+      where("nome", "==", nomeMarca)
+    );
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      // Se não existe, salva
+      await addDoc(collection(db, "marcas"), {
+        nome: nomeMarca,
+        dataCriacao: serverTimestamp()
+      });
+      console.log("Nova marca salva:", nomeMarca);
+    }
+  } catch (error) {
+    console.error("Erro ao salvar marca:", error);
+  }
+}
 
 // Funções para manipular perfumes (AGORA COM USERID)
 export async function salvarPerfume(perfumeData, userId) {
@@ -140,18 +177,13 @@ export async function salvarPreferenciasUsuario(userId, preferencias) {
 
 export async function buscarPreferenciasUsuario(userId) {
   try {
-    const q = query(
-      collection(db, "userPreferences"),
-      where("userId", "==", userId)
-    );
+    const preferencesRef = doc(db, "userPreferences", userId);
+    const docSnap = await getDoc(preferencesRef);
     
-    const querySnapshot = await getDocs(q);
-    
-    if (!querySnapshot.empty) {
-      const doc = querySnapshot.docs[0];
+    if (docSnap.exists()) {
       return {
-        id: doc.id,
-        ...doc.data()
+        id: docSnap.id,
+        ...docSnap.data()
       };
     }
     

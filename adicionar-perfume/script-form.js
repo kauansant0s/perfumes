@@ -1,5 +1,25 @@
 // script-form.js
-import { salvarPerfume, uploadFotoPerfume } from './firebase-config.js';
+import { auth, salvarPerfume, uploadFotoPerfume, buscarMarcas, salvarMarca } from './firebase-config.js';
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+let usuarioAtual = null;
+let marcasDisponiveis = [];
+
+// Verifica autenticação
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    usuarioAtual = user;
+    console.log('Usuário logado:', user.email);
+    
+    // Carrega marcas existentes
+    marcasDisponiveis = await buscarMarcas();
+    console.log('Marcas carregadas:', marcasDisponiveis);
+    inicializarAutocompleteMarca();
+  } else {
+    alert('Você precisa estar logado para cadastrar perfumes!');
+    window.location.href = '../login/login.html';
+  }
+});
 
 const notas = window.dadosNotas.notas;
 const ids = ["topo", "coracao", "fundo"];
@@ -8,7 +28,7 @@ const ids = ["topo", "coracao", "fundo"];
 const acordes = [
   'Abaunilhado', 'Aldeídico', 'Alcoólico', 'Almiscarado', 'Ambarado',
   'Amadeirado', 'Animálico', 'Aquático', 'Aromático', 'Atalcado',
-  'Chipre', 'Cítrico', 'Couro', 'Cremoso', 'Esfumaçado',
+  'Chipre', 'Cítrico', 'Couro', 'Cremoso', 'Doce', 'Esfumaçado',
   'Especiado', 'Floral', 'Floral Amarelo', 'Floral Branco', 'Fougère',
   'Fresco', 'Frutado', 'Gourmand', 'Lactônico',
   'Metálico', 'Oriental', 'Terroso', 'Tropical', 'Verde'
@@ -16,7 +36,7 @@ const acordes = [
 
 // Popular select de acordes
 const acordesSelect = document.getElementById('acordes');
-acordes.sort(); // Ordena alfabeticamente
+acordes.sort();
 acordes.forEach(acorde => {
   const option = document.createElement('option');
   option.value = acorde;
@@ -24,7 +44,7 @@ acordes.forEach(acorde => {
   acordesSelect.appendChild(option);
 });
 
-// Inicializa TomSelect para acordes (igual às notas)
+// Inicializa TomSelect para acordes
 const acordesInstance = new TomSelect('#acordes', {
   maxItems: null,
   create: false,
@@ -38,18 +58,14 @@ const acordesInstance = new TomSelect('#acordes', {
   }
 });
 
-// Força a largura do wrapper do TomSelect de acordes
 acordesInstance.wrapper.style.width = '93%';
 acordesInstance.wrapper.style.marginBottom = '10px';
 
-// Inicializa TomSelect SIMPLES - só uma vez, sem destruir
+// Inicializa TomSelect para notas
 ids.forEach((id) => {
   const select = document.getElementById(id);
-  
-  // Limpa o select
   select.innerHTML = '';
   
-  // Adiciona todas as notas
   notas.forEach((nota) => {
     const option = document.createElement("option");
     option.value = nota;
@@ -57,7 +73,6 @@ ids.forEach((id) => {
     select.appendChild(option);
   });
   
-  // Inicializa TomSelect e MANTÉM (não destrói nunca)
   const tomInstance = new TomSelect(`#${id}`, {
     maxItems: null,
     create: false,
@@ -66,23 +81,18 @@ ids.forEach((id) => {
     plugins: ["remove_button"],
     dropdownParent: 'body',
     onItemAdd: function() {
-      this.setTextboxValue(''); // Limpa o texto após adicionar
+      this.setTextboxValue('');
       this.refreshOptions();
     },
     onInitialize: function() {
       console.log('TomSelect inicializado para:', id);
-      console.log('Número de opções:', this.options);
-    },
-    onDropdownOpen: function() {
-      console.log('Dropdown aberto para:', id);
-      console.log('Dropdown element:', this.dropdown);
     }
   });
   
-  console.log('TomSelect criado para', id, '- Total de notas:', tomInstance.options);
+  console.log('TomSelect criado para', id);
 });
 
-// Mostrar campo de avaliação quando selecionar "Tenho" ou "Já tive"
+// Mostrar campo de avaliação
 document.querySelectorAll('input[name="status"]').forEach(radio => {
   radio.addEventListener('change', e => {
     const avaliacao = document.getElementById('avaliacao');
@@ -110,7 +120,7 @@ document.querySelectorAll('input[name="status"]').forEach(radio => {
   });
 });
 
-// Sistema de estrelas SVG com suporte a frações
+// Sistema de estrelas SVG
 function criarEstrelas(container) {
   const total = 5;
   let valorTemporario = 0;
@@ -214,9 +224,16 @@ function atualizarMedia() {
   }
 }
 
-// Handler do formulário
+// Handler do formulário (ATUALIZADO COM USERID)
 document.getElementById('info-perfume').addEventListener('submit', async (e) => {
   e.preventDefault();
+  
+  // Verifica se o usuário está logado
+  if (!usuarioAtual) {
+    alert('Você precisa estar logado!');
+    window.location.href = '../login/login.html';
+    return;
+  }
   
   const submitButton = document.getElementById('adicionar');
   submitButton.disabled = true;
@@ -237,8 +254,7 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
         titulo: document.getElementById('titulo').value,
         texto: document.getElementById('review').value
       },
-      status: document.querySelector('input[name="status"]:checked')?.value || '',
-      dataCriacao: new Date().toISOString()
+      status: document.querySelector('input[name="status"]:checked')?.value || ''
     };
     
     if (perfumeData.status === 'tenho' || perfumeData.status === 'ja-tive') {
@@ -262,15 +278,17 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
     const fotoURL = document.getElementById('foto-url').value.trim();
     
     if (fotoInput.files.length > 0) {
-      perfumeData.fotoURL = await uploadFotoPerfume(fotoInput.files[0]);
+      // Passa o userId para o upload
+      perfumeData.fotoURL = await uploadFotoPerfume(fotoInput.files[0], usuarioAtual.uid);
     } else if (fotoURL) {
       perfumeData.fotoURL = fotoURL;
     }
     
-    const id = await salvarPerfume(perfumeData);
+    // Salva com o userId
+    const id = await salvarPerfume(perfumeData, usuarioAtual.uid);
     
     alert('Perfume salvo com sucesso!');
-    window.location.reload();
+    window.location.href = '../perfil/perfil.html';
     
   } catch (error) {
     console.error('Erro ao salvar:', error);
@@ -284,7 +302,7 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
 // Botão cancelar
 document.getElementById('cancelar').addEventListener('click', () => {
   if (confirm('Deseja cancelar? Todos os dados serão perdidos.')) {
-    window.location.reload();
+    window.location.href = '../perfil/perfil.html';
   }
 });
 
