@@ -185,6 +185,12 @@ function criarCardPerfume(perfume) {
   const card = document.createElement('div');
   card.className = 'perfume-card';
   card.title = perfume.nome;
+  card.style.cursor = 'pointer';
+  
+  // Adiciona evento de clique para abrir página do perfume
+  card.onclick = () => {
+    window.location.href = `../perfumes/perfume.html?id=${perfume.id}`;
+  };
   
   if (perfume.fotoURL && perfume.fotoURL.trim() !== '') {
     const img = document.createElement('img');

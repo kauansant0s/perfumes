@@ -1,0 +1,390 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    background: #596A5E;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 40px;
+    color: #000;
+}
+
+.container {
+    display: flex;
+    gap: 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Sidebar Esquerda */
+.sidebar-left {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.foto-perfume {
+    width: 320px;
+    height: 320px;
+    background: #d9d9d9;
+    border-radius: 32px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.foto-perfume img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Avaliações */
+.avaliacoes {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 16px;
+}
+
+.estrelas-media {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.estrelas-media:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.estrelas-display {
+    display: flex;
+    gap: 4px;
+}
+
+.estrela {
+    font-size: 24px;
+}
+
+.nota-media {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000;
+}
+
+/* Avaliações Detalhadas - Inicialmente ocultas */
+.avaliacoes-detalhadas {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
+    opacity: 0;
+}
+
+.avaliacoes-detalhadas.expandido {
+    max-height: 500px;
+    opacity: 1;
+    margin-top: 15px;
+}
+
+.avaliacao-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.avaliacao-item:last-child {
+    border-bottom: none;
+}
+
+.avaliacao-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
+}
+
+.avaliacao-nota {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.avaliacao-nota .mini-estrelas {
+    display: flex;
+    gap: 2px;
+}
+
+.avaliacao-nota .mini-estrela {
+    font-size: 14px;
+    color: #FFD700;
+}
+
+.avaliacao-nota .nota-valor {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    min-width: 30px;
+    text-align: right;
+}
+
+/* Sliders */
+.sliders-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.slider-container label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
+}
+
+.slider-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.slider-label-left,
+.slider-label-right {
+    font-size: 11px;
+    color: #000;
+    min-width: 40px;
+    text-align: center;
+}
+
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    outline: none;
+    margin: 0;
+}
+
+.slider-clima {
+    background: linear-gradient(to right, #5BA3D0 0%, #E89560 100%);
+}
+
+.slider-ambiente,
+.slider-genero,
+.slider-hora {
+    background: #D9D9D9;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #5BA3D0;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #5BA3D0;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Status Buttons */
+.status-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.status-buttons input[type="radio"] {
+    display: none;
+}
+
+.status-buttons label {
+    padding: 10px 20px;
+    background: transparent;
+    border: 2px solid #000;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #000;
+    transition: all 0.2s;
+}
+
+.status-buttons input[type="radio"]:checked + label {
+    background: #C06060;
+    border-color: #C06060;
+    color: #fff;
+}
+
+.status-buttons label:hover {
+    background: rgba(192, 96, 96, 0.2);
+}
+
+/* Conteúdo Principal */
+.conteudo-principal {
+    flex: 1;
+}
+
+#nome-perfume {
+    font-size: 48px;
+    font-weight: 400;
+    margin: 0 0 10px 0;
+    color: #000;
+}
+
+#marca-perfume {
+    font-size: 24px;
+    font-weight: 400;
+    margin: 0 0 30px 0;
+    color: #333;
+}
+
+#marca-perfume a {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+#marca-perfume a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.descricao {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #000;
+    margin-bottom: 30px;
+}
+
+hr {
+    border: none;
+    border-top: 2px solid #000;
+    margin: 30px 0;
+}
+
+/* Acordes */
+.acordes-secao h3,
+.notas-secao h3,
+.reviews-secao h3 {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0 0 15px 0;
+    color: #000;
+}
+
+.acordes-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.acorde-tag {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    display: inline-block;
+}
+
+/* Notas */
+.notas-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.nota-tag {
+    padding: 6px 14px;
+    background: #E0E0E0;
+    border-radius: 16px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Reviews */
+.reviews-secao {
+    margin-top: 30px;
+    position: relative;
+}
+
+.btn-editar-perfume {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px 20px;
+    background: #C06060;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-editar-perfume:hover {
+    background: #a85050;
+}
+
+.review-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.review-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #d9d9d9;
+}
+
+.review-autor {
+    font-weight: 600;
+    color: #000;
+}
+
+.review-texto {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+}
+
+.sem-reviews {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 40px 0;
+}

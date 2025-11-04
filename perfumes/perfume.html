@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfume - Detalhes</title>
+    <link rel="stylesheet" href="style-perfume.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Coluna Esquerda - Foto e Avaliações -->
+        <aside class="sidebar-left">
+            <div class="foto-perfume">
+                <img id="foto-perfume" src="" alt="Foto do perfume">
+            </div>
+            
+            <div class="avaliacoes" id="avaliacoes-container" style="display: none;">
+                <div class="estrelas-media" id="toggle-avaliacoes">
+                    <div class="estrelas-display"></div>
+                    <span class="nota-media">0,00</span>
+                </div>
+                
+                <!-- Avaliações Detalhadas - Inicialmente ocultas -->
+                <div class="avaliacoes-detalhadas" id="avaliacoes-detalhadas">
+                    <div class="avaliacao-item">
+                        <span class="avaliacao-label">Cheiro:</span>
+                        <div class="avaliacao-nota">
+                            <div class="mini-estrelas" id="estrelas-cheiro"></div>
+                            <span class="nota-valor" id="nota-cheiro">0.0</span>
+                        </div>
+                    </div>
+                    <div class="avaliacao-item">
+                        <span class="avaliacao-label">Projeção:</span>
+                        <div class="avaliacao-nota">
+                            <div class="mini-estrelas" id="estrelas-projecao"></div>
+                            <span class="nota-valor" id="nota-projecao">0.0</span>
+                        </div>
+                    </div>
+                    <div class="avaliacao-item">
+                        <span class="avaliacao-label">Fixação:</span>
+                        <div class="avaliacao-nota">
+                            <div class="mini-estrelas" id="estrelas-fixacao"></div>
+                            <span class="nota-valor" id="nota-fixacao">0.0</span>
+                        </div>
+                    </div>
+                    <div class="avaliacao-item">
+                        <span class="avaliacao-label">Versatilidade:</span>
+                        <div class="avaliacao-nota">
+                            <div class="mini-estrelas" id="estrelas-versatilidade"></div>
+                            <span class="nota-valor" id="nota-versatilidade">0.0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sliders-info">
+                    <div class="slider-container">
+                        <label>Clima:</label>
+                        <div class="slider-wrapper">
+                            <span class="slider-label-left">Frio</span>
+                            <input type="range" min="0" max="100" value="50" class="slider slider-clima" disabled>
+                            <span class="slider-label-right">Calor</span>
+                        </div>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>Ambiente:</label>
+                        <div class="slider-wrapper">
+                            <span class="slider-label-left">Informal</span>
+                            <input type="range" min="0" max="100" value="50" class="slider slider-ambiente" disabled>
+                            <span class="slider-label-right">Formal</span>
+                        </div>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>Gênero:</label>
+                        <div class="slider-wrapper">
+                            <span class="slider-label-left">Masc.</span>
+                            <input type="range" min="0" max="100" value="50" class="slider slider-genero" disabled>
+                            <span class="slider-label-right">Fem.</span>
+                        </div>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>Hora:</label>
+                        <div class="slider-wrapper">
+                            <span class="slider-label-left">Noite</span>
+                            <input type="range" min="0" max="100" value="50" class="slider slider-hora" disabled>
+                            <span class="slider-label-right">Dia</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="status-buttons">
+                <input type="radio" id="tenho" name="status" value="tenho">
+                <label for="tenho">Tenho</label>
+
+                <input type="radio" id="ja-tive" name="status" value="ja-tive">
+                <label for="ja-tive">Já tive</label>
+
+                <input type="radio" id="quero-ter" name="status" value="quero-ter">
+                <label for="quero-ter">Quero ter</label>
+            </div>
+        </aside>
+        
+        <!-- Coluna Direita - Informações -->
+        <main class="conteudo-principal">
+            <h1 id="nome-perfume">Carregando...</h1>
+            <h2 id="marca-perfume"><a href="#" id="link-marca">Carregando...</a></h2>
+            
+            <p id="descricao-perfume" class="descricao"></p>
+            
+            <hr>
+            
+            <div class="acordes-secao">
+                <h3>Acordes:</h3>
+                <div id="acordes-lista" class="acordes-lista"></div>
+            </div>
+            
+            <hr>
+            
+            <div class="notas-secao">
+                <h3>Notas de topo:</h3>
+                <div id="notas-topo" class="notas-lista"></div>
+                
+                <h3>Notas de Coração:</h3>
+                <div id="notas-coracao" class="notas-lista"></div>
+                
+                <h3>Notas de Fundo:</h3>
+                <div id="notas-fundo" class="notas-lista"></div>
+            </div>
+            
+            <hr>
+            
+            <div class="reviews-secao">
+                <h3>Reviews:</h3>
+                <button class="btn-editar-perfume" id="btn-editar">Editar Fragrância</button>
+                <div id="reviews-container">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <img src="" alt="Foto do usuário" class="review-avatar">
+                            <span class="review-autor">Nome do usuário</span>
+                        </div>
+                        <p class="review-texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce placerat lorem laoreet, lobortis dolor ut, bibendum velit. Suspendisse rhoncus, elit, vel maximus bibendum, nunc ante sodales nulla, nec aliquam urna massa ipsum, nec volutpat nulla hendrerit a. Fusce non libero eu tellus facilisis pretium at.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script type="module" src="script-perfume.js"></script>
+</body>
+</html>
