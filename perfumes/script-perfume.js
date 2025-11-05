@@ -159,7 +159,12 @@ function gerarDescricao() {
         const longevidade = classificarNota(perfumeData.avaliacoes.fixacao);
         const projecao = classificarNota(perfumeData.avaliacoes.projecao);
         
-        descricao += ` Com longevidade ${longevidade} e projeção ${projecao}.`;
+        // Se forem iguais, usa singular
+        if (longevidade === projecao) {
+            descricao += ` Com longevidade e projeção ${longevidade}.`;
+        } else {
+            descricao += ` Com longevidade ${longevidade} e projeção ${projecao}.`;
+        }
     }
     
     // Perfumista
