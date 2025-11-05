@@ -69,10 +69,52 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         usuarioAtual = user;
         await carregarPerfume();
+        
+        // Configura menu lateral
+        configurarMenu(user);
     } else {
         window.location.href = '../login/login.html';
     }
 });
+
+// Configurar menu lateral
+function configurarMenu(user) {
+    // Foto e nome do usuário no menu
+    const menuFoto = document.getElementById('menu-foto');
+    const menuNome = document.getElementById('menu-nome');
+    
+    if (user.photoURL) {
+        menuFoto.src = user.photoURL;
+    } else {
+        menuFoto.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><circle fill="%23d9d9d9" cx="40" cy="40" r="40"/></svg>';
+    }
+    
+    menuNome.textContent = user.displayName || 'Usuário';
+    
+    // Toggle menu
+    const menuToggle = document.getElementById('menu-toggle');
+    const menuLateral = document.getElementById('menu-lateral');
+    const menuOverlay = document.getElementById('menu-overlay');
+    
+    menuToggle.addEventListener('click', () => {
+        menuLateral.classList.toggle('aberto');
+        menuOverlay.classList.toggle('ativo');
+    });
+    
+    menuOverlay.addEventListener('click', () => {
+        menuLateral.classList.remove('aberto');
+        menuOverlay.classList.remove('ativo');
+    });
+    
+    // Logout
+    document.getElementById('menu-logout').addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (confirm('Deseja realmente sair?')) {
+            await auth.signOut();
+            window.location.href = '../login/login.html';
+        }
+    });
+}
 
 async function carregarPerfume() {
     try {
@@ -368,7 +410,9 @@ function renderizarReview() {
     }
 }
 
-// Botão de editar
-document.getElementById('btn-editar').addEventListener('click', () => {
-    window.location.href = `../adicionar-perfume/form-add-perf.html?id=${perfumeId}&editar=true`;
+// Botão de editar perfume
+document.getElementById('btn-editar')?.addEventListener('click', () => {
+    if (perfumeId) {
+        window.location.href = `../adicionar-perfume/form-add-perf.html?id=${perfumeId}&editar=true`;
+    }
 });

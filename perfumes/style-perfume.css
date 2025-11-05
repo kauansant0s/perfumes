@@ -1,5 +1,115 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+/* Menu Toggle Button */
+.menu-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    background: #C06060;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    z-index: 1001;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+    background: #a85050;
+    transform: scale(1.05);
+}
+
+/* Menu Lateral */
+.menu-lateral {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100vh;
+    background: #3c423e;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1002;
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-lateral.aberto {
+    right: 0;
+}
+
+.menu-header {
+    padding: 30px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.menu-foto {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #d9d9d9;
+}
+
+.menu-header span {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.menu-nav {
+    flex: 1;
+    padding: 20px 0;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 25px;
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.2s;
+    font-size: 16px;
+}
+
+.menu-item:hover {
+    background: rgba(192, 96, 96, 0.2);
+}
+
+.menu-item svg {
+    flex-shrink: 0;
+}
+
+/* Overlay */
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.menu-overlay.ativo {
+    opacity: 1;
+    visibility: visible;
+}
+
 body {
     background: #596A5E;
     font-family: 'Inter', sans-serif;
@@ -350,26 +460,6 @@ hr {
 /* Reviews */
 .reviews-secao {
     margin-top: 30px;
-    position: relative;
-}
-
-.btn-editar-perfume {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 10px 20px;
-    background: #C06060;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.btn-editar-perfume:hover {
-    background: #a85050;
 }
 
 .review-card {

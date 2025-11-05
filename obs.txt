@@ -1,4 +1,3 @@
-adicionar o menuzinho lateral em todas as páginas
-o botão de editar fragrancia antigo não foi retirado
+adicionar o menuzinho lateral na página do perfil e fazer design que nem o do figma
 as estrelas ja carregam como 0 qnd edito um perfume
 ver se da pra colocar o link do lugar mais barato

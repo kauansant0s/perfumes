@@ -297,7 +297,7 @@ async function carregarPerfumeParaEdicao() {
     document.title = 'Editar Perfume';
     const submitButton = document.getElementById('adicionar');
     submitButton.textContent = 'Salvar Alterações';
-    submitButton.style.width = '160px'; // Aumenta largura
+    submitButton.style.width = '130px'; // Aumenta largura
     
     const perfumeRef = doc(db, "perfumes", perfumeId);
     const perfumeSnap = await getDoc(perfumeRef);
@@ -377,16 +377,16 @@ async function carregarPerfumeParaEdicao() {
       }, 100);
     }, 500);
     
-    // Avaliações
+    // Avaliações - ANTES de criar as estrelas inicialmente
     if (perfume.avaliacoes) {
+      // Define os valores no dataset IMEDIATAMENTE
+      document.querySelector('[data-id="cheiro"]').dataset.valor = perfume.avaliacoes.cheiro || 0;
+      document.querySelector('[data-id="projecao"]').dataset.valor = perfume.avaliacoes.projecao || 0;
+      document.querySelector('[data-id="fixacao"]').dataset.valor = perfume.avaliacoes.fixacao || 0;
+      document.querySelector('[data-id="versatilidade"]').dataset.valor = perfume.avaliacoes.versatilidade || 0;
+      
+      // Aguarda um pouco e recria as estrelas
       setTimeout(() => {
-        // Define os valores no dataset ANTES de atualizar visualmente
-        document.querySelector('[data-id="cheiro"]').dataset.valor = perfume.avaliacoes.cheiro || 0;
-        document.querySelector('[data-id="projecao"]').dataset.valor = perfume.avaliacoes.projecao || 0;
-        document.querySelector('[data-id="fixacao"]').dataset.valor = perfume.avaliacoes.fixacao || 0;
-        document.querySelector('[data-id="versatilidade"]').dataset.valor = perfume.avaliacoes.versatilidade || 0;
-        
-        // Recria as estrelas com os novos valores
         document.querySelectorAll('.estrelas').forEach(container => {
           // Remove SVG antigo
           const svgAntigo = container.querySelector('svg');
@@ -399,7 +399,7 @@ async function carregarPerfumeParaEdicao() {
         });
         
         atualizarMedia();
-      }, 800); // Aumenta timeout para garantir que carregou
+      }, 100); // Timeout menor
     }
     
     // Características (sliders)
