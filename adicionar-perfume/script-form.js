@@ -2,19 +2,8 @@
 import { auth, salvarPerfume, uploadFotoPerfume, buscarMarcas, salvarMarca } from './firebase-config.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCWuG4gVnf6r2JVBJX4k6a5kwM_Jf3cw8c",
-  authDomain: "meus-pefumes.firebaseapp.com",
-  projectId: "meus-pefumes",
-  storageBucket: "meus-pefumes.firebasestorage.app",
-  messagingSenderId: "5138203233",
-  appId: "1:5138203233:web:b684d4397c4ffefa572020"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = getFirestore();
 
 let usuarioAtual = null;
 let marcasDisponiveis = [];
@@ -94,7 +83,6 @@ function inicializarAutocompleteMarca() {
   const datalistMarca = document.createElement('datalist');
   datalistMarca.id = 'marcas-list';
   
-  // Adiciona todas as marcas no datalist
   marcasDisponiveis.forEach(marca => {
     const option = document.createElement('option');
     option.value = marca;
@@ -107,14 +95,11 @@ function inicializarAutocompleteMarca() {
   console.log('Autocomplete de marcas inicializado com', marcasDisponiveis.length, 'marcas');
 }
 
-// Função para atualizar a lista de marcas
 function atualizarListaMarcas() {
   const datalistMarca = document.getElementById('marcas-list');
   if (datalistMarca) {
-    // Limpa opções antigas
     datalistMarca.innerHTML = '';
     
-    // Adiciona marcas atualizadas
     marcasDisponiveis.forEach(marca => {
       const option = document.createElement('option');
       option.value = marca;
@@ -184,11 +169,15 @@ document.querySelectorAll('input[name="status"]').forEach(radio => {
   });
 });
 
-// Sistema de estrelas SVG
+// ===== SISTEMA DE ESTRELAS (CORRIGIDO) =====
 function criarEstrelas(container) {
   const total = 5;
   let valorTemporario = 0;
   let valorSelecionado = 0;
+  
+  // ✅ CORREÇÃO: Verifica se já existe um valor inicial no dataset
+  const valorInicial = parseFloat(container.dataset.valor) || 0;
+  valorSelecionado = valorInicial;
   
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("viewBox", "0 0 120 24");
@@ -262,7 +251,7 @@ function criarEstrelas(container) {
   
   const spanNota = document.createElement('span');
   spanNota.className = 'nota-valor';
-  spanNota.textContent = '0.0';
+  spanNota.textContent = valorSelecionado.toFixed(1);
   spanNota.style.marginLeft = '6px';
   spanNota.style.fontWeight = '600';
   spanNota.style.color = '#000';
@@ -270,7 +259,8 @@ function criarEstrelas(container) {
   spanNota.style.minWidth = '30px';
   container.appendChild(spanNota);
   
-  atualizar(0);
+  // ✅ CORREÇÃO: Atualiza para o valor inicial
+  atualizar(valorSelecionado);
 }
 
 document.querySelectorAll('.estrelas').forEach(criarEstrelas);
@@ -288,16 +278,15 @@ function atualizarMedia() {
   }
 }
 
-// Função para carregar perfume para edição
+// ===== FUNÇÃO PARA CARREGAR PERFUME NA EDIÇÃO (CORRIGIDA) =====
 async function carregarPerfumeParaEdicao() {
   try {
     console.log('Carregando perfume para edição:', perfumeId);
     
-    // Atualiza título da página
     document.title = 'Editar Perfume';
     const submitButton = document.getElementById('adicionar');
     submitButton.textContent = 'Salvar Alterações';
-    submitButton.style.width = '130px'; // Aumenta largura
+    submitButton.style.width = '130px';
     
     const perfumeRef = doc(db, "perfumes", perfumeId);
     const perfumeSnap = await getDoc(perfumeRef);
@@ -338,12 +327,10 @@ async function carregarPerfumeParaEdicao() {
       preview.src = perfume.fotoURL;
       preview.style.display = 'block';
       textoFoto.style.display = 'none';
-      
-      // Armazena URL antiga
       document.getElementById('foto-url').value = perfume.fotoURL;
     }
     
-    // Notas - precisa aguardar TomSelect inicializar
+    // Notas
     setTimeout(() => {
       if (perfume.notas) {
         const topoInstance = document.getElementById('topo').tomselect;
@@ -369,7 +356,6 @@ async function carregarPerfumeParaEdicao() {
         }
       }
       
-      // Força fechar todos os dropdowns após carregar
       setTimeout(() => {
         document.querySelectorAll('.ts-dropdown').forEach(dropdown => {
           dropdown.style.display = 'none';
@@ -377,29 +363,30 @@ async function carregarPerfumeParaEdicao() {
       }, 100);
     }, 500);
     
-    // Avaliações - ANTES de criar as estrelas inicialmente
+    // ✅ CORREÇÃO: Avaliações carregam corretamente
     if (perfume.avaliacoes) {
-      // Define os valores no dataset IMEDIATAMENTE
+      console.log('Carregando avaliações:', perfume.avaliacoes);
+      
+      // Define os valores no dataset ANTES de criar as estrelas
       document.querySelector('[data-id="cheiro"]').dataset.valor = perfume.avaliacoes.cheiro || 0;
       document.querySelector('[data-id="projecao"]').dataset.valor = perfume.avaliacoes.projecao || 0;
       document.querySelector('[data-id="fixacao"]').dataset.valor = perfume.avaliacoes.fixacao || 0;
       document.querySelector('[data-id="versatilidade"]').dataset.valor = perfume.avaliacoes.versatilidade || 0;
       
-      // Aguarda um pouco e recria as estrelas
-      setTimeout(() => {
+      // Aguarda um frame e recria as estrelas
+      requestAnimationFrame(() => {
         document.querySelectorAll('.estrelas').forEach(container => {
-          // Remove SVG antigo
           const svgAntigo = container.querySelector('svg');
           const spanAntigo = container.querySelector('.nota-valor');
           if (svgAntigo) svgAntigo.remove();
           if (spanAntigo) spanAntigo.remove();
           
-          // Recria as estrelas (vai ler o dataset.valor atualizado)
           criarEstrelas(container);
         });
         
         atualizarMedia();
-      }, 100); // Timeout menor
+        console.log('✅ Avaliações carregadas nas estrelas!');
+      });
     }
     
     // Características (sliders)
@@ -418,11 +405,10 @@ async function carregarPerfumeParaEdicao() {
   }
 }
 
-// Handler do formulário (ATUALIZADO COM USERID E MODO EDIÇÃO)
+// Handler do formulário
 document.getElementById('info-perfume').addEventListener('submit', async (e) => {
   e.preventDefault();
   
-  // Verifica se o usuário está logado
   if (!usuarioAtual) {
     alert('Você precisa estar logado!');
     window.location.href = '../login/login.html';
@@ -459,17 +445,10 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       if (!marcasDisponiveis.includes(marcaTrimmed)) {
         console.log('Nova marca detectada:', marcaTrimmed);
         await salvarMarca(marcaTrimmed);
-        
-        // Adiciona à lista local
         marcasDisponiveis.push(marcaTrimmed);
         marcasDisponiveis.sort();
-        
-        // Atualiza o datalist
         atualizarListaMarcas();
-        
         console.log('✅ Nova marca adicionada:', marcaTrimmed);
-      } else {
-        console.log('Marca já existe:', marcaTrimmed);
       }
     }
     
@@ -493,7 +472,6 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
     const fotoInput = document.getElementById('foto');
     const fotoURL = document.getElementById('foto-url').value.trim();
     
-    // Upload de nova foto ou mantém a antiga
     if (fotoInput.files.length > 0) {
       perfumeData.fotoURL = await uploadFotoPerfume(fotoInput.files[0], usuarioAtual.uid);
     } else if (fotoURL) {
@@ -501,7 +479,6 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
     }
     
     if (modoEdicao && perfumeId) {
-      // MODO EDIÇÃO - Atualiza perfume existente
       console.log('Atualizando perfume:', perfumeId);
       
       const perfumeRef = doc(db, "perfumes", perfumeId);
@@ -511,7 +488,6 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       window.location.href = `../perfumes/perfume.html?id=${perfumeId}`;
       
     } else {
-      // MODO CRIAR - Salva novo perfume
       const id = await salvarPerfume(perfumeData, usuarioAtual.uid);
       
       alert('Perfume salvo com sucesso!');
@@ -520,7 +496,7 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
     
   } catch (error) {
     console.error('Erro ao salvar:', error);
-    alert('Erro ao salvar perfume. Verifique o console.');
+    alert('Erro ao salvar perfume: ' + error.message);
   } finally {
     submitButton.disabled = false;
     submitButton.textContent = textoOriginal;
@@ -531,10 +507,8 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
 document.getElementById('cancelar').addEventListener('click', () => {
   if (confirm('Deseja cancelar? Todos os dados serão perdidos.')) {
     if (modoEdicao && perfumeId) {
-      // Se estava editando, volta para página do perfume
       window.location.href = `../perfumes/perfume.html?id=${perfumeId}`;
     } else {
-      // Se estava criando, volta para perfil
       window.location.href = '../perfil/perfil.html';
     }
   }

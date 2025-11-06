@@ -16,8 +16,9 @@ onAuthStateChanged(auth, async (user) => {
     usuarioAtual = user;
     console.log('Usuário logado:', user.email);
     
-    // Configura nome e foto no perfil
-    document.getElementById('nome-usuario').textContent = user.displayName || 'Usuário';
+    // Atualiza nome e foto
+    const nomeUsuario = user.displayName || 'Usuário';
+    document.getElementById('nome-usuario').textContent = nomeUsuario;
     
     if (user.photoURL) {
       document.getElementById('foto-perfil').src = user.photoURL;
@@ -36,9 +37,7 @@ onAuthStateChanged(auth, async (user) => {
     } catch (error) {
       console.error('=== ❌ Erro ao carregar dados ===', error);
       document.getElementById('nome-usuario').textContent = 'Erro ao carregar';
-      
-      let mensagemErro = 'Erro ao carregar dados: ' + error.message;
-      alert(mensagemErro);
+      alert('Erro ao carregar dados: ' + error.message);
     }
   } else {
     console.log('❌ Usuário não autenticado');
@@ -82,8 +81,8 @@ function configurarMenu(user) {
         await signOut(auth);
         window.location.href = '../login/login.html';
       } catch (error) {
-        console.error('Erro ao fazer logout:', error);
-        alert('Erro ao sair: ' + error.message);
+        console.error('Erro ao sair:', error);
+        alert('Erro ao fazer logout');
       }
     }
   });
@@ -459,7 +458,7 @@ async function abrirModalTop5() {
   modal.style.display = 'flex';
 }
 
-// Event listeners
+// Event listeners modais
 document.querySelector('.close')?.addEventListener('click', () => {
   document.getElementById('modal-adicionar').style.display = 'none';
 });

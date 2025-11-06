@@ -1,20 +1,7 @@
 // perfumes/script-perfume.js
-import { auth } from '../adicionar-perfume/firebase-config.js';
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCWuG4gVnf6r2JVBJX4k6a5kwM_Jf3cw8c",
-  authDomain: "meus-pefumes.firebaseapp.com",
-  projectId: "meus-pefumes",
-  storageBucket: "meus-pefumes.firebasestorage.app",
-  messagingSenderId: "5138203233",
-  appId: "1:5138203233:web:b684d4397c4ffefa572020"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import { auth, db } from '../adicionar-perfume/firebase-config.js';
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 console.log('=== Script perfume carregado ===');
 
@@ -64,6 +51,27 @@ if (!perfumeId) {
     window.location.href = '../perfil/perfil.html';
 }
 
+// ===== MENU HAMBÚRGUER =====
+const menuHamburger = document.getElementById('menu-toggle');
+const menuLateral = document.getElementById('menu-lateral');
+const menuOverlay = document.getElementById('menu-overlay');
+
+if (menuHamburger) {
+  menuHamburger.addEventListener('click', () => {
+    menuHamburger.classList.toggle('aberto');
+    menuLateral.classList.toggle('aberto');
+    menuOverlay.classList.toggle('ativo');
+  });
+}
+
+if (menuOverlay) {
+  menuOverlay.addEventListener('click', () => {
+    menuHamburger.classList.remove('aberto');
+    menuLateral.classList.remove('aberto');
+    menuOverlay.classList.remove('ativo');
+  });
+}
+
 // Verifica autenticação
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -79,41 +87,30 @@ onAuthStateChanged(auth, async (user) => {
 
 // Configurar menu lateral
 function configurarMenu(user) {
-    // Foto e nome do usuário no menu
     const menuFoto = document.getElementById('menu-foto');
     const menuNome = document.getElementById('menu-nome');
     
-    if (user.photoURL) {
-        menuFoto.src = user.photoURL;
-    } else {
-        menuFoto.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><circle fill="%23d9d9d9" cx="40" cy="40" r="40"/></svg>';
+    if (menuFoto && menuNome) {
+      if (user.photoURL) {
+          menuFoto.src = user.photoURL;
+      } else {
+          menuFoto.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><circle fill="%23d9d9d9" cx="40" cy="40" r="40"/></svg>';
+      }
+      
+      menuNome.textContent = user.displayName || 'Usuário';
     }
     
-    menuNome.textContent = user.displayName || 'Usuário';
-    
-    // Toggle menu
-    const menuToggle = document.getElementById('menu-toggle');
-    const menuLateral = document.getElementById('menu-lateral');
-    const menuOverlay = document.getElementById('menu-overlay');
-    
-    menuToggle.addEventListener('click', () => {
-        menuLateral.classList.toggle('aberto');
-        menuOverlay.classList.toggle('ativo');
-    });
-    
-    menuOverlay.addEventListener('click', () => {
-        menuLateral.classList.remove('aberto');
-        menuOverlay.classList.remove('ativo');
-    });
-    
     // Logout
-    document.getElementById('menu-logout').addEventListener('click', async (e) => {
-        e.preventDefault();
-        if (confirm('Deseja realmente sair?')) {
-            await auth.signOut();
-            window.location.href = '../login/login.html';
-        }
-    });
+    const btnLogout = document.getElementById('menu-logout');
+    if (btnLogout) {
+      btnLogout.addEventListener('click', async (e) => {
+          e.preventDefault();
+          if (confirm('Deseja realmente sair?')) {
+              await signOut(auth);
+              window.location.href = '../login/login.html';
+          }
+      });
+    }
 }
 
 async function carregarPerfume() {
@@ -180,6 +177,7 @@ function renderizarPerfume() {
     renderizarReview();
 }
 
+// ===== FUNÇÃO CORRIGIDA: gerarDescricao() =====
 function gerarDescricao() {
     let descricao = `A fragrância ${perfumeData.nome} de ${perfumeData.marca} é um cheiro majoritariamente `;
     
@@ -193,19 +191,34 @@ function gerarDescricao() {
         }
     }
     
-    // Adiciona ponto final (por enquanto, sem ano de lançamento)
     descricao += '.';
     
-    // Longevidade e Projeção (se tiver avaliações)
+    // ✅ CORREÇÃO: Longevidade e Projeção (só se não forem 0)
     if (perfumeData.avaliacoes) {
-        const longevidade = classificarNota(perfumeData.avaliacoes.fixacao);
-        const projecao = classificarNota(perfumeData.avaliacoes.projecao);
+        const fixacao = perfumeData.avaliacoes.fixacao || 0;
+        const projecao = perfumeData.avaliacoes.projecao || 0;
         
-        // Se forem iguais, usa singular
-        if (longevidade === projecao) {
-            descricao += ` Com longevidade e projeção ${longevidade}.`;
-        } else {
-            descricao += ` Com longevidade ${longevidade} e projeção ${projecao}.`;
+        // Só adiciona frase se as notas não forem 0
+        if (fixacao > 0 || projecao > 0) {
+            const longevidade = classificarNota(fixacao);
+            const projecaoClass = classificarNota(projecao);
+            
+            // Se ambas foram avaliadas
+            if (fixacao > 0 && projecao > 0) {
+                if (longevidade === projecaoClass) {
+                    descricao += ` Com longevidade e projeção ${longevidade}.`;
+                } else {
+                    descricao += ` Com longevidade ${longevidade} e projeção ${projecaoClass}.`;
+                }
+            } 
+            // Se só fixação foi avaliada
+            else if (fixacao > 0) {
+                descricao += ` Com longevidade ${longevidade}.`;
+            }
+            // Se só projeção foi avaliada
+            else if (projecao > 0) {
+                descricao += ` Com projeção ${projecaoClass}.`;
+            }
         }
     }
     
@@ -217,7 +230,10 @@ function gerarDescricao() {
     document.getElementById('descricao-perfume').textContent = descricao;
 }
 
+// ✅ CORREÇÃO: classificarNota() - 0 = não avaliada
 function classificarNota(nota) {
+    if (nota === 0) return 'não avaliada';
+    
     if (nota >= 5) return 'altíssima';
     if (nota >= 4) return 'alta';
     if (nota >= 3.5) return 'acima da média';
@@ -237,7 +253,6 @@ function renderizarAcordes() {
             tag.textContent = acorde;
             tag.style.backgroundColor = coresAcordes[acorde] || '#999';
             
-            // Se a cor for clara, usa texto escuro
             const cor = coresAcordes[acorde] || '#999';
             if (corClara(cor)) {
                 tag.style.color = '#333';
@@ -251,27 +266,22 @@ function renderizarAcordes() {
 }
 
 function corClara(cor) {
-    // Remove # e converte para RGB
     const rgb = parseInt(cor.slice(1), 16);
     const r = (rgb >> 16) & 0xff;
     const g = (rgb >>  8) & 0xff;
     const b = (rgb >>  0) & 0xff;
     
-    // Calcula luminosidade
     const luminosidade = 0.299 * r + 0.587 * g + 0.114 * b;
     return luminosidade > 186;
 }
 
 function renderizarNotas() {
-    // Notas de topo
     const topoElement = document.getElementById('notas-topo');
     renderizarListaNotas(topoElement, perfumeData.notas?.topo);
     
-    // Notas de coração
     const coracaoElement = document.getElementById('notas-coracao');
     renderizarListaNotas(coracaoElement, perfumeData.notas?.coracao);
     
-    // Notas de fundo
     const fundoElement = document.getElementById('notas-fundo');
     renderizarListaNotas(fundoElement, perfumeData.notas?.fundo);
 }
@@ -295,11 +305,9 @@ function renderizarAvaliacoes() {
     const container = document.getElementById('avaliacoes-container');
     container.style.display = 'block';
     
-    // Média das estrelas
     const media = perfumeData.avaliacoes.media || 0;
     document.querySelector('.nota-media').textContent = media.toFixed(2).replace('.', ',');
     
-    // Renderiza estrelas da média
     const estrelasDisplay = document.querySelector('.estrelas-display');
     estrelasDisplay.innerHTML = '';
     
@@ -332,13 +340,11 @@ function renderizarAvaliacoes() {
         estrelasDisplay.appendChild(estrela);
     }
     
-    // Renderiza avaliações detalhadas
     renderizarAvaliacaoDetalhada('cheiro', perfumeData.avaliacoes.cheiro);
     renderizarAvaliacaoDetalhada('projecao', perfumeData.avaliacoes.projecao);
     renderizarAvaliacaoDetalhada('fixacao', perfumeData.avaliacoes.fixacao);
     renderizarAvaliacaoDetalhada('versatilidade', perfumeData.avaliacoes.versatilidade);
     
-    // Adiciona evento de clique para expandir/recolher
     const toggleBtn = document.getElementById('toggle-avaliacoes');
     const avaliacoesDetalhadas = document.getElementById('avaliacoes-detalhadas');
     
@@ -346,7 +352,6 @@ function renderizarAvaliacoes() {
         avaliacoesDetalhadas.classList.toggle('expandido');
     });
     
-    // Sliders
     if (perfumeData.caracteristicas) {
         document.querySelector('.slider-clima').value = perfumeData.caracteristicas.clima || 50;
         document.querySelector('.slider-ambiente').value = perfumeData.caracteristicas.ambiente || 50;
@@ -361,7 +366,6 @@ function renderizarAvaliacaoDetalhada(tipo, nota) {
     
     notaElement.textContent = nota.toFixed(1);
     
-    // Renderiza mini estrelas
     estrelasElement.innerHTML = '';
     const estrelasCompletas = Math.floor(nota);
     const temMeia = (nota % 1) >= 0.5;

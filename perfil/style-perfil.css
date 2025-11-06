@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* ===== MENU LATERAL (ADICIONADO) ===== */
+/* ===== MENU TOGGLE BUTTON ===== */
 .menu-toggle {
     position: fixed;
     top: 20px;
@@ -25,6 +25,7 @@
     transform: scale(1.05);
 }
 
+/* ===== MENU LATERAL ===== */
 .menu-lateral {
     position: fixed;
     top: 0;
@@ -95,6 +96,7 @@
     flex-shrink: 0;
 }
 
+/* Overlay */
 .menu-overlay {
     position: fixed;
     top: 0;
