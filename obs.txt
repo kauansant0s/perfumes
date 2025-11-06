@@ -1,3 +1,5 @@
-adicionar o menuzinho lateral na página do perfil e fazer design que nem o do figma
+adicionar o menuzinho lateral na página do perfil e fazer design que nem o do figma (explicar que eu quero a animação)
+pedir códigos inteiros e pedir para colocar o css no arquivo do css somente
+quando as estrelas forem 0, contar como avaliação não dada, ao inves da nota mais baixa, a nota mais baixa considerável deve ser 0,5
 as estrelas ja carregam como 0 qnd edito um perfume
 ver se da pra colocar o link do lugar mais barato

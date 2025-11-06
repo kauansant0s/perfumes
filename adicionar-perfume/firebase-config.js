@@ -33,13 +33,16 @@ export async function buscarMarcas() {
     return marcas.sort();
   } catch (error) {
     console.error("Erro ao buscar marcas:", error);
-    return [];
+    throw error;
   }
 }
 
 export async function salvarMarca(nomeMarca) {
   try {
-    // Verifica se já existe
+    if (!nomeMarca || nomeMarca.trim() === '') {
+      throw new Error('Nome da marca não pode estar vazio');
+    }
+    
     const q = query(
       collection(db, "marcas"),
       where("nome", "==", nomeMarca)
@@ -47,7 +50,6 @@ export async function salvarMarca(nomeMarca) {
     const querySnapshot = await getDocs(q);
     
     if (querySnapshot.empty) {
-      // Se não existe, salva
       await addDoc(collection(db, "marcas"), {
         nome: nomeMarca,
         dataCriacao: serverTimestamp()
@@ -56,17 +58,56 @@ export async function salvarMarca(nomeMarca) {
     }
   } catch (error) {
     console.error("Erro ao salvar marca:", error);
+    throw error;
   }
 }
 
-// Funções para manipular perfumes (AGORA COM USERID)
+// Validação de perfume
+function validarPerfume(perfumeData) {
+  const erros = [];
+  
+  if (!perfumeData.nome?.trim()) {
+    erros.push('Nome do perfume é obrigatório');
+  }
+  
+  if (!perfumeData.marca?.trim()) {
+    erros.push('Marca é obrigatória');
+  }
+  
+  if (!perfumeData.status) {
+    erros.push('Selecione o status (Tenho/Já tive/Quero ter)');
+  }
+  
+  // Valida avaliações se o status for "tenho" ou "ja-tive"
+  if ((perfumeData.status === 'tenho' || perfumeData.status === 'ja-tive') && perfumeData.avaliacoes) {
+    const { cheiro, projecao, fixacao, versatilidade } = perfumeData.avaliacoes;
+    if (cheiro === 0 || projecao === 0 || fixacao === 0 || versatilidade === 0) {
+      erros.push('Preencha todas as avaliações (cheiro, projeção, fixação e versatilidade)');
+    }
+  }
+  
+  return erros;
+}
+
+// Funções para manipular perfumes
 export async function salvarPerfume(perfumeData, userId) {
   try {
+    // Valida dados
+    const erros = validarPerfume(perfumeData);
+    if (erros.length > 0) {
+      throw new Error(erros.join('\n'));
+    }
+    
+    if (!userId) {
+      throw new Error('Usuário não autenticado');
+    }
+    
     const docRef = await addDoc(collection(db, "perfumes"), {
       ...perfumeData,
-      userId: userId, // Adiciona o ID do usuário
+      userId: userId,
       dataCriacao: serverTimestamp()
     });
+    
     console.log("Perfume salvo com ID:", docRef.id);
     return docRef.id;
   } catch (error) {
@@ -77,7 +118,10 @@ export async function salvarPerfume(perfumeData, userId) {
 
 export async function buscarPerfumes(userId) {
   try {
-    // Busca apenas perfumes do usuário logado
+    if (!userId) {
+      throw new Error('ID do usuário não fornecido');
+    }
+    
     const q = query(
       collection(db, "perfumes"),
       where("userId", "==", userId)
@@ -85,6 +129,7 @@ export async function buscarPerfumes(userId) {
     
     const querySnapshot = await getDocs(q);
     const perfumes = [];
+    
     querySnapshot.forEach((doc) => {
       perfumes.push({
         id: doc.id,
@@ -102,9 +147,24 @@ export async function buscarPerfumes(userId) {
 
 export async function atualizarPerfume(id, perfumeData, userId) {
   try {
+    // Valida dados
+    const erros = validarPerfume(perfumeData);
+    if (erros.length > 0) {
+      throw new Error(erros.join('\n'));
+    }
+    
     const perfumeRef = doc(db, "perfumes", id);
     
-    // Verifica se o perfume pertence ao usuário (segurança extra)
+    // Verifica se o perfume existe e pertence ao usuário
+    const perfumeSnap = await getDoc(perfumeRef);
+    if (!perfumeSnap.exists()) {
+      throw new Error('Perfume não encontrado');
+    }
+    
+    if (perfumeSnap.data().userId !== userId) {
+      throw new Error('Você não tem permissão para editar este perfume');
+    }
+    
     await updateDoc(perfumeRef, {
       ...perfumeData,
       dataAtualizacao: serverTimestamp()
@@ -119,9 +179,19 @@ export async function atualizarPerfume(id, perfumeData, userId) {
 
 export async function deletarPerfume(id, userId) {
   try {
-    // Em produção, você deve verificar se o perfume pertence ao usuário
-    // antes de deletar (usando uma consulta primeiro)
-    await deleteDoc(doc(db, "perfumes", id));
+    const perfumeRef = doc(db, "perfumes", id);
+    
+    // Verifica se pertence ao usuário
+    const perfumeSnap = await getDoc(perfumeRef);
+    if (!perfumeSnap.exists()) {
+      throw new Error('Perfume não encontrado');
+    }
+    
+    if (perfumeSnap.data().userId !== userId) {
+      throw new Error('Você não tem permissão para deletar este perfume');
+    }
+    
+    await deleteDoc(perfumeRef);
     console.log("Perfume deletado!");
   } catch (error) {
     console.error("Erro ao deletar perfume:", error);
@@ -131,8 +201,21 @@ export async function deletarPerfume(id, userId) {
 
 export async function uploadFotoPerfume(file, userId) {
   try {
+    if (!file) {
+      throw new Error('Nenhum arquivo selecionado');
+    }
+    
+    // Valida tipo de arquivo
+    if (!file.type.startsWith('image/')) {
+      throw new Error('Arquivo deve ser uma imagem');
+    }
+    
+    // Valida tamanho (máx 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      throw new Error('Imagem muito grande. Máximo 5MB');
+    }
+    
     const timestamp = Date.now();
-    // Organiza fotos por usuário
     const storageRef = ref(storage, `perfumes/${userId}/${timestamp}_${file.name}`);
     await uploadBytes(storageRef, file);
     const url = await getDownloadURL(storageRef);
@@ -143,12 +226,15 @@ export async function uploadFotoPerfume(file, userId) {
   }
 }
 
-// Funções para preferências do usuário (Top 5 e Assinatura)
+// Funções para preferências do usuário
 export async function salvarPreferenciasUsuario(userId, preferencias) {
   try {
+    if (!userId) {
+      throw new Error('ID do usuário não fornecido');
+    }
+    
     const preferencesRef = doc(db, "userPreferences", userId);
     
-    // Tenta atualizar primeiro
     try {
       await updateDoc(preferencesRef, {
         ...preferencias,
@@ -156,7 +242,6 @@ export async function salvarPreferenciasUsuario(userId, preferencias) {
       });
       console.log("Preferências atualizadas!");
     } catch (error) {
-      // Se não existe, cria o documento com setDoc
       if (error.code === 'not-found') {
         await setDoc(preferencesRef, {
           userId: userId,
@@ -177,6 +262,10 @@ export async function salvarPreferenciasUsuario(userId, preferencias) {
 
 export async function buscarPreferenciasUsuario(userId) {
   try {
+    if (!userId) {
+      throw new Error('ID do usuário não fornecido');
+    }
+    
     const preferencesRef = doc(db, "userPreferences", userId);
     const docSnap = await getDoc(preferencesRef);
     
@@ -190,6 +279,6 @@ export async function buscarPreferenciasUsuario(userId) {
     return null;
   } catch (error) {
     console.error("Erro ao buscar preferências:", error);
-    return null;
+    throw error;
   }
 }
