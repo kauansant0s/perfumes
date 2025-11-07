@@ -3,7 +3,7 @@ import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
-// Configuração do Firebase (mesma do firebase-config.js)
+// Configuração do Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCWuG4gVnf6r2JVBJX4k6a5kwM_Jf3cw8c",
   authDomain: "meus-pefumes.firebaseapp.com",
@@ -17,13 +17,61 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const storage = getStorage(app);
 
+// Verifica se está em modo de edição
+const urlParams = new URLSearchParams(window.location.search);
+const modoEdicao = urlParams.get('editar') === 'true';
+
+console.log('Modo edição:', modoEdicao);
+
+// Se está em modo de edição, carrega dados do usuário
+if (modoEdicao) {
+  document.getElementById('titulo-pagina').textContent = 'Editar Perfil';
+  document.getElementById('btn-submit').textContent = 'Salvar Alterações';
+  
+  // Oculta campos de email e senha (não pode editar)
+  document.getElementById('campo-email').style.display = 'none';
+  document.getElementById('campo-senha').style.display = 'none';
+  document.getElementById('campo-confirmar-senha').style.display = 'none';
+  
+  // Remove required dos campos ocultos
+  document.getElementById('email').required = false;
+  document.getElementById('senha').required = false;
+  document.getElementById('confirmar-senha').required = false;
+  
+  // Aguarda autenticação e carrega dados
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      console.log('Carregando dados do usuário:', user.email);
+      carregarDadosUsuario(user);
+    } else {
+      alert('Você precisa estar logado!');
+      window.location.href = '../login/login.html';
+    }
+  });
+}
+
+// Carrega dados do usuário para edição
+function carregarDadosUsuario(user) {
+  document.getElementById('nome').value = user.displayName || '';
+  document.getElementById('email').value = user.email || '';
+  
+  if (user.photoURL) {
+    const preview = document.getElementById('preview-foto');
+    const textoFoto = document.getElementById('texto-foto');
+    preview.src = user.photoURL;
+    preview.style.display = 'block';
+    textoFoto.style.display = 'none';
+  }
+  
+  console.log('✅ Dados do usuário carregados!');
+}
+
 // Preview da foto
 const quadradoFoto = document.getElementById('quadrado-foto');
 const fotoInput = document.getElementById('foto-perfil');
 const previewFoto = document.getElementById('preview-foto');
 const textoFoto = document.getElementById('texto-foto');
 
-// Clica direto no input ao clicar no quadrado
 quadradoFoto.addEventListener('click', () => {
   fotoInput.click();
 });
@@ -41,75 +89,121 @@ fotoInput.addEventListener('change', (e) => {
   }
 });
 
-// Criar conta
+// Botão Cancelar
+document.getElementById('btn-cancelar').addEventListener('click', () => {
+  if (modoEdicao) {
+    window.location.href = '../perfil/perfil.html';
+  } else {
+    window.location.href = '../login/login.html';
+  }
+});
+
+// Criar conta OU Editar perfil
 document.getElementById('form-criar-conta').addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const nome = document.getElementById('nome').value;
-  const email = document.getElementById('email').value;
-  const senha = document.getElementById('senha').value;
-  const confirmarSenha = document.getElementById('confirmar-senha').value;
-
-  // Validações
-  if (senha !== confirmarSenha) {
-    alert('As senhas não coincidem!');
-    return;
-  }
-
-  // Validação de senha: mínimo 8 caracteres, 1 número e 1 caractere especial
-  if (senha.length < 8) {
-    alert('A senha deve ter pelo menos 8 caracteres!');
-    return;
-  }
-
-  const temNumero = /\d/.test(senha);
-  const temEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(senha);
-
-  if (!temNumero) {
-    alert('A senha deve conter pelo menos 1 número!');
-    return;
-  }
-
-  if (!temEspecial) {
-    alert('A senha deve conter pelo menos 1 caractere especial (!@#$%^&*(),.?":{}|<>)');
-    return;
-  }
-
-  const btnCriar = document.querySelector('.btn-criar');
-  btnCriar.disabled = true;
-  btnCriar.textContent = 'Criando conta...';
+  const btnSubmit = document.getElementById('btn-submit');
+  const textoOriginal = btnSubmit.textContent;
+  
+  btnSubmit.disabled = true;
+  btnSubmit.textContent = modoEdicao ? 'Salvando...' : 'Criando conta...';
 
   try {
-    // Cria o usuário no Firebase Authentication
-    const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-    const user = userCredential.user;
+    if (modoEdicao) {
+      // ===== MODO EDIÇÃO =====
+      const user = auth.currentUser;
+      
+      if (!user) {
+        throw new Error('Usuário não autenticado');
+      }
+      
+      let photoURL = user.photoURL;
+      
+      // Faz upload da nova foto se houver
+      if (fotoInput.files.length > 0) {
+        const file = fotoInput.files[0];
+        const storageRef = ref(storage, `perfis/${user.uid}`);
+        await uploadBytes(storageRef, file);
+        photoURL = await getDownloadURL(storageRef);
+      }
+      
+      // Atualiza o perfil
+      await updateProfile(user, {
+        displayName: nome,
+        photoURL: photoURL
+      });
+      
+      alert('Perfil atualizado com sucesso!');
+      window.location.href = '../perfil/perfil.html';
+      
+    } else {
+      // ===== MODO CRIAR CONTA =====
+      const email = document.getElementById('email').value;
+      const senha = document.getElementById('senha').value;
+      const confirmarSenha = document.getElementById('confirmar-senha').value;
+      
+      // Validações
+      if (senha !== confirmarSenha) {
+        alert('As senhas não coincidem!');
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = textoOriginal;
+        return;
+      }
 
-    let photoURL = null;
+      if (senha.length < 8) {
+        alert('A senha deve ter pelo menos 8 caracteres!');
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = textoOriginal;
+        return;
+      }
 
-    // Faz upload da foto se existir
-    if (fotoInput.files.length > 0) {
-      const file = fotoInput.files[0];
-      const storageRef = ref(storage, `perfis/${user.uid}`);
-      await uploadBytes(storageRef, file);
-      photoURL = await getDownloadURL(storageRef);
+      const temNumero = /\d/.test(senha);
+      const temEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(senha);
+
+      if (!temNumero) {
+        alert('A senha deve conter pelo menos 1 número!');
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = textoOriginal;
+        return;
+      }
+
+      if (!temEspecial) {
+        alert('A senha deve conter pelo menos 1 caractere especial (!@#$%^&*(),.?":{}|<>)');
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = textoOriginal;
+        return;
+      }
+
+      // Cria o usuário
+      const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+      const user = userCredential.user;
+
+      let photoURL = null;
+
+      // Faz upload da foto se existir
+      if (fotoInput.files.length > 0) {
+        const file = fotoInput.files[0];
+        const storageRef = ref(storage, `perfis/${user.uid}`);
+        await uploadBytes(storageRef, file);
+        photoURL = await getDownloadURL(storageRef);
+      }
+
+      // Atualiza o perfil com nome e foto
+      await updateProfile(user, {
+        displayName: nome,
+        photoURL: photoURL
+      });
+
+      alert('Conta criada com sucesso!');
+      window.location.href = '../login/login.html';
     }
 
-    // Atualiza o perfil com nome e foto
-    await updateProfile(user, {
-      displayName: nome,
-      photoURL: photoURL
-    });
-
-    alert('Conta criada com sucesso!');
-    
-    // Redireciona para a página de login
-    window.location.href = '../login/login.html';
-
   } catch (error) {
-    console.error('Erro ao criar conta:', error);
+    console.error('Erro:', error);
     
-    // Mensagens de erro mais amigáveis
-    let mensagem = 'Erro ao criar conta. ';
+    let mensagem = modoEdicao ? 'Erro ao atualizar perfil. ' : 'Erro ao criar conta. ';
+    
     switch (error.code) {
       case 'auth/email-already-in-use':
         mensagem += 'Este email já está em uso.';
@@ -125,7 +219,7 @@ document.getElementById('form-criar-conta').addEventListener('submit', async (e)
     }
     
     alert(mensagem);
-    btnCriar.disabled = false;
-    btnCriar.textContent = 'Criar conta';
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = textoOriginal;
   }
 });

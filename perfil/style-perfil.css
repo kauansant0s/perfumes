@@ -169,6 +169,35 @@ body {
     width: 100%;
 }
 
+/* Botão Editar Perfil */
+.btn-editar-perfil {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1.5px solid #000000;
+    border-radius: 20px;
+    color: #000000;
+    font-size: 13px;
+    font-family: 'Inter';
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    transition: all 0.2s;
+}
+
+.btn-editar-perfil:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: #313131;
+    color: #313131;
+}
+
+.btn-editar-perfil svg {
+    width: 14px;
+    height: 14px;
+}
+
 .assinatura-atual {
     width: 100%;
     text-align: center;

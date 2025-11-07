@@ -46,8 +46,8 @@ const acordes = [
   'Amadeirado', 'Animálico', 'Aquático', 'Aromático', 'Atalcado',
   'Chipre', 'Cítrico', 'Couro', 'Cremoso', 'Doce', 'Esfumaçado',
   'Especiado', 'Floral', 'Floral Amarelo', 'Floral Branco', 'Fougère',
-  'Fresco', 'Frutado', 'Gourmand', 'Lactônico',
-  'Metálico', 'Oriental', 'Terroso', 'Tropical', 'Verde'
+  'Fresco', 'Frutado', 'Gourmand', 'Lactônico', 'Limpeza',
+  'Metálico', 'Terroso', 'Tropical', 'Verde'
 ];
 
 // Popular select de acordes

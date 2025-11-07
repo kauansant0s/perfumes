@@ -169,9 +169,14 @@ function renderizarSecao(secaoId, perfumes) {
     const btnVerTodos = document.createElement('button');
     btnVerTodos.className = 'btn-ver-todos';
     btnVerTodos.textContent = 'Ver todos';
-    // ✅ ATUALIZADO: Redireciona para página ver-todos
+    // ✅ ATUALIZADO: Passa o filtro específico na URL
     btnVerTodos.onclick = () => {
-      window.location.href = '../ver-todos/ver-todos.html';
+      let filtro = 'todos';
+      if (secaoId === 'tenho') filtro = 'tenho';
+      else if (secaoId === 'ja-tive') filtro = 'ja-tive';
+      else if (secaoId === 'quero-ter') filtro = 'quero-ter';
+      
+      window.location.href = `../ver-todos/ver-todos.html?filtro=${filtro}`;
     };
     secao.appendChild(btnVerTodos);
   }
@@ -483,4 +488,9 @@ document.getElementById('btn-cadastrar')?.addEventListener('click', () => {
 
 document.getElementById('btn-cadastrar-novo')?.addEventListener('click', () => {
   window.location.href = '../adicionar-perfume/form-add-perf.html';
+});
+
+// Botão Editar Perfil
+document.getElementById('btn-editar-perfil')?.addEventListener('click', () => {
+  window.location.href = '../criar-conta/criar-conta.html?editar=true';
 });

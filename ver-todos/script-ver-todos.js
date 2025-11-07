@@ -11,6 +11,13 @@ let filtroAtual = 'todos';
 let ordenacaoAtual = 'nome-asc';
 let buscaAtual = '';
 
+// ✅ Lê o filtro da URL
+const urlParams = new URLSearchParams(window.location.search);
+const filtroURL = urlParams.get('filtro');
+if (filtroURL && ['todos', 'tenho', 'ja-tive', 'quero-ter'].includes(filtroURL)) {
+    filtroAtual = filtroURL;
+}
+
 // Verifica autenticação
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -99,6 +106,15 @@ async function carregarPerfumes() {
 
 // Configura eventos
 function configurarEventos() {
+    // ✅ Ativa o filtro correto baseado na URL
+    document.querySelectorAll('.btn-filtro').forEach(btn => {
+        if (btn.dataset.filtro === filtroAtual) {
+            btn.classList.add('ativo');
+        } else {
+            btn.classList.remove('ativo');
+        }
+    });
+    
     // Filtros de status
     document.querySelectorAll('.btn-filtro').forEach(btn => {
         btn.addEventListener('click', () => {
