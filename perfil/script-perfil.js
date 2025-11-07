@@ -16,7 +16,6 @@ onAuthStateChanged(auth, async (user) => {
     usuarioAtual = user;
     console.log('Usuário logado:', user.email);
     
-    // Atualiza nome e foto
     const nomeUsuario = user.displayName || 'Usuário';
     document.getElementById('nome-usuario').textContent = nomeUsuario;
     
@@ -26,7 +25,6 @@ onAuthStateChanged(auth, async (user) => {
       document.getElementById('foto-perfil').src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><rect fill="%23d9d9d9" width="180" height="180"/></svg>';
     }
     
-    // Configura menu lateral
     configurarMenu(user);
     
     try {
@@ -45,7 +43,6 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// Configura menu lateral
 function configurarMenu(user) {
   const menuFoto = document.getElementById('menu-foto');
   const menuNome = document.getElementById('menu-nome');
@@ -58,7 +55,6 @@ function configurarMenu(user) {
   
   menuNome.textContent = user.displayName || 'Usuário';
   
-  // Toggle menu
   const menuToggle = document.getElementById('menu-toggle');
   const menuLateral = document.getElementById('menu-lateral');
   const menuOverlay = document.getElementById('menu-overlay');
@@ -73,7 +69,6 @@ function configurarMenu(user) {
     menuOverlay.classList.remove('ativo');
   });
   
-  // Logout
   document.getElementById('menu-logout').addEventListener('click', async (e) => {
     e.preventDefault();
     if (confirm('Deseja realmente sair?')) {
@@ -174,8 +169,9 @@ function renderizarSecao(secaoId, perfumes) {
     const btnVerTodos = document.createElement('button');
     btnVerTodos.className = 'btn-ver-todos';
     btnVerTodos.textContent = 'Ver todos';
+    // ✅ ATUALIZADO: Redireciona para página ver-todos
     btnVerTodos.onclick = () => {
-      alert('Página "Ver todos" ainda não implementada');
+      window.location.href = '../ver-todos/ver-todos.html';
     };
     secao.appendChild(btnVerTodos);
   }
@@ -458,7 +454,6 @@ async function abrirModalTop5() {
   modal.style.display = 'flex';
 }
 
-// Event listeners modais
 document.querySelector('.close')?.addEventListener('click', () => {
   document.getElementById('modal-adicionar').style.display = 'none';
 });

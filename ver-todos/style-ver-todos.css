@@ -1,0 +1,428 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ===== MENU LATERAL ===== */
+.menu-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    background: #C06060;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    z-index: 1001;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+    background: #a85050;
+    transform: scale(1.05);
+}
+
+.menu-lateral {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100vh;
+    background: #3c423e;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1002;
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-lateral.aberto {
+    right: 0;
+}
+
+.menu-header {
+    padding: 30px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.menu-foto {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #d9d9d9;
+}
+
+.menu-header span {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.menu-nav {
+    flex: 1;
+    padding: 20px 0;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 25px;
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.2s;
+    font-size: 16px;
+}
+
+.menu-item:hover {
+    background: rgba(192, 96, 96, 0.2);
+}
+
+.menu-item svg {
+    flex-shrink: 0;
+}
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.menu-overlay.ativo {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ===== PÁGINA PRINCIPAL ===== */
+body {
+    background: #596A5E;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header com foto */
+.header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+    margin-top: 30px;
+}
+
+.foto-usuario {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #d9d9d9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Filtros de status */
+.filtros-status {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.btn-filtro {
+    padding: 14px 35px;
+    background: #d9d9d9;
+    color: #000;
+    border: none;
+    border-radius: 30px;
+    font-size: 18px;
+    font-family: 'Inter';
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-filtro:hover {
+    background: #c5c5c5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-filtro.ativo {
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+}
+
+/* Controles */
+.controles {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.select-ordenar {
+    padding: 12px 25px;
+    background: #d9d9d9;
+    border: none;
+    border-radius: 25px;
+    font-size: 15px;
+    font-family: 'Inter';
+    font-weight: 500;
+    cursor: pointer;
+    min-width: 200px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.select-ordenar:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(192, 96, 96, 0.3);
+}
+
+.btn-adicionar,
+.btn-buscar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-adicionar {
+    background: #C06060;
+    color: #fff;
+    font-size: 26px;
+}
+
+.btn-adicionar:hover {
+    background: #a85050;
+    transform: scale(1.15);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-buscar {
+    background: #d9d9d9;
+    color: #000;
+}
+
+.btn-buscar:hover {
+    background: #c5c5c5;
+    transform: scale(1.15);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.icon-mais {
+    line-height: 0;
+}
+
+/* Campo de busca */
+.campo-busca {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#input-busca {
+    width: 100%;
+    max-width: 450px;
+    padding: 14px 25px;
+    background: #d9d9d9;
+    border: none;
+    border-radius: 30px;
+    font-size: 15px;
+    font-family: 'Inter';
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#input-busca:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(192, 96, 96, 0.3);
+}
+
+.btn-limpar-busca {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #C06060;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-limpar-busca:hover {
+    background: #a85050;
+    transform: scale(1.15);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Grid de perfumes */
+.grid-perfumes {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 25px;
+    padding: 40px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.perfume-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.perfume-card:hover {
+    transform: translateY(-5px);
+}
+
+.perfume-foto {
+    width: 100px;
+    height: 100px;
+    background: #d9d9d9;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s;
+}
+
+.perfume-card:hover .perfume-foto {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.perfume-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.perfume-foto-placeholder {
+    font-size: 11px;
+    color: #666;
+    text-align: center;
+    padding: 10px;
+    font-weight: 500;
+}
+
+.perfume-nome {
+    font-size: 13px;
+    color: #000;
+    text-align: center;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+/* Mensagem sem perfumes */
+.sem-perfumes {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+    font-size: 18px;
+}
+
+/* Responsivo */
+@media (max-width: 1200px) {
+    .grid-perfumes {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .grid-perfumes {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-perfumes {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        padding: 30px 15px;
+    }
+
+    .perfume-foto {
+        width: 85px;
+        height: 85px;
+    }
+
+    .filtros-status {
+        padding: 0 10px;
+    }
+
+    .btn-filtro {
+        padding: 12px 25px;
+        font-size: 16px;
+    }
+    
+    .controles {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 576px) {
+    .grid-perfumes {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+    
+    .perfume-foto {
+        width: 75px;
+        height: 75px;
+    }
+}

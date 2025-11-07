@@ -1,3 +1,5 @@
-fazer menu do mesmo jeito de antes
+adicionar meus perfumes no menu
+botao de editar perfil
+qnd clico no ver todos ele vai direto para a seção q eu cliquei, se clico em ver todos os "tenho", ja vai pra essa seção
 ver se da pra colocar o link do lugar mais barato
 criar página das marcas
