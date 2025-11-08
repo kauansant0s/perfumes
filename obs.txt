@@ -1,4 +1,6 @@
 qnd clica em editar perfil, vai pra página de criar conta, mas com os dados já carregados
+fazer o nome do perfume original clicável
+quando adicionar um perfume a partir do campo de contratipo, ele ja fica salvo como perfume original do perfume que eu estava editando antes.
 não precisa ser obrigatório escolher as opções debaixo da foto
 ver se da pra colocar o link do lugar mais barato
 criar página das marcas
