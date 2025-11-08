@@ -47,7 +47,8 @@ body {
     height: 28px;
     margin-bottom: 10px;
 }
- #acordes {
+ #acordes,
+ #perfume-original {
     width: 93%;
     border: 1px solid #C06060;
     border-radius: 8px;
@@ -317,11 +318,54 @@ select{
 
 .slider-label-left,
 .slider-label-right {
-  font-size: 11px;
-  color: #000000;
-  min-width: 40px;
-  text-align: center;
+    font-size: 11px;
+    color: #000000;
+    min-width: 40px;
+    text-align: center;
 }
+
+/* Campo Contratipo */
+.campo-contratipo {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.campo-contratipo > label {
+    margin: 0;
+}
+
+.radio-inline {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+}
+
+.radio-inline label {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Campo perfume original - animação */
+.campo-perfume-original {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    margin-bottom: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease, margin-bottom 0.4s ease;
+}
+
+.campo-perfume-original.mostrar {
+    max-height: 100px;
+    opacity: 1;
+    margin-bottom: 10px;
+}
+
+#perfume-original {
+    width: 93%;
+}
+
 .ts-wrapper .ts-control input {
   color: #000 !important;
 }

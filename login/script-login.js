@@ -1,6 +1,7 @@
-// login/script-login.js
+// login/script-login.js - Otimizado
 import { auth } from '../adicionar-perfume/firebase-config.js';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { tratarErroFirebase, toggleLoading } from '../adicionar-perfume/utils.js';
 
 console.log('✅ Script login carregado!');
 
@@ -19,6 +20,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Modal de recuperação de senha
+  configurarModalRecuperacao();
+
+  // Login
+  configurarFormularioLogin();
+});
+
+/**
+ * Configura modal de recuperação de senha
+ */
+function configurarModalRecuperacao() {
   const linkEsqueciSenha = document.getElementById('link-esqueci-senha');
   const modalRecuperar = document.getElementById('modal-recuperar-senha');
   const closeRecuperar = document.querySelector('.close-recuperar');
@@ -35,12 +46,15 @@ document.addEventListener('DOMContentLoaded', () => {
   if (closeRecuperar && modalRecuperar) {
     closeRecuperar.addEventListener('click', () => {
       modalRecuperar.style.display = 'none';
+      document.getElementById('email-recuperacao').value = '';
     });
   }
 
+  // Fechar ao clicar fora
   window.addEventListener('click', (e) => {
     if (e.target === modalRecuperar) {
       modalRecuperar.style.display = 'none';
+      document.getElementById('email-recuperacao').value = '';
     }
   });
 
@@ -59,88 +73,67 @@ document.addEventListener('DOMContentLoaded', () => {
       
       try {
         await sendPasswordResetEmail(auth, emailRecuperacao);
-        alert('Email de recuperação enviado! Verifique sua caixa de entrada.');
+        alert('✅ Email de recuperação enviado! Verifique sua caixa de entrada.');
         modalRecuperar.style.display = 'none';
         document.getElementById('email-recuperacao').value = '';
       } catch (error) {
         console.error('Erro ao enviar email:', error);
-        
-        let mensagem = 'Erro ao enviar email. ';
-        switch (error.code) {
-          case 'auth/user-not-found':
-            mensagem += 'Email não encontrado.';
-            break;
-          case 'auth/invalid-email':
-            mensagem += 'Email inválido.';
-            break;
-          case 'auth/too-many-requests':
-            mensagem += 'Muitas tentativas. Tente novamente mais tarde.';
-            break;
-          default:
-            mensagem += error.message;
-        }
-        
-        alert(mensagem);
+        alert('❌ ' + tratarErroFirebase(error));
       } finally {
         btnEnviarRecuperacao.disabled = false;
         btnEnviarRecuperacao.textContent = 'Enviar link';
       }
     });
   }
+}
 
-  // Login
+/**
+ * Configura formulário de login
+ */
+function configurarFormularioLogin() {
   const formLogin = document.getElementById('form-login');
-  if (formLogin) {
-    formLogin.addEventListener('submit', async (e) => {
-      e.preventDefault();
+  
+  if (!formLogin) return;
+  
+  formLogin.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-      const email = document.getElementById('email').value;
-      const senha = document.getElementById('senha').value;
+    const email = document.getElementById('email').value.trim();
+    const senha = document.getElementById('senha').value;
 
-      const btnEntrar = document.querySelector('.btn-entrar');
-      btnEntrar.disabled = true;
-      btnEntrar.textContent = 'Entrando...';
+    // Validações básicas
+    if (!email || !senha) {
+      alert('Por favor, preencha todos os campos!');
+      return;
+    }
 
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-        const user = userCredential.user;
+    const btnEntrar = document.querySelector('.btn-entrar');
+    btnEntrar.disabled = true;
+    btnEntrar.textContent = 'Entrando...';
+    
+    toggleLoading(true);
 
-        console.log('Login realizado:', user.email);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+      const user = userCredential.user;
 
-        // Redireciona para a página de perfil
-        window.location.href = '../perfil/perfil.html';
+      console.log('✅ Login realizado:', user.email);
 
-      } catch (error) {
-        console.error('Erro ao fazer login:', error);
+      // Pequeno delay para feedback visual
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-        let mensagem = 'Erro ao fazer login. ';
-        switch (error.code) {
-          case 'auth/user-not-found':
-            mensagem += 'Usuário não encontrado.';
-            break;
-          case 'auth/wrong-password':
-            mensagem += 'Senha incorreta.';
-            break;
-          case 'auth/invalid-email':
-            mensagem += 'Email inválido.';
-            break;
-          case 'auth/user-disabled':
-            mensagem += 'Esta conta foi desativada.';
-            break;
-          case 'auth/too-many-requests':
-            mensagem += 'Muitas tentativas. Tente novamente mais tarde.';
-            break;
-          case 'auth/invalid-credential':
-            mensagem += 'Email ou senha incorretos.';
-            break;
-          default:
-            mensagem += error.message;
-        }
+      // Redireciona para a página de perfil
+      window.location.href = '../perfil/perfil.html';
 
-        alert(mensagem);
-        btnEntrar.disabled = false;
-        btnEntrar.textContent = 'Entrar';
-      }
-    });
-  }
-});
+    } catch (error) {
+      console.error('❌ Erro ao fazer login:', error);
+      
+      toggleLoading(false);
+      
+      alert('❌ ' + tratarErroFirebase(error));
+      
+      btnEntrar.disabled = false;
+      btnEntrar.textContent = 'Entrar';
+    }
+  });
+}

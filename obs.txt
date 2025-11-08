@@ -1,3 +1,4 @@
 qnd clica em editar perfil, vai pra página de criar conta, mas com os dados já carregados
+não precisa ser obrigatório escolher as opções debaixo da foto
 ver se da pra colocar o link do lugar mais barato
 criar página das marcas

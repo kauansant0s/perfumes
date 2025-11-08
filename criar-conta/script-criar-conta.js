@@ -28,15 +28,15 @@ if (modoEdicao) {
   document.getElementById('titulo-pagina').textContent = 'Editar Perfil';
   document.getElementById('btn-submit').textContent = 'Salvar Alterações';
   
-  // Oculta campos de email e senha (não pode editar)
+  // Oculta campos de email e senha
   document.getElementById('campo-email').style.display = 'none';
   document.getElementById('campo-senha').style.display = 'none';
   document.getElementById('campo-confirmar-senha').style.display = 'none';
   
   // Remove required dos campos ocultos
-  document.getElementById('email').required = false;
-  document.getElementById('senha').required = false;
-  document.getElementById('confirmar-senha').required = false;
+  document.getElementById('email').removeAttribute('required');
+  document.getElementById('senha').removeAttribute('required');
+  document.getElementById('confirmar-senha').removeAttribute('required');
   
   // Aguarda autenticação e carrega dados
   auth.onAuthStateChanged((user) => {
@@ -46,6 +46,14 @@ if (modoEdicao) {
     } else {
       alert('Você precisa estar logado!');
       window.location.href = '../login/login.html';
+    }
+  });
+} else {
+  // Modo criar conta - verifica se está logado (não deveria estar)
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      // Se já está logado, redireciona para perfil
+      window.location.href = '../perfil/perfil.html';
     }
   });
 }

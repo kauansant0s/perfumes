@@ -172,10 +172,24 @@
         <input type="text" id="perfumista" class="campo" name="perfumista" placeholder="Nome do perfumista">
       </div>
 
-      <!-- <div>
-        <label for="descricao">Descrição:</label><br>
-        <textarea id="descricao" class="campotexto" name="descricao" rows="3" placeholder="Descreva brevemente o cheiro do perfume"></textarea>
-      </div> -->
+      <!-- É contratipo -->
+      <div class="campo-contratipo">
+        <label>É contratipo?</label>
+        <div class="radio-inline">
+          <input type="radio" id="contratipo-sim" name="contratipo" value="sim">
+          <label for="contratipo-sim">Sim</label>
+          
+          <input type="radio" id="contratipo-nao" name="contratipo" value="nao" checked>
+          <label for="contratipo-nao">Não</label>
+        </div>
+      </div>
+
+      <!-- Campo "De qual perfume" - Select com perfumes cadastrados -->
+      <div id="campo-perfume-original" class="campo-perfume-original">
+        <select id="perfume-original" name="perfume-original">
+          <option value="">Selecione o perfume original...</option>
+        </select>
+      </div>
 
       <div>
         <label for="review">Review:</label><br>

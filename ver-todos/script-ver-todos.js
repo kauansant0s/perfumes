@@ -1,6 +1,7 @@
-// ver-todos/script-ver-todos.js
+// ver-todos/script-ver-todos.js - Otimizado
 import { auth, buscarPerfumes } from '../adicionar-perfume/firebase-config.js';
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { configurarMenuLateral, toggleLoading, debounce, criarPlaceholder } from '../adicionar-perfume/utils.js';
 
 console.log('=== Script ver-todos carregado ===');
 
@@ -11,7 +12,7 @@ let filtroAtual = 'todos';
 let ordenacaoAtual = 'nome-asc';
 let buscaAtual = '';
 
-// ✅ Lê o filtro da URL
+// Lê o filtro da URL
 const urlParams = new URLSearchParams(window.location.search);
 const filtroURL = urlParams.get('filtro');
 if (filtroURL && ['todos', 'tenho', 'ja-tive', 'quero-ter'].includes(filtroURL)) {
@@ -22,21 +23,26 @@ if (filtroURL && ['todos', 'tenho', 'ja-tive', 'quero-ter'].includes(filtroURL))
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         usuarioAtual = user;
-        console.log('Usuário logado:', user.email);
+        console.log('✅ Usuário logado:', user.email);
         
         // Atualiza foto do usuário
         const fotoUsuario = document.getElementById('foto-usuario');
         if (user.photoURL) {
             fotoUsuario.src = user.photoURL;
         } else {
-            fotoUsuario.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><circle fill="%23d9d9d9" cx="40" cy="40" r="40"/></svg>';
+            fotoUsuario.src = criarPlaceholder(user.displayName?.charAt(0) || 'U', 100);
         }
         
         // Configura menu
-        configurarMenu(user);
+        configurarMenuLateral(auth, user);
         
         // Carrega perfumes
-        await carregarPerfumes();
+        toggleLoading(true);
+        try {
+            await carregarPerfumes();
+        } finally {
+            toggleLoading(false);
+        }
         
         // Configura event listeners
         configurarEventos();
@@ -46,67 +52,28 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// Configura menu lateral
-function configurarMenu(user) {
-    const menuFoto = document.getElementById('menu-foto');
-    const menuNome = document.getElementById('menu-nome');
-    
-    if (user.photoURL) {
-        menuFoto.src = user.photoURL;
-    } else {
-        menuFoto.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><circle fill="%23d9d9d9" cx="40" cy="40" r="40"/></svg>';
-    }
-    
-    menuNome.textContent = user.displayName || 'Usuário';
-    
-    // Toggle menu
-    const menuToggle = document.getElementById('menu-toggle');
-    const menuLateral = document.getElementById('menu-lateral');
-    const menuOverlay = document.getElementById('menu-overlay');
-    
-    menuToggle.addEventListener('click', () => {
-        menuLateral.classList.toggle('aberto');
-        menuOverlay.classList.toggle('ativo');
-    });
-    
-    menuOverlay.addEventListener('click', () => {
-        menuLateral.classList.remove('aberto');
-        menuOverlay.classList.remove('ativo');
-    });
-    
-    // Logout
-    document.getElementById('menu-logout').addEventListener('click', async (e) => {
-        e.preventDefault();
-        if (confirm('Deseja realmente sair?')) {
-            try {
-                await signOut(auth);
-                window.location.href = '../login/login.html';
-            } catch (error) {
-                console.error('Erro ao sair:', error);
-                alert('Erro ao fazer logout');
-            }
-        }
-    });
-}
-
-// Carrega perfumes
+/**
+ * Carrega perfumes
+ */
 async function carregarPerfumes() {
     try {
-        console.log('Carregando perfumes...');
-        perfumesData = await buscarPerfumes(usuarioAtual.uid);
-        console.log('Perfumes carregados:', perfumesData.length);
+        console.log('📡 Carregando perfumes...');
+        perfumesData = await buscarPerfumes(usuarioAtual.uid, true); // usa cache
+        console.log(`✅ ${perfumesData.length} perfumes carregados`);
         
         aplicarFiltrosEOrdenacao();
         
     } catch (error) {
-        console.error('Erro ao carregar perfumes:', error);
+        console.error('❌ Erro ao carregar perfumes:', error);
         alert('Erro ao carregar perfumes: ' + error.message);
     }
 }
 
-// Configura eventos
+/**
+ * Configura eventos
+ */
 function configurarEventos() {
-    // ✅ Ativa o filtro correto baseado na URL
+    // Ativa o filtro correto baseado na URL
     document.querySelectorAll('.btn-filtro').forEach(btn => {
         if (btn.dataset.filtro === filtroAtual) {
             btn.classList.add('ativo');
@@ -131,7 +98,7 @@ function configurarEventos() {
         aplicarFiltrosEOrdenacao();
     });
     
-    // Busca
+    // Busca com debounce
     const btnBuscar = document.getElementById('btn-buscar');
     const campoBusca = document.getElementById('campo-busca');
     const inputBusca = document.getElementById('input-busca');
@@ -149,9 +116,14 @@ function configurarEventos() {
         }
     });
     
-    inputBusca.addEventListener('input', (e) => {
-        buscaAtual = e.target.value.toLowerCase();
+    // Aplica debounce na busca
+    const buscaDebounced = debounce((valor) => {
+        buscaAtual = valor.toLowerCase();
         aplicarFiltrosEOrdenacao();
+    }, 300);
+    
+    inputBusca.addEventListener('input', (e) => {
+        buscaDebounced(e.target.value);
     });
     
     btnLimparBusca.addEventListener('click', () => {
@@ -162,7 +134,9 @@ function configurarEventos() {
     });
 }
 
-// Aplica filtros e ordenação
+/**
+ * Aplica filtros e ordenação
+ */
 function aplicarFiltrosEOrdenacao() {
     // 1. Filtrar por status
     if (filtroAtual === 'todos') {
@@ -186,7 +160,9 @@ function aplicarFiltrosEOrdenacao() {
     renderizarPerfumes();
 }
 
-// Ordena perfumes
+/**
+ * Ordena perfumes
+ */
 function ordenarPerfumes() {
     switch (ordenacaoAtual) {
         case 'nome-asc':
@@ -232,7 +208,9 @@ function ordenarPerfumes() {
     }
 }
 
-// Renderiza perfumes
+/**
+ * Renderiza perfumes
+ */
 function renderizarPerfumes() {
     const grid = document.getElementById('grid-perfumes');
     const semPerfumes = document.getElementById('sem-perfumes');
@@ -247,18 +225,37 @@ function renderizarPerfumes() {
     semPerfumes.style.display = 'none';
     grid.innerHTML = '';
     
+    // Renderização otimizada com fragment
+    const fragment = document.createDocumentFragment();
+    
     perfumesFiltrados.forEach(perfume => {
         const card = criarCardPerfume(perfume);
-        grid.appendChild(card);
+        fragment.appendChild(card);
     });
+    
+    grid.appendChild(fragment);
 }
 
-// Cria card de perfume
+/**
+ * Cria card de perfume
+ */
 function criarCardPerfume(perfume) {
     const card = document.createElement('div');
     card.className = 'perfume-card';
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `Ver detalhes de ${perfume.nome}`);
+    
     card.onclick = () => {
         window.location.href = `../perfumes/perfume.html?id=${perfume.id}`;
+    };
+    
+    // Acessibilidade - navegação por teclado
+    card.onkeypress = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            window.location.href = `../perfumes/perfume.html?id=${perfume.id}`;
+        }
     };
     
     const foto = document.createElement('div');
@@ -268,6 +265,7 @@ function criarCardPerfume(perfume) {
         const img = document.createElement('img');
         img.src = perfume.fotoURL;
         img.alt = perfume.nome;
+        img.loading = 'lazy'; // Lazy loading para performance
         
         img.onerror = () => {
             foto.innerHTML = `<div class="perfume-foto-placeholder">${perfume.nome}</div>`;
@@ -281,7 +279,7 @@ function criarCardPerfume(perfume) {
     const nome = document.createElement('div');
     nome.className = 'perfume-nome';
     nome.textContent = perfume.nome;
-    nome.title = perfume.nome; // Tooltip com nome completo
+    nome.title = perfume.nome;
     
     card.appendChild(foto);
     card.appendChild(nome);

@@ -12,7 +12,7 @@
     <div class="foto-area">
       <div class="quadrado-foto" id="quadrado-foto">
         <span class="texto-foto" id="texto-foto">Carregar foto</span>
-        <img id="preview-foto">
+        <img id="preview-foto" style="display:none;">
       </div>
       <input type="file" id="foto-perfil" accept="image/*" style="display: none;">
     </div>
@@ -30,12 +30,12 @@
 
       <div class="campo-grupo" id="campo-senha">
         <label for="senha">Senha:</label><br>
-        <input type="password" id="senha" name="senha" class="campo-texto">
+        <input type="password" id="senha" name="senha" class="campo-texto" required>
       </div>
 
       <div class="campo-grupo" id="campo-confirmar-senha">
         <label for="confirmar-senha">Confirmar senha:</label><br>
-        <input type="password" id="confirmar-senha" name="confirmar-senha" class="campo-texto">
+        <input type="password" id="confirmar-senha" name="confirmar-senha" class="campo-texto" required>
       </div>
 
       <div class="botoes">

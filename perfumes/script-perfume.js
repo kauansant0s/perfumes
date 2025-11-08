@@ -224,7 +224,12 @@ function gerarDescricao() {
     
     // Perfumista
     if (perfumeData.perfumista && perfumeData.perfumista.trim() !== '') {
-        descricao += ` Assinado por ${perfumeData.perfumista}.`;
+        descricao += ` Assinado pelo perfumista ${perfumeData.perfumista}.`;
+    }
+    
+    // ✅ NOVO: Contratipo
+    if (perfumeData.contratipo && perfumeData.contratipo.eh && perfumeData.contratipo.perfumeOriginal) {
+        descricao += ` É um cheiro inspirado em fragrâncias como ${perfumeData.contratipo.perfumeOriginal}.`;
     }
     
     document.getElementById('descricao-perfume').textContent = descricao;

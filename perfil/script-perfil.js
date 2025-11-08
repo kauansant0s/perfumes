@@ -1,6 +1,7 @@
-// perfil/script-perfil.js
+// perfil/script-perfil.js - Otimizado
 import { auth, buscarPerfumes, buscarPreferenciasUsuario, salvarPreferenciasUsuario } from '../adicionar-perfume/firebase-config.js';
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { configurarMenuLateral, toggleLoading, criarPlaceholder } from '../adicionar-perfume/utils.js';
 
 console.log('=== Script perfil carregado ===');
 
@@ -14,28 +15,36 @@ onAuthStateChanged(auth, async (user) => {
   
   if (user) {
     usuarioAtual = user;
-    console.log('Usuário logado:', user.email);
+    console.log('✅ Usuário logado:', user.email);
     
+    // Atualiza nome do usuário
     const nomeUsuario = user.displayName || 'Usuário';
     document.getElementById('nome-usuario').textContent = nomeUsuario;
     
+    // Atualiza foto
+    const fotoElement = document.getElementById('foto-perfil');
     if (user.photoURL) {
-      document.getElementById('foto-perfil').src = user.photoURL;
+      fotoElement.src = user.photoURL;
     } else {
-      document.getElementById('foto-perfil').src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><rect fill="%23d9d9d9" width="180" height="180"/></svg>';
+      fotoElement.src = criarPlaceholder(nomeUsuario.charAt(0), 180);
     }
     
-    configurarMenu(user);
+    // Configura menu lateral (usando função compartilhada)
+    configurarMenuLateral(auth, user);
+    
+    // Carrega dados com loading
+    toggleLoading(true);
     
     try {
-      console.log('=== Carregando dados ===');
+      console.log('📡 Carregando dados...');
       await carregarPreferencias();
       await carregarPerfumes();
-      console.log('=== ✅ Dados carregados com sucesso! ===');
+      console.log('✅ Dados carregados com sucesso!');
     } catch (error) {
-      console.error('=== ❌ Erro ao carregar dados ===', error);
-      document.getElementById('nome-usuario').textContent = 'Erro ao carregar';
+      console.error('❌ Erro ao carregar dados:', error);
       alert('Erro ao carregar dados: ' + error.message);
+    } finally {
+      toggleLoading(false);
     }
   } else {
     console.log('❌ Usuário não autenticado');
@@ -43,46 +52,9 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-function configurarMenu(user) {
-  const menuFoto = document.getElementById('menu-foto');
-  const menuNome = document.getElementById('menu-nome');
-  
-  if (user.photoURL) {
-    menuFoto.src = user.photoURL;
-  } else {
-    menuFoto.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><circle fill="%23d9d9d9" cx="40" cy="40" r="40"/></svg>';
-  }
-  
-  menuNome.textContent = user.displayName || 'Usuário';
-  
-  const menuToggle = document.getElementById('menu-toggle');
-  const menuLateral = document.getElementById('menu-lateral');
-  const menuOverlay = document.getElementById('menu-overlay');
-  
-  menuToggle.addEventListener('click', () => {
-    menuLateral.classList.toggle('aberto');
-    menuOverlay.classList.toggle('ativo');
-  });
-  
-  menuOverlay.addEventListener('click', () => {
-    menuLateral.classList.remove('aberto');
-    menuOverlay.classList.remove('ativo');
-  });
-  
-  document.getElementById('menu-logout').addEventListener('click', async (e) => {
-    e.preventDefault();
-    if (confirm('Deseja realmente sair?')) {
-      try {
-        await signOut(auth);
-        window.location.href = '../login/login.html';
-      } catch (error) {
-        console.error('Erro ao sair:', error);
-        alert('Erro ao fazer logout');
-      }
-    }
-  });
-}
-
+/**
+ * Carrega preferências do usuário
+ */
 async function carregarPreferencias() {
   try {
     console.log('  → Buscando preferências...');
@@ -96,34 +68,31 @@ async function carregarPreferencias() {
       preferenciasUsuario = { top5: [] };
     }
   } catch (error) {
-    console.error('  ❌ Erro ao carregar preferências:', error);
+    console.error('❌ Erro ao carregar preferências:', error);
     preferenciasUsuario = { top5: [] };
     throw error;
   }
 }
 
+/**
+ * Carrega perfumes do usuário
+ */
 async function carregarPerfumes() {
   try {
     console.log('  → Buscando perfumes...');
-    perfumesData = await buscarPerfumes(usuarioAtual.uid);
-    console.log('  → Perfumes recebidos:', perfumesData.length);
+    perfumesData = await buscarPerfumes(usuarioAtual.uid, true); // usa cache
+    console.log(`  ✅ ${perfumesData.length} perfumes encontrados`);
     
     renderizarPerfumes();
     
+    // Renderiza Top 5
     if (preferenciasUsuario?.top5 && preferenciasUsuario.top5.length > 0) {
       renderizarTop5(preferenciasUsuario.top5);
     } else {
-      const secaoTop5 = document.getElementById('top5');
-      if (secaoTop5) {
-        secaoTop5.innerHTML = '';
-        const btnAdicionar = document.createElement('button');
-        btnAdicionar.className = 'btn-adicionar-perfume';
-        btnAdicionar.textContent = '+';
-        btnAdicionar.onclick = abrirModalTop5;
-        secaoTop5.appendChild(btnAdicionar);
-      }
+      renderizarTop5Vazio();
     }
     
+    // Configura placeholder de assinatura se necessário
     if (!preferenciasUsuario?.assinaturaAtual) {
       const placeholder = document.querySelector('.perfume-placeholder');
       if (placeholder) {
@@ -132,11 +101,14 @@ async function carregarPerfumes() {
       }
     }
   } catch (error) {
-    console.error('  ❌ Erro ao carregar perfumes:', error);
+    console.error('❌ Erro ao carregar perfumes:', error);
     throw error;
   }
 }
 
+/**
+ * Renderiza perfumes nas seções
+ */
 function renderizarPerfumes() {
   const tenho = perfumesData.filter(p => p.status === 'tenho');
   const jaTive = perfumesData.filter(p => p.status === 'ja-tive');
@@ -148,28 +120,35 @@ function renderizarPerfumes() {
   renderizarSecao('todos', perfumesData);
 }
 
+/**
+ * Renderiza uma seção de perfumes
+ */
 function renderizarSecao(secaoId, perfumes) {
   const secao = document.getElementById(secaoId);
   if (!secao) return;
   
   secao.innerHTML = '';
   
+  // Mostra até 7 perfumes
   perfumes.slice(0, 7).forEach(perfume => {
     const card = criarCardPerfume(perfume);
     secao.appendChild(card);
   });
   
+  // Botão adicionar ou ver todos
   if (perfumes.length < 7) {
     const btnAdicionar = document.createElement('button');
     btnAdicionar.className = 'btn-adicionar-perfume';
     btnAdicionar.textContent = '+';
+    btnAdicionar.setAttribute('aria-label', 'Adicionar perfume');
     btnAdicionar.onclick = () => abrirModalAdicionar(secaoId);
     secao.appendChild(btnAdicionar);
   } else {
     const btnVerTodos = document.createElement('button');
     btnVerTodos.className = 'btn-ver-todos';
     btnVerTodos.textContent = 'Ver todos';
-    // ✅ ATUALIZADO: Passa o filtro específico na URL
+    btnVerTodos.setAttribute('aria-label', `Ver todos os perfumes da categoria ${secaoId}`);
+    
     btnVerTodos.onclick = () => {
       let filtro = 'todos';
       if (secaoId === 'tenho') filtro = 'tenho';
@@ -178,18 +157,31 @@ function renderizarSecao(secaoId, perfumes) {
       
       window.location.href = `../ver-todos/ver-todos.html?filtro=${filtro}`;
     };
+    
     secao.appendChild(btnVerTodos);
   }
 }
 
+/**
+ * Cria card de perfume
+ */
 function criarCardPerfume(perfume) {
   const card = document.createElement('div');
   card.className = 'perfume-card';
   card.title = perfume.nome;
   card.style.cursor = 'pointer';
+  card.setAttribute('role', 'button');
+  card.setAttribute('tabindex', '0');
   
   card.onclick = () => {
     window.location.href = `../perfumes/perfume.html?id=${perfume.id}`;
+  };
+  
+  // Acessibilidade - permitir navegação por teclado
+  card.onkeypress = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      window.location.href = `../perfumes/perfume.html?id=${perfume.id}`;
+    }
   };
   
   if (perfume.fotoURL && perfume.fotoURL.trim() !== '') {
@@ -212,6 +204,9 @@ function criarCardPerfume(perfume) {
   return card;
 }
 
+/**
+ * Renderiza Top 5
+ */
 function renderizarTop5(top5Ids) {
   const secao = document.getElementById('top5');
   if (!secao) return;
@@ -229,13 +224,33 @@ function renderizarTop5(top5Ids) {
     const btnAdicionar = document.createElement('button');
     btnAdicionar.className = 'btn-adicionar-perfume';
     btnAdicionar.textContent = '+';
+    btnAdicionar.setAttribute('aria-label', 'Adicionar ao Top 5');
     btnAdicionar.onclick = abrirModalTop5;
     secao.appendChild(btnAdicionar);
   }
 }
 
+/**
+ * Renderiza Top 5 vazio
+ */
+function renderizarTop5Vazio() {
+  const secao = document.getElementById('top5');
+  if (secao) {
+    secao.innerHTML = '';
+    const btnAdicionar = document.createElement('button');
+    btnAdicionar.className = 'btn-adicionar-perfume';
+    btnAdicionar.textContent = '+';
+    btnAdicionar.setAttribute('aria-label', 'Adicionar ao Top 5');
+    btnAdicionar.onclick = abrirModalTop5;
+    secao.appendChild(btnAdicionar);
+  }
+}
+
+/**
+ * Define assinatura atual
+ */
 async function definirAssinaturaAtual(perfume) {
-  console.log('Definindo assinatura:', perfume.nome);
+  console.log('📝 Definindo assinatura:', perfume.nome);
   
   const container = document.getElementById('perfume-assinatura');
   container.innerHTML = '';
@@ -261,6 +276,8 @@ async function definirAssinaturaAtual(perfume) {
   
   container.appendChild(miniCard);
   container.appendChild(nome);
+  
+  toggleLoading(true);
   
   try {
     const novaAssinatura = {
@@ -288,10 +305,15 @@ async function definirAssinaturaAtual(perfume) {
     console.log('✅ Assinatura salva!');
   } catch (error) {
     console.error('❌ Erro ao salvar assinatura:', error);
-    alert('Erro ao salvar assinatura: ' + error.message);
+    alert('❌ ' + error.message);
+  } finally {
+    toggleLoading(false);
   }
 }
 
+/**
+ * Carrega assinatura atual
+ */
 function carregarAssinaturaAtual(assinatura) {
   if (assinatura) {
     const container = document.getElementById('perfume-assinatura');
@@ -321,6 +343,9 @@ function carregarAssinaturaAtual(assinatura) {
   }
 }
 
+/**
+ * Abre modal para escolher assinatura
+ */
 function abrirModalAssinatura() {
   const modal = document.getElementById('modal-top5');
   const lista = document.getElementById('lista-perfumes-top5');
@@ -333,21 +358,11 @@ function abrirModalAssinatura() {
     lista.innerHTML = '<p style="text-align:center;color:#666;">Você ainda não cadastrou nenhum perfume</p>';
   } else {
     perfumesData.forEach(perfume => {
-      const card = document.createElement('div');
-      card.className = 'perfume-modal-card';
-      card.onclick = async () => {
+      const card = criarCardModal(perfume, async () => {
         await definirAssinaturaAtual(perfume);
         modal.style.display = 'none';
         titulo.textContent = 'Adicionar ao Top 5';
-      };
-      
-      card.innerHTML = `
-        <div class="perfume-modal-img">
-          ${perfume.fotoURL ? `<img src="${perfume.fotoURL}" alt="${perfume.nome}">` : `<div style="background:#d9d9d9;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666;padding:5px;text-align:center;">${perfume.nome}</div>`}
-        </div>
-        <div class="perfume-modal-nome">${perfume.nome}</div>
-      `;
-      
+      });
       lista.appendChild(card);
     });
   }
@@ -355,6 +370,9 @@ function abrirModalAssinatura() {
   modal.style.display = 'flex';
 }
 
+/**
+ * Abre modal para adicionar perfume à seção
+ */
 function abrirModalAdicionar(tipo) {
   const modal = document.getElementById('modal-adicionar');
   const lista = document.getElementById('lista-perfumes-modal');
@@ -365,19 +383,9 @@ function abrirModalAdicionar(tipo) {
     lista.innerHTML = '<p style="text-align:center;color:#666;">Você ainda não cadastrou nenhum perfume</p>';
   } else {
     perfumesData.forEach(perfume => {
-      const card = document.createElement('div');
-      card.className = 'perfume-modal-card';
-      card.onclick = () => {
+      const card = criarCardModal(perfume, () => {
         modal.style.display = 'none';
-      };
-      
-      card.innerHTML = `
-        <div class="perfume-modal-img">
-          ${perfume.fotoURL ? `<img src="${perfume.fotoURL}" alt="${perfume.nome}">` : `<div style="background:#d9d9d9;width:100%;height:100%;"></div>`}
-        </div>
-        <div class="perfume-modal-nome">${perfume.nome}</div>
-      `;
-      
+      });
       lista.appendChild(card);
     });
   }
@@ -385,6 +393,9 @@ function abrirModalAdicionar(tipo) {
   modal.style.display = 'flex';
 }
 
+/**
+ * Abre modal Top 5
+ */
 async function abrirModalTop5() {
   const modal = document.getElementById('modal-top5');
   const lista = document.getElementById('lista-perfumes-top5');
@@ -399,58 +410,46 @@ async function abrirModalTop5() {
     lista.innerHTML = '<p style="text-align:center;color:#666;">Você ainda não cadastrou nenhum perfume</p>';
   } else {
     perfumesData.forEach(perfume => {
-      const card = document.createElement('div');
-      card.className = 'perfume-modal-card';
-      
       const jaEstaNoTop5 = top5Atual.includes(perfume.id);
       
-      if (jaEstaNoTop5) {
-        card.style.opacity = '0.5';
-        card.style.cursor = 'not-allowed';
-        card.title = 'Já está no Top 5';
-      } else {
-        card.onclick = async () => {
-          if (top5Atual.length >= 5) {
-            alert('Você já tem 5 perfumes no Top 5!');
-            return;
-          }
-          
+      const card = criarCardModal(perfume, async () => {
+        if (top5Atual.length >= 5) {
+          alert('Você já tem 5 perfumes no Top 5!');
+          return;
+        }
+        
+        toggleLoading(true);
+        
+        try {
           const novoTop5 = [...top5Atual, perfume.id];
           
-          try {
-            const dadosParaSalvar = preferenciasUsuario?.assinaturaAtual 
-              ? { 
-                  top5: novoTop5,
-                  assinaturaAtual: preferenciasUsuario.assinaturaAtual
-                }
-              : { 
-                  top5: novoTop5 
-                };
-            
-            await salvarPreferenciasUsuario(usuarioAtual.uid, dadosParaSalvar);
-            
-            if (!preferenciasUsuario) {
-              preferenciasUsuario = { top5: [] };
-            }
-            preferenciasUsuario.top5 = novoTop5;
-            
-            renderizarTop5(novoTop5);
-            modal.style.display = 'none';
-            
-            console.log('✅ Perfume adicionado ao Top 5!');
-          } catch (error) {
-            console.error('❌ Erro ao salvar Top 5:', error);
-            alert('Erro ao adicionar: ' + error.message);
+          const dadosParaSalvar = preferenciasUsuario?.assinaturaAtual 
+            ? { 
+                top5: novoTop5,
+                assinaturaAtual: preferenciasUsuario.assinaturaAtual
+              }
+            : { 
+                top5: novoTop5 
+              };
+          
+          await salvarPreferenciasUsuario(usuarioAtual.uid, dadosParaSalvar);
+          
+          if (!preferenciasUsuario) {
+            preferenciasUsuario = { top5: [] };
           }
-        };
-      }
-      
-      card.innerHTML = `
-        <div class="perfume-modal-img">
-          ${perfume.fotoURL ? `<img src="${perfume.fotoURL}" alt="${perfume.nome}">` : `<div style="background:#d9d9d9;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666;padding:5px;text-align:center;">${perfume.nome}</div>`}
-        </div>
-        <div class="perfume-modal-nome">${perfume.nome}</div>
-      `;
+          preferenciasUsuario.top5 = novoTop5;
+          
+          renderizarTop5(novoTop5);
+          modal.style.display = 'none';
+          
+          console.log('✅ Perfume adicionado ao Top 5!');
+        } catch (error) {
+          console.error('❌ Erro ao salvar Top 5:', error);
+          alert('❌ ' + error.message);
+        } finally {
+          toggleLoading(false);
+        }
+      }, jaEstaNoTop5);
       
       lista.appendChild(card);
     });
@@ -459,6 +458,32 @@ async function abrirModalTop5() {
   modal.style.display = 'flex';
 }
 
+/**
+ * Cria card para modal
+ */
+function criarCardModal(perfume, onClick, disabled = false) {
+  const card = document.createElement('div');
+  card.className = 'perfume-modal-card';
+  
+  if (disabled) {
+    card.style.opacity = '0.5';
+    card.style.cursor = 'not-allowed';
+    card.title = 'Já está no Top 5';
+  } else {
+    card.onclick = onClick;
+  }
+  
+  card.innerHTML = `
+    <div class="perfume-modal-img">
+      ${perfume.fotoURL ? `<img src="${perfume.fotoURL}" alt="${perfume.nome}">` : `<div style="background:#d9d9d9;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666;padding:5px;text-align:center;">${perfume.nome}</div>`}
+    </div>
+    <div class="perfume-modal-nome">${perfume.nome}</div>
+  `;
+  
+  return card;
+}
+
+// Event listeners para modais
 document.querySelector('.close')?.addEventListener('click', () => {
   document.getElementById('modal-adicionar').style.display = 'none';
 });
@@ -482,6 +507,7 @@ window.onclick = (event) => {
   }
 };
 
+// Botões de navegação
 document.getElementById('btn-cadastrar')?.addEventListener('click', () => {
   window.location.href = '../adicionar-perfume/form-add-perf.html';
 });
@@ -490,7 +516,6 @@ document.getElementById('btn-cadastrar-novo')?.addEventListener('click', () => {
   window.location.href = '../adicionar-perfume/form-add-perf.html';
 });
 
-// Botão Editar Perfil
 document.getElementById('btn-editar-perfil')?.addEventListener('click', () => {
   window.location.href = '../criar-conta/criar-conta.html?editar=true';
 });

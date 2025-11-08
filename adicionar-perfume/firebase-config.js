@@ -1,8 +1,9 @@
-// firebase-config.js
+// firebase-config.js - Otimizado
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, serverTimestamp, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { tratarErroFirebase } from './utils.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCWuG4gVnf6r2JVBJX4k6a5kwM_Jf3cw8c",
@@ -19,50 +20,90 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
 
+// Cache para marcas (evita múltiplas consultas)
+let marcasCache = null;
+let marcasCacheTime = null;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+
 // Exporta instâncias
 export { app, db, storage, auth };
 
-// Funções para manipular marcas
+// ===== FUNÇÕES PARA MANIPULAR MARCAS =====
+
+/**
+ * Busca todas as marcas (com cache)
+ * @returns {Promise<Array<string>>}
+ */
 export async function buscarMarcas() {
   try {
+    // Verifica se tem cache válido
+    const agora = Date.now();
+    if (marcasCache && marcasCacheTime && (agora - marcasCacheTime) < CACHE_DURATION) {
+      console.log('✅ Marcas carregadas do cache');
+      return marcasCache;
+    }
+    
+    console.log('📡 Buscando marcas do Firestore...');
     const querySnapshot = await getDocs(collection(db, "marcas"));
     const marcas = [];
     querySnapshot.forEach((doc) => {
       marcas.push(doc.data().nome);
     });
-    return marcas.sort();
+    
+    // Atualiza cache
+    marcasCache = marcas.sort();
+    marcasCacheTime = agora;
+    
+    return marcasCache;
   } catch (error) {
     console.error("Erro ao buscar marcas:", error);
-    throw error;
+    throw new Error(tratarErroFirebase(error));
   }
 }
 
+/**
+ * Salva nova marca
+ * @param {string} nomeMarca - Nome da marca
+ */
 export async function salvarMarca(nomeMarca) {
   try {
     if (!nomeMarca || nomeMarca.trim() === '') {
       throw new Error('Nome da marca não pode estar vazio');
     }
     
+    const marcaNormalizada = nomeMarca.trim();
+    
+    // Verifica se já existe
     const q = query(
       collection(db, "marcas"),
-      where("nome", "==", nomeMarca)
+      where("nome", "==", marcaNormalizada)
     );
     const querySnapshot = await getDocs(q);
     
     if (querySnapshot.empty) {
       await addDoc(collection(db, "marcas"), {
-        nome: nomeMarca,
+        nome: marcaNormalizada,
         dataCriacao: serverTimestamp()
       });
-      console.log("Nova marca salva:", nomeMarca);
+      console.log("✅ Nova marca salva:", marcaNormalizada);
+      
+      // Invalida cache
+      marcasCache = null;
+      marcasCacheTime = null;
     }
   } catch (error) {
     console.error("Erro ao salvar marca:", error);
-    throw error;
+    throw new Error(tratarErroFirebase(error));
   }
 }
 
-// Validação de perfume
+// ===== FUNÇÕES PARA MANIPULAR PERFUMES =====
+
+/**
+ * Valida dados do perfume
+ * @param {Object} perfumeData - Dados do perfume
+ * @returns {Array<string>} Array de erros
+ */
 function validarPerfume(perfumeData) {
   const erros = [];
   
@@ -89,7 +130,12 @@ function validarPerfume(perfumeData) {
   return erros;
 }
 
-// Funções para manipular perfumes
+/**
+ * Salva perfume
+ * @param {Object} perfumeData - Dados do perfume
+ * @param {string} userId - ID do usuário
+ * @returns {Promise<string>} ID do documento criado
+ */
 export async function salvarPerfume(perfumeData, userId) {
   try {
     // Valida dados
@@ -108,20 +154,34 @@ export async function salvarPerfume(perfumeData, userId) {
       dataCriacao: serverTimestamp()
     });
     
-    console.log("Perfume salvo com ID:", docRef.id);
+    console.log("✅ Perfume salvo com ID:", docRef.id);
     return docRef.id;
   } catch (error) {
     console.error("Erro ao salvar perfume:", error);
-    throw error;
+    throw new Error(tratarErroFirebase(error));
   }
 }
 
-export async function buscarPerfumes(userId) {
+/**
+ * Busca perfumes do usuário (com cache opcional)
+ * @param {string} userId - ID do usuário
+ * @param {boolean} useCache - Se deve usar cache
+ * @returns {Promise<Array>}
+ */
+let perfumesCache = {};
+export async function buscarPerfumes(userId, useCache = false) {
   try {
     if (!userId) {
       throw new Error('ID do usuário não fornecido');
     }
     
+    // Verifica cache
+    if (useCache && perfumesCache[userId]) {
+      console.log('✅ Perfumes carregados do cache');
+      return perfumesCache[userId];
+    }
+    
+    console.log('📡 Buscando perfumes do Firestore...');
     const q = query(
       collection(db, "perfumes"),
       where("userId", "==", userId)
@@ -137,14 +197,34 @@ export async function buscarPerfumes(userId) {
       });
     });
     
-    console.log(`Perfumes encontrados para usuário ${userId}:`, perfumes.length);
+    // Atualiza cache
+    perfumesCache[userId] = perfumes;
+    
+    console.log(`✅ ${perfumes.length} perfumes encontrados`);
     return perfumes;
   } catch (error) {
     console.error("Erro ao buscar perfumes:", error);
-    throw error;
+    throw new Error(tratarErroFirebase(error));
   }
 }
 
+/**
+ * Invalida cache de perfumes
+ * @param {string} userId - ID do usuário
+ */
+export function invalidarCachePerfumes(userId) {
+  if (userId && perfumesCache[userId]) {
+    delete perfumesCache[userId];
+    console.log('🗑️ Cache de perfumes invalidado');
+  }
+}
+
+/**
+ * Atualiza perfume
+ * @param {string} id - ID do perfume
+ * @param {Object} perfumeData - Dados atualizados
+ * @param {string} userId - ID do usuário
+ */
 export async function atualizarPerfume(id, perfumeData, userId) {
   try {
     // Valida dados
@@ -170,13 +250,21 @@ export async function atualizarPerfume(id, perfumeData, userId) {
       dataAtualizacao: serverTimestamp()
     });
     
-    console.log("Perfume atualizado!");
+    // Invalida cache
+    invalidarCachePerfumes(userId);
+    
+    console.log("✅ Perfume atualizado!");
   } catch (error) {
     console.error("Erro ao atualizar perfume:", error);
-    throw error;
+    throw new Error(tratarErroFirebase(error));
   }
 }
 
+/**
+ * Deleta perfume
+ * @param {string} id - ID do perfume
+ * @param {string} userId - ID do usuário
+ */
 export async function deletarPerfume(id, userId) {
   try {
     const perfumeRef = doc(db, "perfumes", id);
@@ -192,13 +280,23 @@ export async function deletarPerfume(id, userId) {
     }
     
     await deleteDoc(perfumeRef);
-    console.log("Perfume deletado!");
+    
+    // Invalida cache
+    invalidarCachePerfumes(userId);
+    
+    console.log("✅ Perfume deletado!");
   } catch (error) {
     console.error("Erro ao deletar perfume:", error);
-    throw error;
+    throw new Error(tratarErroFirebase(error));
   }
 }
 
+/**
+ * Upload de foto do perfume
+ * @param {File} file - Arquivo da foto
+ * @param {string} userId - ID do usuário
+ * @returns {Promise<string>} URL da foto
+ */
 export async function uploadFotoPerfume(file, userId) {
   try {
     if (!file) {
@@ -217,16 +315,26 @@ export async function uploadFotoPerfume(file, userId) {
     
     const timestamp = Date.now();
     const storageRef = ref(storage, `perfumes/${userId}/${timestamp}_${file.name}`);
+    
+    console.log('📤 Fazendo upload da foto...');
     await uploadBytes(storageRef, file);
     const url = await getDownloadURL(storageRef);
+    
+    console.log('✅ Foto enviada com sucesso!');
     return url;
   } catch (error) {
     console.error("Erro ao fazer upload da foto:", error);
-    throw error;
+    throw new Error(tratarErroFirebase(error));
   }
 }
 
-// Funções para preferências do usuário
+// ===== FUNÇÕES PARA PREFERÊNCIAS DO USUÁRIO =====
+
+/**
+ * Salva preferências do usuário
+ * @param {string} userId - ID do usuário
+ * @param {Object} preferencias - Preferências a salvar
+ */
 export async function salvarPreferenciasUsuario(userId, preferencias) {
   try {
     if (!userId) {
@@ -240,7 +348,7 @@ export async function salvarPreferenciasUsuario(userId, preferencias) {
         ...preferencias,
         dataAtualizacao: serverTimestamp()
       });
-      console.log("Preferências atualizadas!");
+      console.log("✅ Preferências atualizadas!");
     } catch (error) {
       if (error.code === 'not-found') {
         await setDoc(preferencesRef, {
@@ -249,17 +357,22 @@ export async function salvarPreferenciasUsuario(userId, preferencias) {
           dataCriacao: serverTimestamp(),
           dataAtualizacao: serverTimestamp()
         });
-        console.log("Preferências criadas!");
+        console.log("✅ Preferências criadas!");
       } else {
         throw error;
       }
     }
   } catch (error) {
     console.error("Erro ao salvar preferências:", error);
-    throw error;
+    throw new Error(tratarErroFirebase(error));
   }
 }
 
+/**
+ * Busca preferências do usuário
+ * @param {string} userId - ID do usuário
+ * @returns {Promise<Object|null>}
+ */
 export async function buscarPreferenciasUsuario(userId) {
   try {
     if (!userId) {
@@ -279,6 +392,6 @@ export async function buscarPreferenciasUsuario(userId) {
     return null;
   } catch (error) {
     console.error("Erro ao buscar preferências:", error);
-    throw error;
+    throw new Error(tratarErroFirebase(error));
   }
 }
