@@ -1,5 +1,5 @@
-// perfumes/script-perfume.js
-import { auth, db } from '../adicionar-perfume/firebase-config.js';
+// perfumes/script-perfume.js - CORRIGIDO
+import { auth, db, buscarPerfumePorId } from '../adicionar-perfume/firebase-config.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -51,7 +51,7 @@ if (!perfumeId) {
     window.location.href = '../perfil/perfil.html';
 }
 
-// ===== MENU HAMBÚRGUER =====
+// Menu hamburger
 const menuHamburger = document.getElementById('menu-toggle');
 const menuLateral = document.getElementById('menu-lateral');
 const menuOverlay = document.getElementById('menu-overlay');
@@ -77,8 +77,6 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         usuarioAtual = user;
         await carregarPerfume();
-        
-        // Configura menu lateral
         configurarMenu(user);
     } else {
         window.location.href = '../login/login.html';
@@ -100,7 +98,6 @@ function configurarMenu(user) {
       menuNome.textContent = user.displayName || 'Usuário';
     }
     
-    // Logout
     const btnLogout = document.getElementById('menu-logout');
     if (btnLogout) {
       btnLogout.addEventListener('click', async (e) => {
@@ -129,7 +126,7 @@ async function carregarPerfume() {
         perfumeData = perfumeSnap.data();
         console.log('Perfume carregado:', perfumeData);
         
-        renderizarPerfume();
+        await renderizarPerfume();
         
     } catch (error) {
         console.error('Erro ao carregar perfume:', error);
@@ -137,7 +134,7 @@ async function carregarPerfume() {
     }
 }
 
-function renderizarPerfume() {
+async function renderizarPerfume() {
     // Foto
     const fotoElement = document.getElementById('foto-perfume');
     if (perfumeData.fotoURL) {
@@ -145,14 +142,24 @@ function renderizarPerfume() {
         fotoElement.alt = perfumeData.nome;
     }
     
-    // Nome e Marca
+    // Nome
     document.getElementById('nome-perfume').textContent = perfumeData.nome;
+    
+    // ✅ CORREÇÃO: Marca com link clicável
     const linkMarca = document.getElementById('link-marca');
     linkMarca.textContent = perfumeData.marca;
     linkMarca.href = `../marca/marca.html?nome=${encodeURIComponent(perfumeData.marca)}`;
+    linkMarca.style.cursor = 'pointer';
+    linkMarca.style.textDecoration = 'none';
+    linkMarca.addEventListener('mouseenter', () => {
+        linkMarca.style.textDecoration = 'underline';
+    });
+    linkMarca.addEventListener('mouseleave', () => {
+        linkMarca.style.textDecoration = 'none';
+    });
     
     // Descrição gerada
-    gerarDescricao();
+    await gerarDescricao();
     
     // Acordes
     renderizarAcordes();
@@ -177,8 +184,8 @@ function renderizarPerfume() {
     renderizarReview();
 }
 
-// ===== FUNÇÃO CORRIGIDA: gerarDescricao() =====
-function gerarDescricao() {
+// ✅ FUNÇÃO CORRIGIDA: gerarDescricao com link clicável para perfume original
+async function gerarDescricao() {
     let descricao = `A fragrância ${perfumeData.nome} de ${perfumeData.marca} é um cheiro majoritariamente `;
     
     // Pega os 2 primeiros acordes
@@ -193,30 +200,24 @@ function gerarDescricao() {
     
     descricao += '.';
     
-    // ✅ CORREÇÃO: Longevidade e Projeção (só se não forem 0)
+    // Longevidade e Projeção
     if (perfumeData.avaliacoes) {
         const fixacao = perfumeData.avaliacoes.fixacao || 0;
         const projecao = perfumeData.avaliacoes.projecao || 0;
         
-        // Só adiciona frase se as notas não forem 0
         if (fixacao > 0 || projecao > 0) {
             const longevidade = classificarNota(fixacao);
             const projecaoClass = classificarNota(projecao);
             
-            // Se ambas foram avaliadas
             if (fixacao > 0 && projecao > 0) {
                 if (longevidade === projecaoClass) {
                     descricao += ` Com longevidade e projeção ${longevidade}.`;
                 } else {
                     descricao += ` Com longevidade ${longevidade} e projeção ${projecaoClass}.`;
                 }
-            } 
-            // Se só fixação foi avaliada
-            else if (fixacao > 0) {
+            } else if (fixacao > 0) {
                 descricao += ` Com longevidade ${longevidade}.`;
-            }
-            // Se só projeção foi avaliada
-            else if (projecao > 0) {
+            } else if (projecao > 0) {
                 descricao += ` Com projeção ${projecaoClass}.`;
             }
         }
@@ -227,15 +228,35 @@ function gerarDescricao() {
         descricao += ` Assinado pelo perfumista ${perfumeData.perfumista}.`;
     }
     
-    // ✅ NOVO: Contratipo
+    // ✅ CORREÇÃO: Contratipo com DOIS links clicáveis separados
     if (perfumeData.contratipo && perfumeData.contratipo.eh && perfumeData.contratipo.perfumeOriginal) {
-        descricao += ` É um cheiro inspirado em fragrâncias como ${perfumeData.contratipo.perfumeOriginal}.`;
+        const perfumeOriginalId = perfumeData.contratipo.perfumeOriginal;
+        
+        try {
+            // Busca os dados do perfume original
+            const perfumeOriginal = await buscarPerfumePorId(perfumeOriginalId);
+            
+            if (perfumeOriginal) {
+                // ✅ Cria HTML com DOIS links separados: nome do perfume + marca
+                const descricaoElement = document.getElementById('descricao-perfume');
+                
+                const linkPerfume = `<a href="../perfumes/perfume.html?id=${perfumeOriginalId}" style="color: #C06060; text-decoration: none; font-weight: 600; cursor: pointer;" onmouseenter="this.style.textDecoration='underline'" onmouseleave="this.style.textDecoration='none'">${perfumeOriginal.nome}</a>`;
+                
+                const linkMarca = `<a href="../marca/marca.html?nome=${encodeURIComponent(perfumeOriginal.marca)}" style="color: #C06060; text-decoration: none; font-weight: 600; cursor: pointer;" onmouseenter="this.style.textDecoration='underline'" onmouseleave="this.style.textDecoration='none'">${perfumeOriginal.marca}</a>`;
+                
+                descricaoElement.innerHTML = descricao + ` É um cheiro inspirado em fragrâncias como ${linkPerfume} de ${linkMarca}.`;
+                return; // Retorna aqui para não executar o textContent abaixo
+            }
+        } catch (error) {
+            console.error('Erro ao buscar perfume original:', error);
+            // Se der erro, continua sem o link
+        }
     }
     
+    // Se não é contratipo ou deu erro, usa textContent normal
     document.getElementById('descricao-perfume').textContent = descricao;
 }
 
-// ✅ CORREÇÃO: classificarNota() - 0 = não avaliada
 function classificarNota(nota) {
     if (nota === 0) return 'não avaliada';
     

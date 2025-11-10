@@ -373,3 +373,58 @@ select{
 .ts-dropdown .option {
   color: #000 !important;
 }
+
+
+
+/* Correção: texto preto no select de perfume original */
+.ts-wrapper .ts-control {
+    color: #000 !important;
+}
+
+.ts-wrapper .ts-control input {
+    color: #000 !important;
+}
+
+.ts-wrapper.single .ts-control .item {
+    color: #000 !important;
+}
+
+/* Dropdown também com texto preto */
+.ts-dropdown .option {
+    color: #000 !important;
+}
+
+.ts-dropdown .option.active {
+    color: #000 !important;
+}
+
+/* Destaque para opção "Cadastrar novo" */
+.option-cadastrar-novo {
+    color: #C06060 !important;
+    font-weight: 600;
+    background: #f5f5f5;
+}
+
+.option-cadastrar-novo:hover {
+    background: #e8e8e8;
+}
+
+/* ✅ NOVO: Feedback visual para radios de status */
+#opcoesfoto label {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+#opcoesfoto label:hover {
+    opacity: 0.7;
+}
+
+#opcoesfoto label:active {
+    transform: scale(0.95);
+}
+
+/* Indicador visual quando nenhum status está selecionado */
+#opcoesfoto:has(input:not(:checked)) {
+    opacity: 0.6;
+}

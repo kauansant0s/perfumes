@@ -1,7 +1,5 @@
+ainda n da pra desmarcar, mas agr consigo criar um perfume sem marcar nada
+qnd eu vou adicionar um perfume a partir do campo do contratipo, ele duplica o perfume contratipo e eu fico com dois iguais
 qnd clica em editar perfil, vai pra página de criar conta, mas com os dados já carregados
-deixar o nome do perfume original preto dentro campo, agr, dps q seleciona, ele fica meio cinza
-fazer o nome do perfume original clicável
-quando adicionar um perfume a partir do campo de contratipo, ele ja fica salvo como perfume original do perfume que eu estava editando antes.
-não precisa ser obrigatório escolher as opções debaixo da foto
 ver se da pra colocar o link do lugar mais barato
 criar página das marcas

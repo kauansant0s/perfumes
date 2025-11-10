@@ -115,9 +115,8 @@ function validarPerfume(perfumeData) {
     erros.push('Marca é obrigatória');
   }
   
-  if (!perfumeData.status) {
-    erros.push('Selecione o status (Tenho/Já tive/Quero ter)');
-  }
+  // Status NÃO é mais obrigatório - pode ser vazio/indefinido
+  // O perfume pode existir sem status específico
   
   // Valida avaliações se o status for "tenho" ou "ja-tive"
   if ((perfumeData.status === 'tenho' || perfumeData.status === 'ja-tive') && perfumeData.avaliacoes) {
@@ -204,6 +203,34 @@ export async function buscarPerfumes(userId, useCache = false) {
     return perfumes;
   } catch (error) {
     console.error("Erro ao buscar perfumes:", error);
+    throw new Error(tratarErroFirebase(error));
+  }
+}
+
+/**
+ * Busca um perfume específico por ID
+ * @param {string} perfumeId - ID do perfume
+ * @returns {Promise<Object|null>}
+ */
+export async function buscarPerfumePorId(perfumeId) {
+  try {
+    if (!perfumeId) {
+      throw new Error('ID do perfume não fornecido');
+    }
+    
+    const perfumeRef = doc(db, "perfumes", perfumeId);
+    const perfumeSnap = await getDoc(perfumeRef);
+    
+    if (perfumeSnap.exists()) {
+      return {
+        id: perfumeSnap.id,
+        ...perfumeSnap.data()
+      };
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Erro ao buscar perfume:", error);
     throw new Error(tratarErroFirebase(error));
   }
 }
