@@ -48,16 +48,25 @@ onAuthStateChanged(auth, async (user) => {
       // ✅ PRIORIDADE 1: Se voltou de cadastrar perfume original
       if (voltandoDeOriginal === 'true' && perfumeOriginalRecemCadastrado && dadosContratipoSalvos) {
         console.log('🔄 Restaurando dados do contratipo...');
+        console.log('📍 Perfume original cadastrado:', perfumeOriginalRecemCadastrado);
+        console.log('📍 Modo edição:', modoEdicao);
+        console.log('📍 Perfume ID:', perfumeId);
+        
         await restaurarDadosContratipo(perfumeOriginalRecemCadastrado, dadosContratipoSalvos);
         
         // Limpa sessionStorage
         sessionStorage.removeItem('cadastrandoPerfumeOriginal');
         sessionStorage.removeItem('ultimoPerfumeCadastrado');
         sessionStorage.removeItem('dadosContratipoTemp');
+        
+        console.log('✅ SessionStorage limpo após restauração');
       }
       // Se está em modo de edição normal, carrega os dados do perfume
       else if (modoEdicao && perfumeId) {
+        console.log('📝 Modo edição - carregando perfume:', perfumeId);
         await carregarPerfumeParaEdicao();
+      } else {
+        console.log('📝 Modo cadastro novo');
       }
       
     } catch (error) {
@@ -403,8 +412,9 @@ document.querySelectorAll('input[name="status"]').forEach(radio => {
   radio.dataset.checked = 'false'; // Inicia todos como false
 });
 
-// Mostrar campo de avaliação
+// Mostrar campo de avaliação E sistema de desmarcar
 document.querySelectorAll('input[name="status"]').forEach(radio => {
+  // ✅ CORREÇÃO: Evento de CHANGE
   radio.addEventListener('change', e => {
     const avaliacao = document.getElementById('avaliacao');
     
@@ -430,34 +440,53 @@ document.querySelectorAll('input[name="status"]').forEach(radio => {
     }
   });
   
-  // ✅ NOVO: Permite desmarcar clicando novamente
+  // ✅ CORREÇÃO: Evento de CLICK para desmarcar (SEPARADO do change)
+  let clickTimeout;
   radio.addEventListener('click', e => {
-    // Se já estava marcado, desmarca
-    if (e.target.dataset.checked === 'true') {
-      e.target.checked = false;
-      e.target.dataset.checked = 'false';
-      
-      // Esconde avaliação se estiver visível
-      const avaliacao = document.getElementById('avaliacao');
-      if (avaliacao.style.display !== 'none') {
-        avaliacao.classList.remove('show');
-        avaliacao.classList.add('fechando');
+    // Previne o comportamento padrão temporariamente
+    e.preventDefault();
+    
+    // Limpa timeout anterior
+    clearTimeout(clickTimeout);
+    
+    // Pequeno delay para processar
+    clickTimeout = setTimeout(() => {
+      // Se já estava marcado, desmarca
+      if (radio.dataset.checked === 'true') {
+        radio.checked = false;
+        radio.dataset.checked = 'false';
         
-        setTimeout(() => {
-          avaliacao.style.display = 'none';
-          avaliacao.classList.remove('fechando');
-        }, 600);
+        // Marca todos como false
+        document.querySelectorAll('input[name="status"]').forEach(r => {
+          r.dataset.checked = 'false';
+        });
+        
+        // Esconde avaliação se estiver visível
+        const avaliacao = document.getElementById('avaliacao');
+        if (avaliacao.style.display !== 'none') {
+          avaliacao.classList.remove('show');
+          avaliacao.classList.add('fechando');
+          
+          setTimeout(() => {
+            avaliacao.style.display = 'none';
+            avaliacao.classList.remove('fechando');
+          }, 600);
+        }
+      } else {
+        // Desmarca todos
+        document.querySelectorAll('input[name="status"]').forEach(r => {
+          r.checked = false;
+          r.dataset.checked = 'false';
+        });
+        
+        // Marca este
+        radio.checked = true;
+        radio.dataset.checked = 'true';
+        
+        // Dispara o evento change manualmente
+        radio.dispatchEvent(new Event('change'));
       }
-      
-      e.preventDefault();
-    } else {
-      // Marca todos como false
-      document.querySelectorAll('input[name="status"]').forEach(r => {
-        r.dataset.checked = 'false';
-      });
-      // Marca este como true
-      e.target.dataset.checked = 'true';
-    }
+    }, 10);
   });
 });
 
@@ -477,9 +506,7 @@ document.querySelectorAll('input[name="contratipo"]').forEach(radio => {
   });
 });
 
-// SISTEMA DE ESTRELAS - continua no próximo comentário...
-
-//Cria sistema de estrelas
+// Cria sistema de estrelas
 function criarEstrelas(container) {
   const total = 5;
   let valorTemporario = 0;
@@ -851,27 +878,38 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       invalidarCachePerfumes(usuarioAtual.uid);
       
       alert('✅ Perfume atualizado com sucesso!');
+      
+      // ✅ CORREÇÃO: Se estava editando e voltou de cadastrar original, limpa flags
+      sessionStorage.removeItem('cadastrandoPerfumeOriginal');
+      sessionStorage.removeItem('ultimoPerfumeCadastrado');
+      sessionStorage.removeItem('dadosContratipoTemp');
+      
       window.location.href = `../perfumes/perfume.html?id=${perfumeId}`;
       
     } else {
       const id = await salvarPerfume(perfumeData, usuarioAtual.uid);
       
-      // ✅ NOVO: Se estava cadastrando perfume original, salva o ID
-      if (sessionStorage.getItem('cadastrandoPerfumeOriginal') === 'true') {
+      // ✅ CORREÇÃO: Se estava cadastrando perfume original, salva o ID mas NÃO volta ainda
+      const estaCadastrandoOriginal = sessionStorage.getItem('cadastrandoPerfumeOriginal') === 'true';
+      
+      if (estaCadastrandoOriginal) {
         sessionStorage.setItem('ultimoPerfumeCadastrado', id);
+        console.log('✅ Perfume original cadastrado:', id);
       }
       
       invalidarCachePerfumes(usuarioAtual.uid);
       
       alert('✅ Perfume salvo com sucesso!');
       
-      // ✅ Se estava cadastrando perfume original, volta para o contratipo
-      if (sessionStorage.getItem('cadastrandoPerfumeOriginal') === 'true') {
+      // ✅ CORREÇÃO: Se estava cadastrando perfume original, volta para o contratipo
+      if (estaCadastrandoOriginal) {
         window.location.href = 'form-add-perf.html';
       } else {
+        // Se é cadastro normal, vai para o perfil
         window.location.href = '../perfil/perfil.html';
       }
     }
+    
     
   } catch (error) {
     console.error('❌ Erro ao salvar:', error);

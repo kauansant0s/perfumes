@@ -1,5 +1,3 @@
-ainda n da pra desmarcar, mas agr consigo criar um perfume sem marcar nada
-qnd eu vou adicionar um perfume a partir do campo do contratipo, ele duplica o perfume contratipo e eu fico com dois iguais
 qnd clica em editar perfil, vai pra página de criar conta, mas com os dados já carregados
 ver se da pra colocar o link do lugar mais barato
 criar página das marcas
