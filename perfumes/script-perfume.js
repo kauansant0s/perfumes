@@ -184,9 +184,17 @@ async function renderizarPerfume() {
     renderizarReview();
 }
 
-// ✅ FUNÇÃO CORRIGIDA: gerarDescricao com link clicável para perfume original
+// ✅ FUNÇÃO CORRIGIDA: gerarDescricao com gênero
 async function gerarDescricao() {
-    let descricao = `A fragrância ${perfumeData.nome} de ${perfumeData.marca} é um cheiro majoritariamente `;
+    let descricao = 'A fragrância ';
+    
+    // ✅ NOVO: Adiciona gênero no início se existir
+    if (perfumeData.caracteristicas?.genero) {
+        const generoTexto = obterTextoGenero(perfumeData.caracteristicas.genero);
+        descricao += `${perfumeData.nome} de ${perfumeData.marca} é um cheiro ${generoTexto} majoritariamente `;
+    } else {
+        descricao += `${perfumeData.nome} de ${perfumeData.marca} é um cheiro majoritariamente `;
+    }
     
     // Pega os 2 primeiros acordes
     if (perfumeData.acordes && perfumeData.acordes.length > 0) {
@@ -200,7 +208,7 @@ async function gerarDescricao() {
     
     descricao += '.';
     
-    // Longevidade e Projeção
+    // ✅ Longevidade e Projeção (só se foram avaliados)
     if (perfumeData.avaliacoes) {
         const fixacao = perfumeData.avaliacoes.fixacao || 0;
         const projecao = perfumeData.avaliacoes.projecao || 0;
@@ -228,16 +236,14 @@ async function gerarDescricao() {
         descricao += ` Assinado pelo perfumista ${perfumeData.perfumista}.`;
     }
     
-    // ✅ CORREÇÃO: Contratipo com DOIS links clicáveis separados
+    // ✅ Contratipo com DOIS links clicáveis separados
     if (perfumeData.contratipo && perfumeData.contratipo.eh && perfumeData.contratipo.perfumeOriginal) {
         const perfumeOriginalId = perfumeData.contratipo.perfumeOriginal;
         
         try {
-            // Busca os dados do perfume original
             const perfumeOriginal = await buscarPerfumePorId(perfumeOriginalId);
             
             if (perfumeOriginal) {
-                // ✅ Cria HTML com DOIS links separados: nome do perfume + marca
                 const descricaoElement = document.getElementById('descricao-perfume');
                 
                 const linkPerfume = `<a href="../perfumes/perfume.html?id=${perfumeOriginalId}" style="color: #C06060; text-decoration: none; font-weight: 600; cursor: pointer;" onmouseenter="this.style.textDecoration='underline'" onmouseleave="this.style.textDecoration='none'">${perfumeOriginal.nome}</a>`;
@@ -245,16 +251,26 @@ async function gerarDescricao() {
                 const linkMarca = `<a href="../marca/marca.html?nome=${encodeURIComponent(perfumeOriginal.marca)}" style="color: #C06060; text-decoration: none; font-weight: 600; cursor: pointer;" onmouseenter="this.style.textDecoration='underline'" onmouseleave="this.style.textDecoration='none'">${perfumeOriginal.marca}</a>`;
                 
                 descricaoElement.innerHTML = descricao + ` É um cheiro inspirado em fragrâncias como ${linkPerfume} de ${linkMarca}.`;
-                return; // Retorna aqui para não executar o textContent abaixo
+                return;
             }
         } catch (error) {
             console.error('Erro ao buscar perfume original:', error);
-            // Se der erro, continua sem o link
         }
     }
     
-    // Se não é contratipo ou deu erro, usa textContent normal
     document.getElementById('descricao-perfume').textContent = descricao;
+}
+
+// ✅ NOVA FUNÇÃO: Converte valor do gênero para texto
+function obterTextoGenero(genero) {
+    const textos = {
+        'masculino': 'masculino',
+        'um-pouco-masculino': 'levemente masculino',
+        'compartilhavel': 'compartilhável',
+        'um-pouco-feminino': 'levemente feminino',
+        'feminino': 'feminino'
+    };
+    return textos[genero] || '';
 }
 
 function classificarNota(nota) {

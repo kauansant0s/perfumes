@@ -62,72 +62,84 @@
           </small>
         </div>
 
-        <!-- Avaliação -->
-        <div id="avaliacao" style="display:none;">
-          <div class="avaliacao-estrelas">
-            <h3>Avaliação</h3>
+        <!-- Substitua a div#avaliacao inteira por este código -->
 
-            <div class="linha-avaliacao">
-              <label>Cheiro:</label>
-              <div class="estrelas" data-id="cheiro"></div>
-            </div>
+    <!-- Avaliação - SEMPRE VISÍVEL -->
+    <div id="avaliacao" style="display:block !important;">
+      <div class="avaliacao-estrelas">
+        <h3>Avaliação</h3>
 
-            <div class="linha-avaliacao">
-              <label>Projeção:</label>
-              <div class="estrelas" data-id="projecao"></div>
-            </div>
+        <div class="linha-avaliacao">
+          <label>Cheiro:</label>
+          <div class="estrelas" data-id="cheiro"></div>
+        </div>
 
-            <div class="linha-avaliacao">
-              <label>Fixação:</label>
-              <div class="estrelas" data-id="fixacao"></div>
-            </div>
+        <div class="linha-avaliacao">
+          <label>Projeção:</label>
+          <div class="estrelas" data-id="projecao"></div>
+        </div>
 
-            <div class="linha-avaliacao">
-              <label>Versatilidade:</label>
-              <div class="estrelas" data-id="versatilidade"></div>
-            </div>
+        <div class="linha-avaliacao">
+          <label>Fixação:</label>
+          <div class="estrelas" data-id="fixacao"></div>
+        </div>
 
-            <p class="media">Média: <span id="media">0</span></p>
+        <div class="linha-avaliacao">
+          <label>Versatilidade:</label>
+          <div class="estrelas" data-id="versatilidade"></div>
+        </div>
+
+        <p class="media">Média: <span id="media">0</span></p>
+      </div>
+
+      <hr>
+
+      <div class="avaliacao-sliders">
+        <div class="slider-container">
+          <label>Clima:</label>
+          <div class="slider-wrapper">
+            <span class="slider-label-left">Frio</span>
+            <input type="range" min="0" max="100" value="50" class="slider slider-clima" data-avaliado="false">
+            <span class="slider-label-right">Calor</span>
           </div>
+        </div>
 
-          <hr>
+        <div class="slider-container">
+          <label>Ambiente:</label>
+          <div class="slider-wrapper">
+            <span class="slider-label-left">Informal</span>
+            <input type="range" min="0" max="100" value="50" class="slider slider-ambiente" data-avaliado="false">
+            <span class="slider-label-right">Formal</span>
+          </div>
+        </div>
 
-          <div class="avaliacao-sliders">
-            <div class="slider-container">
-              <label>Clima:</label>
-              <div class="slider-wrapper">
-                <span class="slider-label-left">Frio</span>
-                <input type="range" min="0" max="100" value="50" class="slider slider-clima">
-                <span class="slider-label-right">Calor</span>
-              </div>
-            </div>
+        <!-- ✅ NOVO: Botões de Gênero -->
+        <div class="genero-container">
+          <label>Gênero:</label>
+          <div class="genero-buttons">
+            <input type="radio" id="genero-masc" name="genero" value="masculino">
+            <label for="genero-masc" class="genero-btn">Masc.</label>
+            
+            <input type="radio" id="genero-um-pouco-masc" name="genero" value="um-pouco-masculino">
+            <label for="genero-um-pouco-masc" class="genero-btn">Um pouco masc.</label>
+            
+            <input type="radio" id="genero-compartilhavel" name="genero" value="compartilhavel">
+            <label for="genero-compartilhavel" class="genero-btn">Compartilhável</label>
+            
+            <input type="radio" id="genero-um-pouco-fem" name="genero" value="um-pouco-feminino">
+            <label for="genero-um-pouco-fem" class="genero-btn">Um pouco fem.</label>
+            
+            <input type="radio" id="genero-fem" name="genero" value="feminino">
+            <label for="genero-fem" class="genero-btn">Fem.</label>
+          </div>
+        </div>
 
-            <div class="slider-container">
-              <label>Ambiente:</label>
-              <div class="slider-wrapper">
-                <span class="slider-label-left">Informal</span>
-                <input type="range" min="0" max="100" value="50" class="slider slider-ambiente">
-                <span class="slider-label-right">Formal</span>
-              </div>
-            </div>
-
-            <div class="slider-container">
-              <label>Gênero:</label>
-              <div class="slider-wrapper">
-                <span class="slider-label-left">Masc.</span>
-                <input type="range" min="0" max="100" value="50" class="slider slider-genero">
-                <span class="slider-label-right">Fem.</span>
-              </div>
-            </div>
-
-            <div class="slider-container">
-              <label>Hora:</label>
-              <div class="slider-wrapper">
-                <span class="slider-label-left">Noite</span>
-                <input type="range" min="0" max="100" value="50" class="slider slider-hora">
-                <span class="slider-label-right">Dia</span>
-              </div>
-            </div>
+        <div class="slider-container">
+          <label>Hora:</label>
+          <div class="slider-wrapper">
+            <span class="slider-label-left">Noite</span>
+            <input type="range" min="0" max="100" value="50" class="slider slider-hora" data-avaliado="false">
+            <span class="slider-label-right">Dia</span>
           </div>
         </div>
       </div>

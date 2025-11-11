@@ -728,7 +728,7 @@ async function carregarPerfumeParaEdicao() {
       }, 100);
     }, 500);
     
-    // Avaliações
+    // ✅ Avaliações (sempre carrega se existir)
     if (perfume.avaliacoes) {
       console.log('✅ Carregando avaliações:', perfume.avaliacoes);
       
@@ -752,12 +752,34 @@ async function carregarPerfumeParaEdicao() {
       });
     }
     
-    // Características (sliders)
+    // ✅ Características (carrega os que existem e marca como avaliados)
     if (perfume.caracteristicas) {
-      document.querySelector('.slider-clima').value = perfume.caracteristicas.clima || 50;
-      document.querySelector('.slider-ambiente').value = perfume.caracteristicas.ambiente || 50;
-      document.querySelector('.slider-genero').value = perfume.caracteristicas.genero || 50;
-      document.querySelector('.slider-hora').value = perfume.caracteristicas.hora || 50;
+      if (perfume.caracteristicas.clima !== undefined) {
+        const sliderClima = document.querySelector('.slider-clima');
+        sliderClima.value = perfume.caracteristicas.clima;
+        sliderClima.dataset.avaliado = 'true';
+      }
+      
+      if (perfume.caracteristicas.ambiente !== undefined) {
+        const sliderAmbiente = document.querySelector('.slider-ambiente');
+        sliderAmbiente.value = perfume.caracteristicas.ambiente;
+        sliderAmbiente.dataset.avaliado = 'true';
+      }
+      
+      if (perfume.caracteristicas.hora !== undefined) {
+        const sliderHora = document.querySelector('.slider-hora');
+        sliderHora.value = perfume.caracteristicas.hora;
+        sliderHora.dataset.avaliado = 'true';
+      }
+      
+      // ✅ NOVO: Gênero (botões)
+      if (perfume.caracteristicas.genero) {
+        const generoRadio = document.querySelector(`input[name="genero"][value="${perfume.caracteristicas.genero}"]`);
+        if (generoRadio) {
+          generoRadio.checked = true;
+          generoRadio.dataset.checked = 'true';
+        }
+      }
     }
     
     console.log('✅ Perfume carregado para edição!');
@@ -840,22 +862,52 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       }
     }
     
-    // Avaliações e características
-    if (perfumeData.status === 'tenho' || perfumeData.status === 'ja-tive') {
+    // ✅ NOVO: Avaliações sempre podem ser salvas (independente do status)
+    // Verifica se alguma estrela foi preenchida
+    const avaliacoes = {
+      cheiro: parseFloat(document.querySelector('[data-id="cheiro"]').dataset.valor || 0),
+      projecao: parseFloat(document.querySelector('[data-id="projecao"]').dataset.valor || 0),
+      fixacao: parseFloat(document.querySelector('[data-id="fixacao"]').dataset.valor || 0),
+      versatilidade: parseFloat(document.querySelector('[data-id="versatilidade"]').dataset.valor || 0)
+    };
+    
+    const temAvaliacaoEstrelas = Object.values(avaliacoes).some(v => v > 0);
+    
+    if (temAvaliacaoEstrelas) {
+      const media = Object.values(avaliacoes).reduce((a, b) => a + b, 0) / 4;
       perfumeData.avaliacoes = {
-        cheiro: parseFloat(document.querySelector('[data-id="cheiro"]').dataset.valor || 0),
-        projecao: parseFloat(document.querySelector('[data-id="projecao"]').dataset.valor || 0),
-        fixacao: parseFloat(document.querySelector('[data-id="fixacao"]').dataset.valor || 0),
-        versatilidade: parseFloat(document.querySelector('[data-id="versatilidade"]').dataset.valor || 0),
-        media: parseFloat(document.getElementById('media').textContent || 0)
+        ...avaliacoes,
+        media: parseFloat(media.toFixed(1))
       };
-      
-      perfumeData.caracteristicas = {
-        clima: document.querySelector('.slider-clima').value,
-        ambiente: document.querySelector('.slider-ambiente').value,
-        genero: document.querySelector('.slider-genero').value,
-        hora: document.querySelector('.slider-hora').value
-      };
+    }
+    
+    // ✅ NOVO: Características - salva apenas os avaliados
+    const caracteristicas = {};
+    
+    const sliderClima = document.querySelector('.slider-clima');
+    if (sliderClima.dataset.avaliado === 'true') {
+      caracteristicas.clima = sliderClima.value;
+    }
+    
+    const sliderAmbiente = document.querySelector('.slider-ambiente');
+    if (sliderAmbiente.dataset.avaliado === 'true') {
+      caracteristicas.ambiente = sliderAmbiente.value;
+    }
+    
+    const sliderHora = document.querySelector('.slider-hora');
+    if (sliderHora.dataset.avaliado === 'true') {
+      caracteristicas.hora = sliderHora.value;
+    }
+    
+    // ✅ NOVO: Gênero (botões)
+    const generoSelecionado = document.querySelector('input[name="genero"]:checked');
+    if (generoSelecionado) {
+      caracteristicas.genero = generoSelecionado.value;
+    }
+    
+    // Só salva características se pelo menos uma foi avaliada
+    if (Object.keys(caracteristicas).length > 0) {
+      perfumeData.caracteristicas = caracteristicas;
     }
     
     // Upload de foto
