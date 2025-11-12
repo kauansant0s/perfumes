@@ -394,11 +394,25 @@ function renderizarAvaliacoes() {
         avaliacoesDetalhadas.classList.toggle('expandido');
     });
     
+    // ✅ NOVO: Ordem reorganizada - Gênero primeiro
     if (perfumeData.caracteristicas) {
-        document.querySelector('.slider-clima').value = perfumeData.caracteristicas.clima || 50;
-        document.querySelector('.slider-ambiente').value = perfumeData.caracteristicas.ambiente || 50;
-        document.querySelector('.slider-genero').value = perfumeData.caracteristicas.genero || 50;
-        document.querySelector('.slider-hora').value = perfumeData.caracteristicas.hora || 50;
+        // Gênero (se existir, renderiza primeiro visualmente)
+        if (perfumeData.caracteristicas.genero) {
+            const generoTexto = obterTextoGenero(perfumeData.caracteristicas.genero);
+            // Renderizar indicador de gênero (opcional - pode adicionar visual depois)
+        }
+        
+        if (perfumeData.caracteristicas.clima !== undefined) {
+            document.querySelector('.slider-clima').value = perfumeData.caracteristicas.clima;
+        }
+        
+        if (perfumeData.caracteristicas.ambiente !== undefined) {
+            document.querySelector('.slider-ambiente').value = perfumeData.caracteristicas.ambiente;
+        }
+        
+        if (perfumeData.caracteristicas.hora !== undefined) {
+            document.querySelector('.slider-hora').value = perfumeData.caracteristicas.hora;
+        }
     }
 }
 

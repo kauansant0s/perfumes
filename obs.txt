@@ -1,5 +1,5 @@
-arrumar o design da pagina do perfume, deixar o genero primeiro e fazer botões como os tres de tenho, ja tive e quero ter, só que menores.
-colocar o formulário lado a lado com o coisa de avaliações e arrumar o design dos botões e colocar primeiro tbm
+deixar o design exatamente igual o do figma
+fazer o formulário ficar lado a lado com as avaliações
 adicionar as outras avaliações na descrição do perfume
 qnd clica em editar perfil, vai pra página de criar conta, mas com os dados já carregados
 ver se da pra colocar o link do lugar mais barato

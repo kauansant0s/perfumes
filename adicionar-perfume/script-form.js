@@ -881,8 +881,14 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       };
     }
     
-    // ✅ NOVO: Características - salva apenas os avaliados
+    // ✅ Características - salva apenas os avaliados
     const caracteristicas = {};
+    
+    // ✅ NOVO: Gênero primeiro (ordem mudou)
+    const generoValue = document.getElementById('genero-value');
+    if (generoValue.dataset.avaliado === 'true' && generoValue.value) {
+      caracteristicas.genero = generoValue.value;
+    }
     
     const sliderClima = document.querySelector('.slider-clima');
     if (sliderClima.dataset.avaliado === 'true') {
@@ -897,12 +903,6 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
     const sliderHora = document.querySelector('.slider-hora');
     if (sliderHora.dataset.avaliado === 'true') {
       caracteristicas.hora = sliderHora.value;
-    }
-    
-    // ✅ NOVO: Gênero (botões)
-    const generoSelecionado = document.querySelector('input[name="genero"]:checked');
-    if (generoSelecionado) {
-      caracteristicas.genero = generoSelecionado.value;
     }
     
     // Só salva características se pelo menos uma foi avaliada
