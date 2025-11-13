@@ -56,13 +56,12 @@
           <input type="radio" id="quero-ter" name="status" value="quero-ter">
           <label for="quero-ter">Quero ter</label>
           
-          <!-- ✅ NOVO: Dica visual (opcional) -->
           <small style="display: block; margin-top: 8px; color: #666; font-size: 11px; font-style: italic;">
             💡 Clique novamente para desmarcar
           </small>
         </div>
 
-            <!-- Avaliação - SEMPRE VISÍVEL -->
+        <!-- Avaliação - SEMPRE VISÍVEL -->
         <div id="avaliacao" style="display:block !important;">
           <div class="avaliacao-estrelas">
             <h3>Avaliação</h3>
@@ -93,30 +92,30 @@
           <hr>
 
           <div class="avaliacao-sliders">
-            <!-- ✅ NOVO: Gênero como primeiro slider -->
+            <!-- ✅ NOVO: Slider de Gênero Customizado -->
             <div class="slider-container">
               <label>Gênero:</label>
-              <div class="slider-genero-custom">
+              <div class="genero-slider-wrapper">
                 <div class="genero-linha"></div>
                 <div class="genero-pontos">
-                  <div class="genero-ponto" data-value="masculino" data-label="Masc.">
-                    <div class="ponto"></div>
+                  <div class="genero-ponto" data-value="masculino">
+                    <div class="ponto-circulo"></div>
                     <span class="ponto-label">Masc.</span>
                   </div>
-                  <div class="genero-ponto" data-value="um-pouco-masculino" data-label="Um pouco masc.">
-                    <div class="ponto"></div>
-                    <span class="ponto-label">Um pouco<br>masc.</span>
+                  <div class="genero-ponto" data-value="um-pouco-masculino">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
                   </div>
-                  <div class="genero-ponto" data-value="compartilhavel" data-label="Compartilhável">
-                    <div class="ponto"></div>
+                  <div class="genero-ponto" data-value="compartilhavel">
+                    <div class="ponto-circulo"></div>
                     <span class="ponto-label">Compartilhável</span>
                   </div>
-                  <div class="genero-ponto" data-value="um-pouco-feminino" data-label="Um pouco fem.">
-                    <div class="ponto"></div>
-                    <span class="ponto-label">Um pouco<br>fem.</span>
+                  <div class="genero-ponto" data-value="um-pouco-feminino">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
                   </div>
-                  <div class="genero-ponto" data-value="feminino" data-label="Fem.">
-                    <div class="ponto"></div>
+                  <div class="genero-ponto" data-value="feminino">
+                    <div class="ponto-circulo"></div>
                     <span class="ponto-label">Fem.</span>
                   </div>
                 </div>
@@ -152,6 +151,8 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
 
     <!-- Parte do formulário -->
     <form id="info-perfume">

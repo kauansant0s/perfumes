@@ -267,11 +267,6 @@ select{
   background: #D9D9D9;
 }
 
-/* Slider Gênero - Cinza */
-.slider-genero {
-  background: #D9D9D9;
-}
-
 /* Slider Hora - Cinza */
 .slider-hora {
   background: #D9D9D9;
@@ -324,6 +319,90 @@ select{
     text-align: center;
 }
 
+/* ✅ NOVO: Slider de Gênero Customizado */
+.genero-slider-wrapper {
+  position: relative;
+  width: 100%;
+  padding: 3px 0 3px;
+}
+
+.genero-linha {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: #D9D9D9;
+  border-radius: 3px;
+  transform: translateY(-50%);
+}
+
+.genero-pontos {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.genero-ponto {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.ponto-circulo {
+  width: 18px;
+  height: 18px;
+  background: #D9D9D9;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.genero-ponto:hover .ponto-circulo {
+  transform: scale(1.2);
+  background: #B0B0B0;
+}
+
+.genero-ponto.ativo .ponto-circulo {
+  background: #5BA3D0;
+  border-color: #fff;
+  transform: scale(1.3);
+  box-shadow: 0 3px 8px rgba(91, 163, 208, 0.4);
+}
+
+.ponto-label {
+  position: absolute;
+  top: 30px;
+  font-size: 11px;
+  color: #000;
+  font-weight: 500;
+  white-space: nowrap;
+  user-select: none;
+  text-align: center;
+}
+
+/* Espaçamento especial para labels */
+.genero-ponto:nth-child(1) .ponto-label {
+  left: -5px;
+}
+
+.genero-ponto:nth-child(5) .ponto-label {
+  right: -5px;
+  left: auto;
+}
+
+/* Label do meio (Compartilhável) */
+.genero-ponto:nth-child(3) .ponto-label {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 /* Campo Contratipo */
 .campo-contratipo {
     margin-bottom: 10px;
@@ -374,8 +453,6 @@ select{
   color: #000 !important;
 }
 
-
-
 /* Correção: texto preto no select de perfume original */
 .ts-wrapper .ts-control {
     color: #000 !important;
@@ -409,7 +486,7 @@ select{
     background: #e8e8e8;
 }
 
-/* ✅ NOVO: Feedback visual para radios de status */
+/* Feedback visual para radios de status */
 #opcoesfoto label {
     cursor: pointer;
     transition: all 0.2s ease;
