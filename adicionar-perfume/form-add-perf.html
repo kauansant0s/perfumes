@@ -61,8 +61,8 @@
           </small>
         </div>
 
-        <!-- Avaliação - SEMPRE VISÍVEL -->
-        <div id="avaliacao" style="display:block !important;">
+        <!-- Avaliação - SEMPRE VISÍVEL, SEM ANIMAÇÕES -->
+        <div id="avaliacao">
           <div class="avaliacao-estrelas">
             <h3>Avaliação</h3>
 
@@ -92,7 +92,7 @@
           <hr>
 
           <div class="avaliacao-sliders">
-            <!-- ✅ NOVO: Slider de Gênero Customizado -->
+            <!-- ✅ Slider de Gênero Customizado -->
             <div class="slider-container">
               <label>Gênero:</label>
               <div class="genero-slider-wrapper">
@@ -123,31 +123,97 @@
               <input type="hidden" id="genero-value" data-avaliado="false">
             </div>
 
+            <!-- ✅ Slider de Clima Customizado -->
             <div class="slider-container">
               <label>Clima:</label>
-              <div class="slider-wrapper">
-                <span class="slider-label-left">Frio</span>
-                <input type="range" min="0" max="100" value="50" class="slider slider-clima" data-avaliado="false">
-                <span class="slider-label-right">Calor</span>
+              <div class="clima-slider-wrapper">
+                <div class="clima-linha"></div>
+                <div class="clima-pontos">
+                  <div class="clima-ponto" data-value="0">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label">Frio</span>
+                  </div>
+                  <div class="clima-ponto" data-value="25">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="clima-ponto" data-value="50">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="clima-ponto" data-value="75">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="clima-ponto" data-value="100">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label">Calor</span>
+                  </div>
+                </div>
               </div>
+              <input type="hidden" id="clima-value" data-avaliado="false">
             </div>
 
+            <!-- ✅ Slider de Ambiente Customizado -->
             <div class="slider-container">
               <label>Ambiente:</label>
-              <div class="slider-wrapper">
-                <span class="slider-label-left">Informal</span>
-                <input type="range" min="0" max="100" value="50" class="slider slider-ambiente" data-avaliado="false">
-                <span class="slider-label-right">Formal</span>
+              <div class="ambiente-slider-wrapper">
+                <div class="ambiente-linha"></div>
+                <div class="ambiente-pontos">
+                  <div class="ambiente-ponto" data-value="0">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label">Informal</span>
+                  </div>
+                  <div class="ambiente-ponto" data-value="25">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="ambiente-ponto" data-value="50">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="ambiente-ponto" data-value="75">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="ambiente-ponto" data-value="100">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label">Formal</span>
+                  </div>
+                </div>
               </div>
+              <input type="hidden" id="ambiente-value" data-avaliado="false">
             </div>
 
+            <!-- ✅ Slider de Hora Customizado -->
             <div class="slider-container">
               <label>Hora:</label>
-              <div class="slider-wrapper">
-                <span class="slider-label-left">Noite</span>
-                <input type="range" min="0" max="100" value="50" class="slider slider-hora" data-avaliado="false">
-                <span class="slider-label-right">Dia</span>
+              <div class="hora-slider-wrapper">
+                <div class="hora-linha"></div>
+                <div class="hora-pontos">
+                  <div class="hora-ponto" data-value="0">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label">Noite</span>
+                  </div>
+                  <div class="hora-ponto" data-value="25">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="hora-ponto" data-value="50">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="hora-ponto" data-value="75">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="hora-ponto" data-value="100">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label">Dia</span>
+                  </div>
+                </div>
               </div>
+              <input type="hidden" id="hora-value" data-avaliado="false">
             </div>
           </div>
         </div>

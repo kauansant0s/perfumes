@@ -1,24 +1,19 @@
-deixar os outros slider igual o do genero
-quando a pagina do formulário abre, a parte de avaliação está lá, mas quando clico na opção quero ter ela some, e dps se eu tirar a opção ela tbm some, então, deixar a parte de avaliação inalterada quando clicar nas opções, e tbm tirar as animações dessa parte, pois elas ainda estão lá quando eu clico nas opções, acho que pode ser um desperdicio de linhas no codigo.
-mostrar que fiz essas alterações (/* ✅ NOVO: Slider de Gênero Customizado */
-.genero-slider-wrapper {
-  position: relative;
-  width: 100%;
-  padding: 3px 0 3px;
-}
-
-.genero-linha {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 10px;
-  background: #D9D9D9;
-  border-radius: 3px;
-  transform: translateY(-50%);
-})
 adicionar as outras avaliações na descrição do perfume
 qnd clica em editar perfil, vai pra página de criar conta, mas com os dados já carregados
 ver se da pra colocar o link do lugar mais barato
-
 criar página das marcas
+
+
+nova descrição dos perfumes
+A fragrância [nome do perfume] de [marca do perfume] é um cheiro [gênero], [momento do dia] majoritariamente [primeiro acorde] e [segundo acorde]. Geralmente sendo usado em ambientes [nível de formalidade] e em temperaturas [nível de temperatura]. Com longevidade [nível de longevidade] e projeção [nível de projeção]. É um cheiro inspirado em fragrâncias como [nome do original] de [marca do original].
+
+aqui são as descrições
+gênero = [masculino], [um pouco mais masculino], [compartilhável], [um pouco mais feminino], [feminino]
+
+momento do dia = [noturno], [um pouco mais noturno], [para qualquer hora do dia], [um pouco mais diurno], [diurno]
+
+nível de formalidade = [informais], [um pouco mais informais], [formais e informais], [um pouco mais formais], [formais]
+
+nível de temperatura = [frias], [levemente mais frias], [quentes e frias], [levemente mais quentes], [quentes]
+
+longevidade e projeção continuam a mesma coisa, porém, quando as duas forem medianas, a palavra "mediana" se transforma em "medianas", para ficar gramaticalmente correto.

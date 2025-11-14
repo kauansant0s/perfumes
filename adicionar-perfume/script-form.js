@@ -218,6 +218,9 @@ function salvarDadosAtuaisEIrParaOriginal() {
   window.location.href = 'form-add-perf.html';
 }
 
+// CONTINUA NA PARTE 2...
+
+// CONTINUAÇÃO DO script-form.js - PARTE 2 (SEM ANIMAÇÕES)
 
 async function restaurarDadosContratipo(perfumeOriginalId, dadosJSON) {
   try {
@@ -244,7 +247,7 @@ async function restaurarDadosContratipo(perfumeOriginalId, dadosJSON) {
       const statusRadio = document.querySelector(`input[value="${dados.status}"]`);
       if (statusRadio) {
         statusRadio.checked = true;
-        statusRadio.dispatchEvent(new Event('change'));
+        statusRadio.dataset.checked = 'true';
       }
     }
     
@@ -272,40 +275,55 @@ async function restaurarDadosContratipo(perfumeOriginalId, dadosJSON) {
       console.log('✅ Notas e acordes restaurados');
     }, 1000);
     
-    if (dados.status === 'tenho' || dados.status === 'ja-tive') {
-      setTimeout(() => {
-        document.querySelector('[data-id="cheiro"]').dataset.valor = dados.avaliacaoCheiro;
-        document.querySelector('[data-id="projecao"]').dataset.valor = dados.avaliacaoProjecao;
-        document.querySelector('[data-id="fixacao"]').dataset.valor = dados.avaliacaoFixacao;
-        document.querySelector('[data-id="versatilidade"]').dataset.valor = dados.avaliacaoVersatilidade;
-        
-        document.querySelectorAll('.estrelas').forEach(container => {
-          const svgAntigo = container.querySelector('svg');
-          const spanAntigo = container.querySelector('.nota-valor');
-          if (svgAntigo) svgAntigo.remove();
-          if (spanAntigo) spanAntigo.remove();
-          
-          criarEstrelas(container);
-        });
-        
-        atualizarMedia();
-      }, 1200);
+    setTimeout(() => {
+      document.querySelector('[data-id="cheiro"]').dataset.valor = dados.avaliacaoCheiro;
+      document.querySelector('[data-id="projecao"]').dataset.valor = dados.avaliacaoProjecao;
+      document.querySelector('[data-id="fixacao"]').dataset.valor = dados.avaliacaoFixacao;
+      document.querySelector('[data-id="versatilidade"]').dataset.valor = dados.avaliacaoVersatilidade;
       
-      document.querySelector('.slider-clima').value = dados.clima;
-      document.querySelector('.slider-ambiente').value = dados.ambiente;
-      document.querySelector('.slider-hora').value = dados.hora;
-      
-      // ✅ Restaura gênero customizado
-      if (dados.genero) {
-        const generoInput = document.getElementById('genero-value');
-        generoInput.value = dados.genero;
-        generoInput.dataset.avaliado = 'true';
+      document.querySelectorAll('.estrelas').forEach(container => {
+        const svgAntigo = container.querySelector('svg');
+        const spanAntigo = container.querySelector('.nota-valor');
+        if (svgAntigo) svgAntigo.remove();
+        if (spanAntigo) spanAntigo.remove();
         
-        const pontoCerto = document.querySelector(`.genero-ponto[data-value="${dados.genero}"]`);
-        if (pontoCerto) {
-          pontoCerto.classList.add('ativo');
-        }
-      }
+        criarEstrelas(container);
+      });
+      
+      atualizarMedia();
+    }, 1200);
+    
+    // ✅ Restaura sliders customizados
+    if (dados.clima) {
+      const climaInput = document.getElementById('clima-value');
+      climaInput.value = dados.clima;
+      climaInput.dataset.avaliado = 'true';
+      const pontoCerto = document.querySelector(`.clima-ponto[data-value="${dados.clima}"]`);
+      if (pontoCerto) pontoCerto.classList.add('ativo');
+    }
+    
+    if (dados.ambiente) {
+      const ambienteInput = document.getElementById('ambiente-value');
+      ambienteInput.value = dados.ambiente;
+      ambienteInput.dataset.avaliado = 'true';
+      const pontoCerto = document.querySelector(`.ambiente-ponto[data-value="${dados.ambiente}"]`);
+      if (pontoCerto) pontoCerto.classList.add('ativo');
+    }
+    
+    if (dados.hora) {
+      const horaInput = document.getElementById('hora-value');
+      horaInput.value = dados.hora;
+      horaInput.dataset.avaliado = 'true';
+      const pontoCerto = document.querySelector(`.hora-ponto[data-value="${dados.hora}"]`);
+      if (pontoCerto) pontoCerto.classList.add('ativo');
+    }
+    
+    if (dados.genero) {
+      const generoInput = document.getElementById('genero-value');
+      generoInput.value = dados.genero;
+      generoInput.dataset.avaliado = 'true';
+      const pontoCerto = document.querySelector(`.genero-ponto[data-value="${dados.genero}"]`);
+      if (pontoCerto) pontoCerto.classList.add('ativo');
     }
     
     if (dados.modoEdicao && dados.perfumeId) {
@@ -366,36 +384,12 @@ ids.forEach((id) => {
   console.log(`✅ TomSelect criado para ${id}`);
 });
 
+// ✅ Sistema de status (SEM ANIMAÇÕES)
 document.querySelectorAll('input[name="status"]').forEach(radio => {
   radio.dataset.checked = 'false';
 });
 
 document.querySelectorAll('input[name="status"]').forEach(radio => {
-  radio.addEventListener('change', e => {
-    const avaliacao = document.getElementById('avaliacao');
-    
-    if (e.target.value === 'tenho' || e.target.value === 'ja-tive') {
-      avaliacao.style.display = 'block';
-      avaliacao.classList.remove('fechando');
-      avaliacao.classList.add('animando');
-      
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          avaliacao.classList.remove('animando');
-          avaliacao.classList.add('show');
-        });
-      });
-    } else {
-      avaliacao.classList.remove('show');
-      avaliacao.classList.add('fechando');
-      
-      setTimeout(() => {
-        avaliacao.style.display = 'none';
-        avaliacao.classList.remove('fechando');
-      }, 600);
-    }
-  });
-  
   let clickTimeout;
   radio.addEventListener('click', e => {
     e.preventDefault();
@@ -410,17 +404,6 @@ document.querySelectorAll('input[name="status"]').forEach(radio => {
         document.querySelectorAll('input[name="status"]').forEach(r => {
           r.dataset.checked = 'false';
         });
-        
-        const avaliacao = document.getElementById('avaliacao');
-        if (avaliacao.style.display !== 'none') {
-          avaliacao.classList.remove('show');
-          avaliacao.classList.add('fechando');
-          
-          setTimeout(() => {
-            avaliacao.style.display = 'none';
-            avaliacao.classList.remove('fechando');
-          }, 600);
-        }
       } else {
         document.querySelectorAll('input[name="status"]').forEach(r => {
           r.checked = false;
@@ -429,8 +412,6 @@ document.querySelectorAll('input[name="status"]').forEach(radio => {
         
         radio.checked = true;
         radio.dataset.checked = 'true';
-        
-        radio.dispatchEvent(new Event('change'));
       }
     }, 10);
   });
@@ -451,30 +432,38 @@ document.querySelectorAll('input[name="contratipo"]').forEach(radio => {
   });
 });
 
-// ✅ SLIDER DE GÊNERO CUSTOMIZADO
-document.querySelectorAll('.genero-ponto').forEach(ponto => {
-  ponto.addEventListener('click', function() {
-    const value = this.dataset.value;
-    const generoInput = document.getElementById('genero-value');
-    
-    // Remove ativo de todos
-    document.querySelectorAll('.genero-ponto').forEach(p => p.classList.remove('ativo'));
-    
-    // Verifica se já estava ativo (para desmarcar)
-    if (generoInput.value === value) {
-      // Desmarca
-      generoInput.value = '';
-      generoInput.dataset.avaliado = 'false';
-      console.log('🔵 Gênero desmarcado');
-    } else {
-      // Marca este ponto
-      this.classList.add('ativo');
-      generoInput.value = value;
-      generoInput.dataset.avaliado = 'true';
-      console.log('🔵 Gênero selecionado:', value);
-    }
+// ✅ TODOS OS SLIDERS CUSTOMIZADOS
+function criarSliderCustomizado(tipoSlider, inputId) {
+  document.querySelectorAll(`.${tipoSlider}-ponto`).forEach(ponto => {
+    ponto.addEventListener('click', function() {
+      const value = this.dataset.value;
+      const input = document.getElementById(inputId);
+      
+      // Remove ativo de todos
+      document.querySelectorAll(`.${tipoSlider}-ponto`).forEach(p => p.classList.remove('ativo'));
+      
+      // Verifica se já estava ativo (para desmarcar)
+      if (input.value === value) {
+        // Desmarca
+        input.value = '';
+        input.dataset.avaliado = 'false';
+        console.log(`🔵 ${tipoSlider} desmarcado`);
+      } else {
+        // Marca este ponto
+        this.classList.add('ativo');
+        input.value = value;
+        input.dataset.avaliado = 'true';
+        console.log(`🔵 ${tipoSlider} selecionado:`, value);
+      }
+    });
   });
-});
+}
+
+// Inicializa todos os sliders
+criarSliderCustomizado('genero', 'genero-value');
+criarSliderCustomizado('clima', 'clima-value');
+criarSliderCustomizado('ambiente', 'ambiente-value');
+criarSliderCustomizado('hora', 'hora-value');
 
 function criarEstrelas(container) {
   const total = 5;
@@ -582,6 +571,10 @@ function atualizarMedia() {
   }
 }
 
+// CONTINUA NA PARTE 3...
+
+// CONTINUAÇÃO DO script-form.js - PARTE 3 FINAL
+
 async function carregarPerfumeParaEdicao() {
   try {
     console.log('📡 Carregando perfume para edição:', perfumeId);
@@ -617,7 +610,6 @@ async function carregarPerfumeParaEdicao() {
       if (statusRadio) {
         statusRadio.checked = true;
         statusRadio.dataset.checked = 'true';
-        statusRadio.dispatchEvent(new Event('change'));
       }
     } else {
       document.querySelectorAll('input[name="status"]').forEach(r => {
@@ -705,31 +697,45 @@ async function carregarPerfumeParaEdicao() {
       });
     }
     
+    // ✅ Carrega todos os sliders customizados
     if (perfume.caracteristicas) {
       if (perfume.caracteristicas.clima !== undefined) {
-        const sliderClima = document.querySelector('.slider-clima');
-        sliderClima.value = perfume.caracteristicas.clima;
-        sliderClima.dataset.avaliado = 'true';
+        const climaInput = document.getElementById('clima-value');
+        climaInput.value = perfume.caracteristicas.clima;
+        climaInput.dataset.avaliado = 'true';
+        const pontoCerto = document.querySelector(`.clima-ponto[data-value="${perfume.caracteristicas.clima}"]`);
+        if (pontoCerto) {
+          pontoCerto.classList.add('ativo');
+          console.log('✅ Clima carregado:', perfume.caracteristicas.clima);
+        }
       }
       
       if (perfume.caracteristicas.ambiente !== undefined) {
-        const sliderAmbiente = document.querySelector('.slider-ambiente');
-        sliderAmbiente.value = perfume.caracteristicas.ambiente;
-        sliderAmbiente.dataset.avaliado = 'true';
+        const ambienteInput = document.getElementById('ambiente-value');
+        ambienteInput.value = perfume.caracteristicas.ambiente;
+        ambienteInput.dataset.avaliado = 'true';
+        const pontoCerto = document.querySelector(`.ambiente-ponto[data-value="${perfume.caracteristicas.ambiente}"]`);
+        if (pontoCerto) {
+          pontoCerto.classList.add('ativo');
+          console.log('✅ Ambiente carregado:', perfume.caracteristicas.ambiente);
+        }
       }
       
       if (perfume.caracteristicas.hora !== undefined) {
-        const sliderHora = document.querySelector('.slider-hora');
-        sliderHora.value = perfume.caracteristicas.hora;
-        sliderHora.dataset.avaliado = 'true';
+        const horaInput = document.getElementById('hora-value');
+        horaInput.value = perfume.caracteristicas.hora;
+        horaInput.dataset.avaliado = 'true';
+        const pontoCerto = document.querySelector(`.hora-ponto[data-value="${perfume.caracteristicas.hora}"]`);
+        if (pontoCerto) {
+          pontoCerto.classList.add('ativo');
+          console.log('✅ Hora carregado:', perfume.caracteristicas.hora);
+        }
       }
       
-      // ✅ Carrega gênero customizado
       if (perfume.caracteristicas.genero) {
         const generoInput = document.getElementById('genero-value');
         generoInput.value = perfume.caracteristicas.genero;
         generoInput.dataset.avaliado = 'true';
-        
         const pontoCerto = document.querySelector(`.genero-ponto[data-value="${perfume.caracteristicas.genero}"]`);
         if (pontoCerto) {
           pontoCerto.classList.add('ativo');
@@ -833,7 +839,7 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       };
     }
     
-    // ✅ Características com gênero customizado
+    // ✅ Características com TODOS os sliders customizados
     const caracteristicas = {};
     
     const generoValue = document.getElementById('genero-value');
@@ -842,19 +848,22 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       console.log('✅ Salvando gênero:', generoValue.value);
     }
     
-    const sliderClima = document.querySelector('.slider-clima');
-    if (sliderClima.dataset.avaliado === 'true') {
-      caracteristicas.clima = sliderClima.value;
+    const climaValue = document.getElementById('clima-value');
+    if (climaValue.dataset.avaliado === 'true' && climaValue.value) {
+      caracteristicas.clima = climaValue.value;
+      console.log('✅ Salvando clima:', climaValue.value);
     }
     
-    const sliderAmbiente = document.querySelector('.slider-ambiente');
-    if (sliderAmbiente.dataset.avaliado === 'true') {
-      caracteristicas.ambiente = sliderAmbiente.value;
+    const ambienteValue = document.getElementById('ambiente-value');
+    if (ambienteValue.dataset.avaliado === 'true' && ambienteValue.value) {
+      caracteristicas.ambiente = ambienteValue.value;
+      console.log('✅ Salvando ambiente:', ambienteValue.value);
     }
     
-    const sliderHora = document.querySelector('.slider-hora');
-    if (sliderHora.dataset.avaliado === 'true') {
-      caracteristicas.hora = sliderHora.value;
+    const horaValue = document.getElementById('hora-value');
+    if (horaValue.dataset.avaliado === 'true' && horaValue.value) {
+      caracteristicas.hora = horaValue.value;
+      console.log('✅ Salvando hora:', horaValue.value);
     }
     
     if (Object.keys(caracteristicas).length > 0) {
