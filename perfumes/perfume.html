@@ -75,7 +75,7 @@
                     <span class="nota-media">0,00</span>
                 </div>
                 
-                <!-- Avaliações Detalhadas - Inicialmente ocultas -->
+                <!-- Avaliações Detalhadas -->
                 <div class="avaliacoes-detalhadas" id="avaliacoes-detalhadas">
                     <div class="avaliacao-item">
                         <span class="avaliacao-label">Cheiro:</span>
@@ -107,40 +107,110 @@
                     </div>
                 </div>
                 
+                <!-- ✅ Sliders Customizados -->
                 <div class="sliders-info">
-                    <div class="slider-container">
-                        <label>Clima:</label>
-                        <div class="slider-wrapper">
-                            <span class="slider-label-left">Frio</span>
-                            <input type="range" min="0" max="100" value="50" class="slider slider-clima" disabled>
-                            <span class="slider-label-right">Calor</span>
-                        </div>
-                    </div>
-                    
-                    <div class="slider-container">
-                        <label>Ambiente:</label>
-                        <div class="slider-wrapper">
-                            <span class="slider-label-left">Informal</span>
-                            <input type="range" min="0" max="100" value="50" class="slider slider-ambiente" disabled>
-                            <span class="slider-label-right">Formal</span>
-                        </div>
-                    </div>
-                    
-                    <div class="slider-container">
+                    <div class="slider-container" id="container-genero" style="display: none;">
                         <label>Gênero:</label>
-                        <div class="slider-wrapper">
-                            <span class="slider-label-left">Masc.</span>
-                            <input type="range" min="0" max="100" value="50" class="slider slider-genero" disabled>
-                            <span class="slider-label-right">Fem.</span>
+                        <div class="genero-slider-wrapper">
+                            <div class="genero-linha"></div>
+                            <div class="genero-pontos">
+                                <div class="genero-ponto" data-value="masculino">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Masc.</span>
+                                </div>
+                                <div class="genero-ponto" data-value="um-pouco-masculino">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="genero-ponto" data-value="compartilhavel">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Compartilhável</span>
+                                </div>
+                                <div class="genero-ponto" data-value="um-pouco-feminino">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="genero-ponto" data-value="feminino">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Fem.</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="slider-container">
+
+                    <div class="slider-container" id="container-clima" style="display: none;">
+                        <label>Clima:</label>
+                        <div class="clima-slider-wrapper">
+                            <div class="clima-linha"></div>
+                            <div class="clima-pontos">
+                                <div class="clima-ponto" data-value="0">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Frio</span>
+                                </div>
+                                <div class="clima-ponto" data-value="25">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="clima-ponto" data-value="50">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="clima-ponto" data-value="75">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="clima-ponto" data-value="100">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Calor</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slider-container" id="container-ambiente" style="display: none;">
+                        <label>Ambiente:</label>
+                        <div class="ambiente-slider-wrapper">
+                            <div class="ambiente-linha"></div>
+                            <div class="ambiente-pontos">
+                                <div class="ambiente-ponto" data-value="0">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Informal</span>
+                                </div>
+                                <div class="ambiente-ponto" data-value="25">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="ambiente-ponto" data-value="50">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="ambiente-ponto" data-value="75">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="ambiente-ponto" data-value="100">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Formal</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slider-container" id="container-hora" style="display: none;">
                         <label>Hora:</label>
-                        <div class="slider-wrapper">
-                            <span class="slider-label-left">Noite</span>
-                            <input type="range" min="0" max="100" value="50" class="slider slider-hora" disabled>
-                            <span class="slider-label-right">Dia</span>
+                        <div class="hora-slider-wrapper">
+                            <div class="hora-linha"></div>
+                            <div class="hora-pontos">
+                                <div class="hora-ponto" data-value="0">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Noite</span>
+                                </div>
+                                <div class="hora-ponto" data-value="25">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="hora-ponto" data-value="50">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="hora-ponto" data-value="75">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="hora-ponto" data-value="100">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Dia</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -201,7 +271,7 @@
                             <img src="" alt="Foto do usuário" class="review-avatar">
                             <span class="review-autor">Nome do usuário</span>
                         </div>
-                        <p class="review-texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce placerat lorem laoreet, lobortis dolor ut, bibendum velit. Suspendisse rhoncus, elit, vel maximus bibendum, nunc ante sodales nulla, nec aliquam urna massa ipsum, nec volutpat nulla hendrerit a. Fusce non libero eu tellus facilisis pretium at.</p>
+                        <p class="review-texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
                     </div>
                 </div>
             </div>

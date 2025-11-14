@@ -1,4 +1,4 @@
-// perfumes/script-perfume.js - CORRIGIDO
+// perfumes/script-perfume.js - ATUALIZADO COM SLIDERS E NOVA DESCRIÇÃO
 import { auth, db, buscarPerfumePorId } from '../adicionar-perfume/firebase-config.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -10,39 +10,18 @@ let usuarioAtual = null;
 
 // Cores dos acordes
 const coresAcordes = {
-    'Abaunilhado': '#D4A574',
-    'Aldeídico': '#E8E8E8',
-    'Alcoólico': '#C9B8A8',
-    'Almiscarado': '#F5E6D3',
-    'Ambarado': '#FFB347',
-    'Amadeirado': '#8B4513',
-    'Animálico': '#654321',
-    'Aquático': '#4DD0E1',
-    'Aromático': '#7CB342',
-    'Atalcado': '#E8D5C4',
-    'Chipre': '#556B2F',
-    'Cítrico': '#FFA500',
-    'Couro': '#654321',
-    'Cremoso': '#FFF8DC',
-    'Doce': '#FFB6C1',
-    'Esfumaçado': '#696969',
-    'Especiado': '#CD853F',
-    'Floral': '#FF69B4',
-    'Floral Amarelo': '#FFD700',
-    'Floral Branco': '#F5F5F5',
-    'Fougère': '#2E8B57',
-    'Fresco': '#87CEEB',
-    'Frutado': '#FF6347',
-    'Gourmand': '#D2691E',
-    'Lactônico': '#FFF5EE',
-    'Metálico': '#B0B0B0',
-    'Oriental': '#8B0000',
-    'Terroso': '#8B7355',
-    'Tropical': '#FF8C00',
-    'Verde': '#228B22'
+    'Abaunilhado': '#D4A574', 'Aldeídico': '#E8E8E8', 'Alcoólico': '#C9B8A8',
+    'Almiscarado': '#F5E6D3', 'Ambarado': '#FFB347', 'Amadeirado': '#8B4513',
+    'Animálico': '#654321', 'Aquático': '#4DD0E1', 'Aromático': '#7CB342',
+    'Atalcado': '#E8D5C4', 'Chipre': '#556B2F', 'Cítrico': '#FFA500',
+    'Couro': '#654321', 'Cremoso': '#FFF8DC', 'Doce': '#FFB6C1',
+    'Esfumaçado': '#696969', 'Especiado': '#CD853F', 'Floral': '#FF69B4',
+    'Floral Amarelo': '#FFD700', 'Floral Branco': '#F5F5F5', 'Fougère': '#2E8B57',
+    'Fresco': '#87CEEB', 'Frutado': '#FF6347', 'Gourmand': '#D2691E',
+    'Lactônico': '#FFF5EE', 'Metálico': '#B0B0B0', 'Oriental': '#8B0000',
+    'Terroso': '#8B7355', 'Tropical': '#FF8C00', 'Verde': '#228B22'
 };
 
-// Pega o ID do perfume da URL
 const urlParams = new URLSearchParams(window.location.search);
 const perfumeId = urlParams.get('id');
 
@@ -51,7 +30,7 @@ if (!perfumeId) {
     window.location.href = '../perfil/perfil.html';
 }
 
-// Menu hamburger
+// Menu
 const menuHamburger = document.getElementById('menu-toggle');
 const menuLateral = document.getElementById('menu-lateral');
 const menuOverlay = document.getElementById('menu-overlay');
@@ -72,7 +51,6 @@ if (menuOverlay) {
   });
 }
 
-// Verifica autenticação
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         usuarioAtual = user;
@@ -83,7 +61,6 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// Configurar menu lateral
 function configurarMenu(user) {
     const menuFoto = document.getElementById('menu-foto');
     const menuNome = document.getElementById('menu-nome');
@@ -142,14 +119,12 @@ async function renderizarPerfume() {
         fotoElement.alt = perfumeData.nome;
     }
     
-    // Nome
+    // Nome e Marca
     document.getElementById('nome-perfume').textContent = perfumeData.nome;
     
-    // ✅ CORREÇÃO: Marca com link clicável
     const linkMarca = document.getElementById('link-marca');
     linkMarca.textContent = perfumeData.marca;
     linkMarca.href = `../marca/marca.html?nome=${encodeURIComponent(perfumeData.marca)}`;
-    linkMarca.style.cursor = 'pointer';
     linkMarca.style.textDecoration = 'none';
     linkMarca.addEventListener('mouseenter', () => {
         linkMarca.style.textDecoration = 'underline';
@@ -158,16 +133,13 @@ async function renderizarPerfume() {
         linkMarca.style.textDecoration = 'none';
     });
     
-    // Descrição gerada
+    // ✅ Nova descrição
     await gerarDescricao();
     
-    // Acordes
     renderizarAcordes();
-    
-    // Notas
     renderizarNotas();
     
-    // Avaliações (se tiver)
+    // ✅ Mostra avaliações se tiver (independente do status)
     if (perfumeData.avaliacoes) {
         renderizarAvaliacoes();
     }
@@ -180,23 +152,34 @@ async function renderizarPerfume() {
         }
     }
     
-    // Review
     renderizarReview();
 }
 
-// ✅ FUNÇÃO CORRIGIDA: gerarDescricao com gênero
+// ✅ NOVA FUNÇÃO: Gerar descrição completa
 async function gerarDescricao() {
-    let descricao = 'A fragrância ';
+    let descricao = `A fragrância ${perfumeData.nome} de ${perfumeData.marca} é um cheiro `;
     
-    // ✅ NOVO: Adiciona gênero no início se existir
+    const partes = [];
+    
+    // Gênero
     if (perfumeData.caracteristicas?.genero) {
         const generoTexto = obterTextoGenero(perfumeData.caracteristicas.genero);
-        descricao += `${perfumeData.nome} de ${perfumeData.marca} é um cheiro ${generoTexto} majoritariamente `;
-    } else {
-        descricao += `${perfumeData.nome} de ${perfumeData.marca} é um cheiro majoritariamente `;
+        partes.push(generoTexto);
     }
     
-    // Pega os 2 primeiros acordes
+    // Hora
+    if (perfumeData.caracteristicas?.hora !== undefined) {
+        const horaTexto = obterTextoHora(perfumeData.caracteristicas.hora);
+        partes.push(horaTexto);
+    }
+    
+    // Junta gênero e hora com vírgula
+    if (partes.length > 0) {
+        descricao += partes.join(', ') + ', ';
+    }
+    
+    // Acordes
+    descricao += 'majoritariamente ';
     if (perfumeData.acordes && perfumeData.acordes.length > 0) {
         const primeirosAcordes = perfumeData.acordes.slice(0, 2);
         if (primeirosAcordes.length === 1) {
@@ -205,10 +188,26 @@ async function gerarDescricao() {
             descricao += `${primeirosAcordes[0].toLowerCase()} e ${primeirosAcordes[1].toLowerCase()}`;
         }
     }
+    descricao += '. ';
     
-    descricao += '.';
+    // Ambiente e Temperatura
+    const partesUso = [];
     
-    // ✅ Longevidade e Projeção (só se foram avaliados)
+    if (perfumeData.caracteristicas?.ambiente !== undefined) {
+        const ambienteTexto = obterTextoAmbiente(perfumeData.caracteristicas.ambiente);
+        partesUso.push(`ambientes ${ambienteTexto}`);
+    }
+    
+    if (perfumeData.caracteristicas?.clima !== undefined) {
+        const climaTexto = obterTextoClima(perfumeData.caracteristicas.clima);
+        partesUso.push(`temperaturas ${climaTexto}`);
+    }
+    
+    if (partesUso.length > 0) {
+        descricao += 'Geralmente sendo usado em ' + partesUso.join(' e em ') + '. ';
+    }
+    
+    // Longevidade e Projeção
     if (perfumeData.avaliacoes) {
         const fixacao = perfumeData.avaliacoes.fixacao || 0;
         const projecao = perfumeData.avaliacoes.projecao || 0;
@@ -219,24 +218,28 @@ async function gerarDescricao() {
             
             if (fixacao > 0 && projecao > 0) {
                 if (longevidade === projecaoClass) {
-                    descricao += ` Com longevidade e projeção ${longevidade}.`;
+                    // Ajusta plural para mediana e alta
+                    const textoPlural = (longevidade === 'mediana' || longevidade === 'alta') 
+                        ? longevidade + 's' 
+                        : longevidade;
+                    descricao += `Com longevidade e projeção ${textoPlural}. `;
                 } else {
-                    descricao += ` Com longevidade ${longevidade} e projeção ${projecaoClass}.`;
+                    descricao += `Com longevidade ${longevidade} e projeção ${projecaoClass}. `;
                 }
             } else if (fixacao > 0) {
-                descricao += ` Com longevidade ${longevidade}.`;
+                descricao += `Com longevidade ${longevidade}. `;
             } else if (projecao > 0) {
-                descricao += ` Com projeção ${projecaoClass}.`;
+                descricao += `Com projeção ${projecaoClass}. `;
             }
         }
     }
     
     // Perfumista
     if (perfumeData.perfumista && perfumeData.perfumista.trim() !== '') {
-        descricao += ` Assinado pelo perfumista ${perfumeData.perfumista}.`;
+        descricao += `Assinado por ${perfumeData.perfumista}. `;
     }
     
-    // ✅ Contratipo com DOIS links clicáveis separados
+    // Contratipo
     if (perfumeData.contratipo && perfumeData.contratipo.eh && perfumeData.contratipo.perfumeOriginal) {
         const perfumeOriginalId = perfumeData.contratipo.perfumeOriginal;
         
@@ -250,7 +253,7 @@ async function gerarDescricao() {
                 
                 const linkMarca = `<a href="../marca/marca.html?nome=${encodeURIComponent(perfumeOriginal.marca)}" style="color: #C06060; text-decoration: none; font-weight: 600; cursor: pointer;" onmouseenter="this.style.textDecoration='underline'" onmouseleave="this.style.textDecoration='none'">${perfumeOriginal.marca}</a>`;
                 
-                descricaoElement.innerHTML = descricao + ` É um cheiro inspirado em fragrâncias como ${linkPerfume} de ${linkMarca}.`;
+                descricaoElement.innerHTML = descricao + `É um cheiro inspirado em fragrâncias como ${linkPerfume} de ${linkMarca}.`;
                 return;
             }
         } catch (error) {
@@ -261,21 +264,53 @@ async function gerarDescricao() {
     document.getElementById('descricao-perfume').textContent = descricao;
 }
 
-// ✅ NOVA FUNÇÃO: Converte valor do gênero para texto
+// ✅ Funções de conversão de valores para texto
 function obterTextoGenero(genero) {
     const textos = {
         'masculino': 'masculino',
-        'um-pouco-masculino': 'levemente masculino',
+        'um-pouco-masculino': 'um pouco mais masculino',
         'compartilhavel': 'compartilhável',
-        'um-pouco-feminino': 'levemente feminino',
+        'um-pouco-feminino': 'um pouco mais feminino',
         'feminino': 'feminino'
     };
     return textos[genero] || '';
 }
 
+function obterTextoHora(hora) {
+    const textos = {
+        '0': 'noturno',
+        '25': 'um pouco mais noturno',
+        '50': 'para qualquer hora do dia',
+        '75': 'um pouco mais diurno',
+        '100': 'diurno'
+    };
+    return textos[hora] || '';
+}
+
+function obterTextoAmbiente(ambiente) {
+    const textos = {
+        '0': 'informais',
+        '25': 'um pouco mais informais',
+        '50': 'formais e informais',
+        '75': 'um pouco mais formais',
+        '100': 'formais'
+    };
+    return textos[ambiente] || '';
+}
+
+function obterTextoClima(clima) {
+    const textos = {
+        '0': 'frias',
+        '25': 'levemente mais frias',
+        '50': 'quentes e frias',
+        '75': 'levemente mais quentes',
+        '100': 'quentes'
+    };
+    return textos[clima] || '';
+}
+
 function classificarNota(nota) {
     if (nota === 0) return 'não avaliada';
-    
     if (nota >= 5) return 'altíssima';
     if (nota >= 4) return 'alta';
     if (nota >= 3.5) return 'acima da média';
@@ -343,6 +378,7 @@ function renderizarListaNotas(elemento, notas) {
     }
 }
 
+// ✅ Renderiza avaliações com sliders customizados
 function renderizarAvaliacoes() {
     const container = document.getElementById('avaliacoes-container');
     container.style.display = 'block';
@@ -394,24 +430,35 @@ function renderizarAvaliacoes() {
         avaliacoesDetalhadas.classList.toggle('expandido');
     });
     
-    // ✅ NOVO: Ordem reorganizada - Gênero primeiro
+    // ✅ Renderiza sliders customizados
     if (perfumeData.caracteristicas) {
-        // Gênero (se existir, renderiza primeiro visualmente)
         if (perfumeData.caracteristicas.genero) {
-            const generoTexto = obterTextoGenero(perfumeData.caracteristicas.genero);
-            // Renderizar indicador de gênero (opcional - pode adicionar visual depois)
+            mostrarSliderCustomizado('genero', perfumeData.caracteristicas.genero);
         }
         
         if (perfumeData.caracteristicas.clima !== undefined) {
-            document.querySelector('.slider-clima').value = perfumeData.caracteristicas.clima;
+            mostrarSliderCustomizado('clima', perfumeData.caracteristicas.clima);
         }
         
         if (perfumeData.caracteristicas.ambiente !== undefined) {
-            document.querySelector('.slider-ambiente').value = perfumeData.caracteristicas.ambiente;
+            mostrarSliderCustomizado('ambiente', perfumeData.caracteristicas.ambiente);
         }
         
         if (perfumeData.caracteristicas.hora !== undefined) {
-            document.querySelector('.slider-hora').value = perfumeData.caracteristicas.hora;
+            mostrarSliderCustomizado('hora', perfumeData.caracteristicas.hora);
+        }
+    }
+}
+
+// ✅ Mostra slider customizado com valor selecionado
+function mostrarSliderCustomizado(tipo, valor) {
+    const container = document.getElementById(`container-${tipo}`);
+    if (container) {
+        container.style.display = 'block';
+        
+        const ponto = container.querySelector(`.${tipo}-ponto[data-value="${valor}"]`);
+        if (ponto) {
+            ponto.classList.add('ativo');
         }
     }
 }
@@ -470,7 +517,6 @@ function renderizarReview() {
     }
 }
 
-// Botão de editar perfume
 document.getElementById('btn-editar')?.addEventListener('click', () => {
     if (perfumeId) {
         window.location.href = `../adicionar-perfume/form-add-perf.html?id=${perfumeId}&editar=true`;

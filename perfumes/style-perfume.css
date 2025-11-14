@@ -187,7 +187,7 @@ body {
     color: #000;
 }
 
-/* Avaliações Detalhadas - Inicialmente ocultas */
+/* Avaliações Detalhadas */
 .avaliacoes-detalhadas {
     max-height: 0;
     overflow: hidden;
@@ -243,11 +243,13 @@ body {
     text-align: right;
 }
 
-/* Sliders */
+/* ✅ Sliders Customizados */
 .sliders-info {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 30px;
+    margin-top: -10px;
+    margin-bottom: 10px;
 }
 
 .slider-container {
@@ -262,60 +264,105 @@ body {
     color: #000;
 }
 
-.slider-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.slider-label-left,
-.slider-label-right {
-    font-size: 11px;
-    color: #000;
-    min-width: 40px;
-    text-align: center;
-}
-
-.slider {
-    -webkit-appearance: none;
-    appearance: none;
+/* Estilos compartilhados para todos os sliders */
+.genero-slider-wrapper,
+.clima-slider-wrapper,
+.ambiente-slider-wrapper,
+.hora-slider-wrapper {
+    position: relative;
     width: 100%;
-    height: 8px;
-    border-radius: 5px;
-    outline: none;
-    margin: 0;
+    padding: 3px 0 3px;
+    pointer-events: none;
 }
 
-.slider-clima {
+.genero-linha,
+.clima-linha,
+.ambiente-linha,
+.hora-linha {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: #D9D9D9;
+    border-radius: 3px;
+    transform: translateY(-50%);
+}
+
+.clima-linha {
     background: linear-gradient(to right, #5BA3D0 0%, #E89560 100%);
 }
 
-.slider-ambiente,
-.slider-genero,
-.slider-hora {
+.genero-pontos,
+.clima-pontos,
+.ambiente-pontos,
+.hora-pontos {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.genero-ponto,
+.clima-ponto,
+.ambiente-ponto,
+.hora-ponto {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+}
+
+.ponto-circulo {
+    width: 18px;
+    height: 18px;
     background: #D9D9D9;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
+.genero-ponto.ativo .ponto-circulo,
+.clima-ponto.ativo .ponto-circulo,
+.ambiente-ponto.ativo .ponto-circulo,
+.hora-ponto.ativo .ponto-circulo {
     background: #5BA3D0;
-    cursor: pointer;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    border-color: #fff;
+    transform: scale(1.3);
+    box-shadow: 0 3px 8px rgba(91, 163, 208, 0.4);
 }
 
-.slider::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #5BA3D0;
-    cursor: pointer;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+.ponto-label {
+    position: absolute;
+    top: 30px;
+    font-size: 11px;
+    color: #000;
+    font-weight: 500;
+    white-space: nowrap;
+    user-select: none;
+    text-align: center;
+}
+
+.genero-ponto:nth-child(1) .ponto-label,
+.clima-ponto:nth-child(1) .ponto-label,
+.ambiente-ponto:nth-child(1) .ponto-label,
+.hora-ponto:nth-child(1) .ponto-label {
+    left: -5px;
+}
+
+.genero-ponto:nth-child(5) .ponto-label,
+.clima-ponto:nth-child(5) .ponto-label,
+.ambiente-ponto:nth-child(5) .ponto-label,
+.hora-ponto:nth-child(5) .ponto-label {
+    right: -5px;
+    left: auto;
+}
+
+.genero-ponto:nth-child(3) .ponto-label {
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 /* Status Buttons */
@@ -350,7 +397,7 @@ body {
     background: rgba(192, 96, 96, 0.2);
 }
 
-/* Botão Editar - Ícone */
+/* Botão Editar */
 .btn-editar-icon {
     width: 48px;
     height: 48px;
@@ -455,6 +502,11 @@ hr {
     border-radius: 16px;
     font-size: 14px;
     color: #333;
+}
+
+.sem-info {
+    color: #666;
+    font-style: italic;
 }
 
 /* Reviews */
