@@ -2,6 +2,7 @@ adicionar as outras avaliações na descrição do perfume
 qnd clica em editar perfil, vai pra página de criar conta, mas com os dados já carregados
 ver se da pra colocar o link do lugar mais barato
 criar página das marcas
+deixar o design dos slider da página de perfumes igual o do formulário
 
 
 nova descrição dos perfumes
@@ -15,5 +16,6 @@ momento do dia = [noturno], [um pouco mais noturno], [para qualquer hora do dia]
 nível de formalidade = [informais], [um pouco mais informais], [formais e informais], [um pouco mais formais], [formais]
 
 nível de temperatura = [frias], [levemente mais frias], [quentes e frias], [levemente mais quentes], [quentes]
+
 
 longevidade e projeção continuam a mesma coisa, porém, quando as duas forem medianas, a palavra "mediana" se transforma em "medianas", para ficar gramaticalmente correto.
