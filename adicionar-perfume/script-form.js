@@ -1,4 +1,4 @@
-// script-form.js - COMPLETO COM SLIDER DE GÊNERO CUSTOMIZADO
+// script-form.js - COMPLETO COM SLIDER DE GÊNERO CUSTOMIZADO E AUTO-PREENCHIMENTO
 import { auth, salvarPerfume, uploadFotoPerfume, buscarMarcas, salvarMarca, buscarPerfumes, invalidarCachePerfumes, buscarPerfumePorId } from './firebase-config.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -77,7 +77,7 @@ const acordes = [
   'Amadeirado', 'Animálico', 'Aquático', 'Aromático', 'Atalcado',
   'Chipre', 'Cítrico', 'Couro', 'Cremoso', 'Doce', 'Esfumaçado',
   'Especiado', 'Floral', 'Floral Amarelo', 'Floral Branco', 'Fougère',
-  'Fresco', 'Frutado', 'Gourmand', 'Lactônico',
+  'Fresco', 'Frutado', 'Gourmand', 'Herbal', 'Lactônico',
   'Metálico', 'Oriental', 'Terroso', 'Tropical', 'Verde'
 ];
 
@@ -129,6 +129,93 @@ function inicializarAutocompleteMarca() {
   console.log(`✅ Autocomplete inicializado com ${marcasDisponiveis.length} marcas`);
 }
 
+/**
+ * ✅ NOVO: Puxa notas e acordes do perfume original se ainda não foram preenchidos
+ */
+async function puxarNotasEAcordesDoOriginal(perfumeOriginalId) {
+  try {
+    console.log('🔄 Verificando se deve puxar dados do original...', perfumeOriginalId);
+    
+    // Verifica se já tem notas ou acordes preenchidos
+    const topoInstance = document.getElementById('topo').tomselect;
+    const coracaoInstance = document.getElementById('coracao').tomselect;
+    const fundoInstance = document.getElementById('fundo').tomselect;
+    const acordesInstance = document.getElementById('acordes').tomselect;
+    
+    const temNotasTopo = topoInstance.getValue().length > 0;
+    const temNotasCoracao = coracaoInstance.getValue().length > 0;
+    const temNotasFundo = fundoInstance.getValue().length > 0;
+    const temAcordes = acordesInstance.getValue().length > 0;
+    
+    console.log('📊 Status dos campos:', {
+      temNotasTopo,
+      temNotasCoracao,
+      temNotasFundo,
+      temAcordes
+    });
+    
+    // Se já tiver algo preenchido, não faz nada
+    if (temNotasTopo || temNotasCoracao || temNotasFundo || temAcordes) {
+      console.log('ℹ️ Notas/acordes já preenchidos, não puxando do original');
+      return;
+    }
+    
+    console.log('📡 Buscando dados do perfume original...');
+    
+    // Busca o perfume original
+    const perfumeOriginal = await buscarPerfumePorId(perfumeOriginalId);
+    
+    if (!perfumeOriginal) {
+      console.log('❌ Perfume original não encontrado');
+      return;
+    }
+    
+    console.log('✅ Perfume original encontrado:', perfumeOriginal.nome);
+    console.log('📋 Dados do perfume:', perfumeOriginal);
+    
+    let algumaCopiaFeita = false;
+    
+    // Puxa as notas
+    if (perfumeOriginal.notas) {
+      if (perfumeOriginal.notas.topo && perfumeOriginal.notas.topo.length > 0) {
+        topoInstance.setValue(perfumeOriginal.notas.topo);
+        console.log('✅ Notas de topo copiadas:', perfumeOriginal.notas.topo);
+        algumaCopiaFeita = true;
+      }
+      
+      if (perfumeOriginal.notas.coracao && perfumeOriginal.notas.coracao.length > 0) {
+        coracaoInstance.setValue(perfumeOriginal.notas.coracao);
+        console.log('✅ Notas de coração copiadas:', perfumeOriginal.notas.coracao);
+        algumaCopiaFeita = true;
+      }
+      
+      if (perfumeOriginal.notas.fundo && perfumeOriginal.notas.fundo.length > 0) {
+        fundoInstance.setValue(perfumeOriginal.notas.fundo);
+        console.log('✅ Notas de fundo copiadas:', perfumeOriginal.notas.fundo);
+        algumaCopiaFeita = true;
+      }
+    }
+    
+    // Puxa os acordes
+    if (perfumeOriginal.acordes && perfumeOriginal.acordes.length > 0) {
+      acordesInstance.setValue(perfumeOriginal.acordes);
+      console.log('✅ Acordes copiados:', perfumeOriginal.acordes);
+      algumaCopiaFeita = true;
+    }
+    
+    // Mostra mensagem para o usuário
+    if (algumaCopiaFeita) {
+      alert(`✅ Notas e acordes copiados de "${perfumeOriginal.nome}"!\n\nVocê pode editá-los se desejar.`);
+    } else {
+      console.log('ℹ️ Perfume original não possui notas ou acordes cadastrados');
+    }
+    
+  } catch (error) {
+    console.error('❌ Erro ao puxar dados do original:', error);
+    alert('Erro ao buscar dados do perfume original: ' + error.message);
+  }
+}
+
 async function inicializarSelectPerfumeOriginal() {
   try {
     const perfumes = await buscarPerfumes(usuarioAtual.uid, true);
@@ -160,9 +247,15 @@ async function inicializarSelectPerfumeOriginal() {
       plugins: [],
       dropdownParent: 'body',
       maxOptions: null,
-      onChange: function(value) {
+      onChange: async function(value) {
+        console.log('🔄 Perfume original selecionado:', value);
         if (value === '__CADASTRAR_NOVO__') {
           salvarDadosAtuaisEIrParaOriginal();
+        } else if (value && value !== '') {
+          // ✅ Pequeno delay para garantir que os TomSelects estejam prontos
+          setTimeout(async () => {
+            await puxarNotasEAcordesDoOriginal(value);
+          }, 300);
         }
       },
       render: {
@@ -204,10 +297,10 @@ function salvarDadosAtuaisEIrParaOriginal() {
     avaliacaoProjecao: document.querySelector('[data-id="projecao"]')?.dataset.valor || '0',
     avaliacaoFixacao: document.querySelector('[data-id="fixacao"]')?.dataset.valor || '0',
     avaliacaoVersatilidade: document.querySelector('[data-id="versatilidade"]')?.dataset.valor || '0',
-    clima: document.querySelector('.slider-clima')?.value || '50',
-    ambiente: document.querySelector('.slider-ambiente')?.value || '50',
+    clima: document.getElementById('clima-value')?.value || '',
+    ambiente: document.getElementById('ambiente-value')?.value || '',
     genero: document.getElementById('genero-value')?.value || '',
-    hora: document.querySelector('.slider-hora')?.value || '50',
+    hora: document.getElementById('hora-value')?.value || '',
     modoEdicao: modoEdicao,
     perfumeId: perfumeId
   };

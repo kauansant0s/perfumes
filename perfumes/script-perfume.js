@@ -18,8 +18,8 @@ const coresAcordes = {
     'Esfumaçado': '#696969', 'Especiado': '#CD853F', 'Floral': '#FF69B4',
     'Floral Amarelo': '#FFD700', 'Floral Branco': '#F5F5F5', 'Fougère': '#2E8B57',
     'Fresco': '#87CEEB', 'Frutado': '#FF6347', 'Gourmand': '#D2691E',
-    'Lactônico': '#FFF5EE', 'Metálico': '#B0B0B0', 'Oriental': '#8B0000',
-    'Terroso': '#8B7355', 'Tropical': '#FF8C00', 'Verde': '#228B22'
+    'Herbal': '#6B8E23', 'Lactônico': '#FFF5EE', 'Metálico': '#B0B0B0', 
+    'Oriental': '#8B0000', 'Terroso': '#8B7355', 'Tropical': '#FF8C00', 'Verde': '#228B22'
 };
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -175,7 +175,7 @@ async function gerarDescricao() {
     
     // Junta gênero e hora com vírgula
     if (partes.length > 0) {
-        descricao += partes.join(', ') + ', ';
+        descricao += partes.join(', ') + ' ';
     }
     
     // Acordes
@@ -236,7 +236,7 @@ async function gerarDescricao() {
     
     // Perfumista
     if (perfumeData.perfumista && perfumeData.perfumista.trim() !== '') {
-        descricao += `Assinado por ${perfumeData.perfumista}. `;
+        descricao += `Assinado pelo perfumista ${perfumeData.perfumista}. `;
     }
     
     // Contratipo

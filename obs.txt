@@ -1,5 +1,4 @@
 qnd clica em editar perfil, vai pra página de criar conta, mas com os dados já carregados
 ver se da pra colocar o link do lugar mais barato
-criar página das marcas
-atualizar o design dos perfumes em lista
-quando eu selecionar um perfume como contratipo, se não tiver nenhuma nota preenchida ainda, ele puxa as notas e acordes do original.
+na pagina de perfume, quando é "quero ter", não aparece os slider e estrelas embaixo
+finalizar criação da pagina de marcas, (fazer funcionar api para procurar logo e site oficial de cada marca)
