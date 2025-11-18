@@ -175,7 +175,7 @@ async function gerarDescricao() {
     
     // Junta gênero e hora com vírgula
     if (partes.length > 0) {
-        descricao += partes.join(', ') + ' ';
+        descricao += partes.join(', ') + ', ';
     }
     
     // Acordes

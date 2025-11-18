@@ -1085,3 +1085,12 @@ document.getElementById('btn-confirmar-url').addEventListener('click', () => {
     alert('Por favor, cole um link válido!');
   }
 });
+
+alert('✅ Perfume salvo com sucesso!');
+      
+      if (estaCadastrandoOriginal) {
+        window.location.href = 'form-add-perf.html';
+      } else {
+        // ✅ Verifica se é marca nova e se é admin
+        await verificarMarcaNovaEPerguntar(perfumeData.marca);
+      }
