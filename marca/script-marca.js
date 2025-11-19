@@ -377,7 +377,7 @@ function adicionarInfoExtra(marcaData) {
         infoElement.className = 'info-marca';
         infoElement.textContent = infoTexto.join(' • ');
         infoElement.style.fontSize = '16px';
-        infoElement.style.color = '#666';
+        infoElement.style.color = '#000000ff';
         infoElement.style.marginTop = '10px';
         
         header.insertBefore(infoElement, totalPerfumes);

@@ -218,3 +218,125 @@ export function sanitizarBusca(str) {
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
 }
+
+// utils.js - Adicione estas funções ao arquivo utils.js
+
+/**
+ * ✅ NOVO: Baixa imagem de URL e salva no Firebase Storage
+ * @param {string} imageUrl - URL da imagem externa
+ * @param {string} userId - ID do usuário
+ * @param {string} tipo - 'perfume' ou 'marca'
+ * @param {string} nome - Nome do perfume/marca (para o nome do arquivo)
+ * @returns {Promise<string>} URL da imagem no Firebase Storage
+ */
+export async function baixarESalvarImagem(imageUrl, userId, tipo = 'perfume', nome = '') {
+  try {
+    console.log('📥 Baixando imagem:', imageUrl);
+    
+    // 1. Baixa a imagem
+    const response = await fetch(imageUrl);
+    
+    if (!response.ok) {
+      throw new Error('Erro ao baixar imagem');
+    }
+    
+    // 2. Converte para Blob
+    const blob = await response.blob();
+    
+    // Valida tamanho (máx 5MB)
+    if (blob.size > 5 * 1024 * 1024) {
+      throw new Error('Imagem muito grande (máx 5MB)');
+    }
+    
+    // 3. Gera nome único para o arquivo
+    const timestamp = Date.now();
+    const extensao = obterExtensaoImagem(imageUrl, blob.type);
+    const nomeLimpo = nome.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
+    const nomeArquivo = `${nomeLimpo}_${timestamp}.${extensao}`;
+    
+    // 4. Faz upload para o Firebase Storage
+    const { getStorage, ref, uploadBytes, getDownloadURL } = await import(
+      "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js"
+    );
+    
+    const storage = getStorage();
+    const caminho = `${tipo}s/${userId}/${nomeArquivo}`;
+    const storageRef = ref(storage, caminho);
+    
+    console.log('📤 Fazendo upload para:', caminho);
+    
+    await uploadBytes(storageRef, blob);
+    const urlFirebase = await getDownloadURL(storageRef);
+    
+    console.log('✅ Imagem salva no Firebase:', urlFirebase);
+    
+    return urlFirebase;
+    
+  } catch (error) {
+    console.error('❌ Erro ao baixar/salvar imagem:', error);
+    throw error;
+  }
+}
+
+/**
+ * Obtém extensão da imagem
+ */
+function obterExtensaoImagem(url, mimeType) {
+  // Tenta pela URL primeiro
+  const urlMatch = url.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i);
+  if (urlMatch) {
+    return urlMatch[1].toLowerCase();
+  }
+  
+  // Tenta pelo MIME type
+  const mimeMap = {
+    'image/jpeg': 'jpg',
+    'image/jpg': 'jpg',
+    'image/png': 'png',
+    'image/gif': 'gif',
+    'image/webp': 'webp',
+    'image/svg+xml': 'svg'
+  };
+  
+  return mimeMap[mimeType] || 'jpg';
+}
+
+/**
+ * ✅ NOVO: Verifica se URL é externa (não do Firebase)
+ */
+export function isUrlExterna(url) {
+  if (!url) return false;
+  return !url.includes('firebasestorage.googleapis.com') && 
+         !url.includes('firebasestorage.app');
+}
+
+/**
+ * ✅ NOVO: Processa URL da foto - baixa se for externa
+ * @param {string} fotoUrl - URL da foto (pode ser externa ou do Firebase)
+ * @param {string} userId - ID do usuário
+ * @param {string} tipo - 'perfume' ou 'marca'
+ * @param {string} nome - Nome do item
+ * @returns {Promise<string>} URL final (Firebase)
+ */
+export async function processarFotoUrl(fotoUrl, userId, tipo, nome) {
+  if (!fotoUrl || fotoUrl.trim() === '') {
+    return null;
+  }
+  
+  // Se já está no Firebase, retorna direto
+  if (!isUrlExterna(fotoUrl)) {
+    console.log('ℹ️ Imagem já está no Firebase');
+    return fotoUrl;
+  }
+  
+  // Se é externa, baixa e salva
+  console.log('🌐 URL externa detectada, baixando...');
+  try {
+    const urlFirebase = await baixarESalvarImagem(fotoUrl, userId, tipo, nome);
+    return urlFirebase;
+  } catch (error) {
+    console.error('⚠️ Erro ao processar imagem, usando URL original:', error);
+    // Em caso de erro, usa a URL original mesmo
+    return fotoUrl;
+  }
+}

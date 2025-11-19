@@ -236,7 +236,7 @@ async function gerarDescricao() {
     
     // Perfumista
     if (perfumeData.perfumista && perfumeData.perfumista.trim() !== '') {
-        descricao += `Assinado pelo perfumista ${perfumeData.perfumista}. `;
+        descricao += `Assinado por ${perfumeData.perfumista}. `;
     }
     
     // Contratipo

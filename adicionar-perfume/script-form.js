@@ -2,12 +2,12 @@
 import { auth, salvarPerfume, uploadFotoPerfume, buscarMarcas, salvarMarca, buscarPerfumes, invalidarCachePerfumes, buscarPerfumePorId } from './firebase-config.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { toggleLoading, tratarErroFirebase } from './utils.js';
+import { toggleLoading, tratarErroFirebase, processarFotoUrl } from './utils.js';
 
 const db = getFirestore();
 
 // ✅ EMAIL DO ADMIN
-const EMAIL_ADMIN = 'kauankssantos.12@gmail.com'; // ⚠️ ALTERE AQUI!
+const EMAIL_ADMIN = 'seu-email@gmail.com'; // ⚠️ ALTERE AQUI!
 
 let usuarioAtual = null;
 let marcasDisponiveis = [];

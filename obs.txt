@@ -1,6 +1,8 @@
 qnd clica em editar perfil, vai pra página de criar conta, mas com os dados já carregados
 ver se da pra colocar o link do lugar mais barato
-adicionar botão de pesquisar no topo das páginas
 ver se da pra o banco dados baixar as imagens dos links dos perfumes, para não sair fora as imagens quando o link sair fora tbm
-script-form não foi atualizado por completo
-"Erro ao salvar informações: Missing or insufficient permissions." da esse erro qnd tento salvar as informações da marca
+precise que atualize os códigos inteiros para a barra de pesquisa e salvar as fotos
+mostrar como fica a review
+quando terminar de cadastrar um perfume, mostra uma caixinha perguntando se eu quero cadastrar as informações da marca, caso ela seja nova
+tentar fazer o fundo da logo da marca ficar igual ao fundo da foto da logo (usar como exemplo o azza parfums)
+na quantia de perfumes no catálogo da marca, se for um, a palavra "perfumes" fica no singular.
