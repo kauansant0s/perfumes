@@ -292,7 +292,7 @@ async function salvarInfoMarca() {
         return;
     }
     
-    if (ano && (!/^\d{4}$/.test(ano) || parseInt(ano) < 1800 || parseInt(ano) > 2024)) {
+    if (ano && (!/^\d{4}$/.test(ano) || parseInt(ano) < 1500 || parseInt(ano) > 2024)) {
         alert('❌ Ano inválido. Use formato: 1921');
         return;
     }

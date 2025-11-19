@@ -6,3 +6,5 @@ mostrar como fica a review
 quando terminar de cadastrar um perfume, mostra uma caixinha perguntando se eu quero cadastrar as informações da marca, caso ela seja nova
 tentar fazer o fundo da logo da marca ficar igual ao fundo da foto da logo (usar como exemplo o azza parfums)
 na quantia de perfumes no catálogo da marca, se for um, a palavra "perfumes" fica no singular.
+salvar os paises das marcas, do mesmo jeitos que salva as marcas no formulário de perfumes
+quero poder clicar com o botão direito e abrir em uma nova guia os perfumes na página dos meus perfumes
