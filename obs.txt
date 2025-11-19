@@ -1,10 +1,11 @@
 qnd clica em editar perfil, vai pra página de criar conta, mas com os dados já carregados
 ver se da pra colocar o link do lugar mais barato
 ver se da pra o banco dados baixar as imagens dos links dos perfumes, para não sair fora as imagens quando o link sair fora tbm
-precise que atualize os códigos inteiros para a barra de pesquisa e salvar as fotos
 mostrar como fica a review
 quando terminar de cadastrar um perfume, mostra uma caixinha perguntando se eu quero cadastrar as informações da marca, caso ela seja nova
 tentar fazer o fundo da logo da marca ficar igual ao fundo da foto da logo (usar como exemplo o azza parfums)
 na quantia de perfumes no catálogo da marca, se for um, a palavra "perfumes" fica no singular.
 salvar os paises das marcas, do mesmo jeitos que salva as marcas no formulário de perfumes
 quero poder clicar com o botão direito e abrir em uma nova guia os perfumes na página dos meus perfumes
+ver se qnd eu altero algo no github ele consegue ver em tempo real, ou só se eu selecionar de novo
+adicionar os acordes resinoso e balsâmico
