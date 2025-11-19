@@ -1,10 +1,13 @@
-// script-form.js - COMPLETO COM SLIDER DE GÊNERO CUSTOMIZADO E AUTO-PREENCHIMENTO
+// script-form.js - COMPLETO COM VERIFICAÇÃO DE MARCA NOVA
 import { auth, salvarPerfume, uploadFotoPerfume, buscarMarcas, salvarMarca, buscarPerfumes, invalidarCachePerfumes, buscarPerfumePorId } from './firebase-config.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { toggleLoading, tratarErroFirebase } from './utils.js';
 
 const db = getFirestore();
+
+// ✅ EMAIL DO ADMIN
+const EMAIL_ADMIN = 'kauankssantos.12@gmail.com'; // ⚠️ ALTERE AQUI!
 
 let usuarioAtual = null;
 let marcasDisponiveis = [];
@@ -69,6 +72,56 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
+/**
+ * ✅ NOVO: Verifica se a marca é nova e pergunta se quer adicionar info
+ */
+async function verificarMarcaNovaEPerguntar(nomeMarca) {
+  try {
+    // Só faz isso para o admin
+    if (usuarioAtual.email !== EMAIL_ADMIN) {
+      window.location.href = '../perfil/perfil.html';
+      return;
+    }
+    
+    // Busca a marca no Firebase
+    const marcasRef = collection(db, "marcas");
+    const q = query(marcasRef, where("nome", "==", nomeMarca));
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      window.location.href = '../perfil/perfil.html';
+      return;
+    }
+    
+    const marcaDoc = querySnapshot.docs[0];
+    const marcaData = marcaDoc.data();
+    
+    // Verifica se já tem site E logo cadastrados
+    if (marcaData.site && marcaData.logo) {
+      window.location.href = '../perfil/perfil.html';
+      return;
+    }
+    
+    // Pergunta se quer cadastrar agora
+    const querCadastrar = confirm(
+      `🎉 Perfume cadastrado com sucesso!\n\n` +
+      `Esta é a primeira vez que você cadastra um perfume da marca "${nomeMarca}".\n\n` +
+      `Deseja adicionar o link do site oficial e da logo agora?`
+    );
+    
+    if (querCadastrar) {
+      // Redireciona para página da marca
+      window.location.href = `../marca/marca.html?nome=${encodeURIComponent(nomeMarca)}`;
+    } else {
+      window.location.href = '../perfil/perfil.html';
+    }
+    
+  } catch (error) {
+    console.error('Erro ao verificar marca:', error);
+    window.location.href = '../perfil/perfil.html';
+  }
+}
+
 const notas = window.dadosNotas.notas;
 const ids = ["topo", "coracao", "fundo"];
 
@@ -129,14 +182,10 @@ function inicializarAutocompleteMarca() {
   console.log(`✅ Autocomplete inicializado com ${marcasDisponiveis.length} marcas`);
 }
 
-/**
- * ✅ NOVO: Puxa notas e acordes do perfume original se ainda não foram preenchidos
- */
 async function puxarNotasEAcordesDoOriginal(perfumeOriginalId) {
   try {
     console.log('🔄 Verificando se deve puxar dados do original...', perfumeOriginalId);
     
-    // Verifica se já tem notas ou acordes preenchidos
     const topoInstance = document.getElementById('topo').tomselect;
     const coracaoInstance = document.getElementById('coracao').tomselect;
     const fundoInstance = document.getElementById('fundo').tomselect;
@@ -154,7 +203,6 @@ async function puxarNotasEAcordesDoOriginal(perfumeOriginalId) {
       temAcordes
     });
     
-    // Se já tiver algo preenchido, não faz nada
     if (temNotasTopo || temNotasCoracao || temNotasFundo || temAcordes) {
       console.log('ℹ️ Notas/acordes já preenchidos, não puxando do original');
       return;
@@ -162,7 +210,6 @@ async function puxarNotasEAcordesDoOriginal(perfumeOriginalId) {
     
     console.log('📡 Buscando dados do perfume original...');
     
-    // Busca o perfume original
     const perfumeOriginal = await buscarPerfumePorId(perfumeOriginalId);
     
     if (!perfumeOriginal) {
@@ -175,7 +222,6 @@ async function puxarNotasEAcordesDoOriginal(perfumeOriginalId) {
     
     let algumaCopiaFeita = false;
     
-    // Puxa as notas
     if (perfumeOriginal.notas) {
       if (perfumeOriginal.notas.topo && perfumeOriginal.notas.topo.length > 0) {
         topoInstance.setValue(perfumeOriginal.notas.topo);
@@ -196,14 +242,12 @@ async function puxarNotasEAcordesDoOriginal(perfumeOriginalId) {
       }
     }
     
-    // Puxa os acordes
     if (perfumeOriginal.acordes && perfumeOriginal.acordes.length > 0) {
       acordesInstance.setValue(perfumeOriginal.acordes);
       console.log('✅ Acordes copiados:', perfumeOriginal.acordes);
       algumaCopiaFeita = true;
     }
     
-    // Mostra mensagem para o usuário
     if (algumaCopiaFeita) {
       alert(`✅ Notas e acordes copiados de "${perfumeOriginal.nome}"!\n\nVocê pode editá-los se desejar.`);
     } else {
@@ -252,7 +296,6 @@ async function inicializarSelectPerfumeOriginal() {
         if (value === '__CADASTRAR_NOVO__') {
           salvarDadosAtuaisEIrParaOriginal();
         } else if (value && value !== '') {
-          // ✅ Pequeno delay para garantir que os TomSelects estejam prontos
           setTimeout(async () => {
             await puxarNotasEAcordesDoOriginal(value);
           }, 300);
@@ -310,10 +353,6 @@ function salvarDadosAtuaisEIrParaOriginal() {
   
   window.location.href = 'form-add-perf.html';
 }
-
-// CONTINUA NA PARTE 2...
-
-// CONTINUAÇÃO DO script-form.js - PARTE 2 (SEM ANIMAÇÕES)
 
 async function restaurarDadosContratipo(perfumeOriginalId, dadosJSON) {
   try {
@@ -386,7 +425,6 @@ async function restaurarDadosContratipo(perfumeOriginalId, dadosJSON) {
       atualizarMedia();
     }, 1200);
     
-    // ✅ Restaura sliders customizados
     if (dados.clima) {
       const climaInput = document.getElementById('clima-value');
       climaInput.value = dados.clima;
@@ -477,7 +515,6 @@ ids.forEach((id) => {
   console.log(`✅ TomSelect criado para ${id}`);
 });
 
-// ✅ Sistema de status (SEM ANIMAÇÕES)
 document.querySelectorAll('input[name="status"]').forEach(radio => {
   radio.dataset.checked = 'false';
 });
@@ -525,24 +562,19 @@ document.querySelectorAll('input[name="contratipo"]').forEach(radio => {
   });
 });
 
-// ✅ TODOS OS SLIDERS CUSTOMIZADOS
 function criarSliderCustomizado(tipoSlider, inputId) {
   document.querySelectorAll(`.${tipoSlider}-ponto`).forEach(ponto => {
     ponto.addEventListener('click', function() {
       const value = this.dataset.value;
       const input = document.getElementById(inputId);
       
-      // Remove ativo de todos
       document.querySelectorAll(`.${tipoSlider}-ponto`).forEach(p => p.classList.remove('ativo'));
       
-      // Verifica se já estava ativo (para desmarcar)
       if (input.value === value) {
-        // Desmarca
         input.value = '';
         input.dataset.avaliado = 'false';
         console.log(`🔵 ${tipoSlider} desmarcado`);
       } else {
-        // Marca este ponto
         this.classList.add('ativo');
         input.value = value;
         input.dataset.avaliado = 'true';
@@ -552,7 +584,6 @@ function criarSliderCustomizado(tipoSlider, inputId) {
   });
 }
 
-// Inicializa todos os sliders
 criarSliderCustomizado('genero', 'genero-value');
 criarSliderCustomizado('clima', 'clima-value');
 criarSliderCustomizado('ambiente', 'ambiente-value');
@@ -663,10 +694,6 @@ function atualizarMedia() {
     document.getElementById('media').textContent = '0';
   }
 }
-
-// CONTINUA NA PARTE 3...
-
-// CONTINUAÇÃO DO script-form.js - PARTE 3 FINAL
 
 async function carregarPerfumeParaEdicao() {
   try {
@@ -790,7 +817,6 @@ async function carregarPerfumeParaEdicao() {
       });
     }
     
-    // ✅ Carrega todos os sliders customizados
     if (perfume.caracteristicas) {
       if (perfume.caracteristicas.clima !== undefined) {
         const climaInput = document.getElementById('clima-value');
@@ -932,7 +958,6 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       };
     }
     
-    // ✅ Características com TODOS os sliders customizados
     const caracteristicas = {};
     
     const generoValue = document.getElementById('genero-value');
@@ -1005,7 +1030,8 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       if (estaCadastrandoOriginal) {
         window.location.href = 'form-add-perf.html';
       } else {
-        window.location.href = '../perfil/perfil.html';
+        // ✅ Verifica se é marca nova e se é admin
+        await verificarMarcaNovaEPerguntar(perfumeData.marca);
       }
     }
     
@@ -1085,12 +1111,3 @@ document.getElementById('btn-confirmar-url').addEventListener('click', () => {
     alert('Por favor, cole um link válido!');
   }
 });
-
-alert('✅ Perfume salvo com sucesso!');
-      
-      if (estaCadastrandoOriginal) {
-        window.location.href = 'form-add-perf.html';
-      } else {
-        // ✅ Verifica se é marca nova e se é admin
-        await verificarMarcaNovaEPerguntar(perfumeData.marca);
-      }
