@@ -9,3 +9,6 @@ salvar os paises das marcas, do mesmo jeitos que salva as marcas no formulário 
 quero poder clicar com o botão direito e abrir em uma nova guia os perfumes na página dos meus perfumes
 ver se qnd eu altero algo no github ele consegue ver em tempo real, ou só se eu selecionar de novo
 adicionar os acordes resinoso e balsâmico
+criar as linhas nas marcas. na hora de adicionar um perfume eu posso escolher se eles pertecem a uma linha da marca. (ex. se eu adiciono um perfume da boticario, na hora que eu seleciono a marca, aparece do lado ou embaixo um select para eu escolher a linha dele, ai eu escolho entre as linhas, ou se ele é um perfume que não é de nenhuma linha só não seleciono nada, e tbm tem uma opção para eu criar uma linha nova)
+dps disso ai na pagina da marca aparece para eu escolher, usando como exemplo o boticario, aparece ali, malbec, zaad, botica 214, etc. a primeira opção e a opção é sempre todos, e a última é "sem linha". adicionar isso logo acima das quatro opções ali de todos, tenho, ja tive e quero ter. elas são no mesmo formato de pílula, a linha selecionada fica na cor vermelha do site e as outras cinza claro.
+e adicinar embaixo das opções de todos, tenho, ja tive e quero ter tres botoes para escolher entre masculino, feminino ou compartilhaveis.
