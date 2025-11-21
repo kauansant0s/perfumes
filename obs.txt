@@ -5,3 +5,7 @@ tentar fazer o fundo da logo da marca ficar igual ao fundo da foto da logo (usar
 criar as linhas nas marcas. na hora de adicionar um perfume eu posso escolher se eles pertecem a uma linha da marca. (ex. se eu adiciono um perfume da boticario, na hora que eu seleciono a marca, aparece do lado ou embaixo um select para eu escolher a linha dele, ai eu escolho entre as linhas, ou se ele é um perfume que não é de nenhuma linha só não seleciono nada, e tbm tem uma opção para eu criar uma linha nova)
 dps disso ai na pagina da marca aparece para eu escolher, usando como exemplo o boticario, aparece ali, malbec, zaad, botica 214, etc. a primeira opção e a opção é sempre todos, e a última é "sem linha". adicionar isso logo acima das quatro opções ali de todos, tenho, ja tive e quero ter. elas são no mesmo formato de pílula, a linha selecionada fica na cor vermelha do site e as outras cinza claro.
 Adicionar um visual de lista na página dos meus perfumes, ai eu posso selecionar entre grid ou lista
+adicionar função para deletar o perfume do banco de dados
+quando salvo um perfume, ele salva e aparece o aviso, mas eu quero que ele vá para a página do perfume que criei
+além de puxar notas e acordes, puxar os slider tbm qnd for contratipo.
+tirar a parte de ir automaticamente para a página da marca qnd ela for nova

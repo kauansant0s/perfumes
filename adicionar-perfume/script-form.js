@@ -979,10 +979,11 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       
       if (estaCadastrandoOriginal) {
         window.location.href = 'form-add-perf.html';
-      } else {
-        // ✅ Verifica se é marca nova e se é admin
-        await verificarMarcaNovaEPerguntar(perfumeData.marca);
-      }
+      } 
+      // else {
+      //   // ✅ Verifica se é marca nova e se é admin
+      //   await verificarMarcaNovaEPerguntar(perfumeData.marca);
+      // }
     }
     
   } catch (error) {
