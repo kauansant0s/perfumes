@@ -119,8 +119,27 @@ async function renderizarPerfume() {
         fotoElement.alt = perfumeData.nome;
     }
     
-    // Nome e Marca
-    document.getElementById('nome-perfume').textContent = perfumeData.nome;
+    // Nome e Marca com símbolo de gênero
+    const nomePerfumeElement = document.getElementById('nome-perfume');
+    
+    // ✅ Adiciona símbolo de gênero se existir
+    let nomeComGenero = perfumeData.nome;
+    if (perfumeData.caracteristicas && perfumeData.caracteristicas.genero) {
+      const genero = perfumeData.caracteristicas.genero;
+      let simbolo = '';
+      
+      if (genero === 'masculino' || genero === 'um-pouco-masculino') {
+        simbolo = ' ♂'; // Símbolo masculino
+      } else if (genero === 'feminino' || genero === 'um-pouco-feminino') {
+        simbolo = ' ♀'; // Símbolo feminino
+      } else if (genero === 'compartilhavel') {
+        simbolo = ' ⚥'; // Símbolo unissex
+      }
+      
+      nomeComGenero += simbolo;
+    }
+    
+    nomePerfumeElement.textContent = nomeComGenero;
     
     const linkMarca = document.getElementById('link-marca');
     linkMarca.textContent = perfumeData.marca;

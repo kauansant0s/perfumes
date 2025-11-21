@@ -11,6 +11,7 @@ let usuarioAtual = null;
 let filtroAtual = 'todos';
 let ordenacaoAtual = 'nome-asc';
 let buscaAtual = '';
+let visualizacaoAtual = 'grid';
 
 // Lê o filtro da URL
 const urlParams = new URLSearchParams(window.location.search);
@@ -132,6 +133,28 @@ function configurarEventos() {
         campoBusca.style.display = 'none';
         aplicarFiltrosEOrdenacao();
     });
+
+    // ✅ NOVO: Toggle de visualização
+    document.querySelectorAll('.btn-visualizacao').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.btn-visualizacao').forEach(b => b.classList.remove('ativo'));
+            btn.classList.add('ativo');
+            visualizacaoAtual = btn.dataset.view;
+            atualizarVisualizacao();
+        });
+    });
+}
+
+function atualizarVisualizacao() {
+    const grid = document.getElementById('grid-perfumes');
+    
+    if (visualizacaoAtual === 'lista') {
+        grid.classList.add('lista');
+        console.log('📋 Visualização em lista ativada');
+    } else {
+        grid.classList.remove('lista');
+        console.log('🔲 Visualização em grid ativada');
+    }
 }
 
 /**

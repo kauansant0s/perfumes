@@ -172,6 +172,7 @@ async function puxarNotasEAcordesDoOriginal(perfumeOriginalId) {
     
     let algumaCopiaFeita = false;
     
+    // ✅ Copia NOTAS
     if (perfumeOriginal.notas) {
       if (perfumeOriginal.notas.topo && perfumeOriginal.notas.topo.length > 0) {
         topoInstance.setValue(perfumeOriginal.notas.topo);
@@ -192,16 +193,82 @@ async function puxarNotasEAcordesDoOriginal(perfumeOriginalId) {
       }
     }
     
+    // ✅ Copia ACORDES
     if (perfumeOriginal.acordes && perfumeOriginal.acordes.length > 0) {
       acordesInstance.setValue(perfumeOriginal.acordes);
       console.log('✅ Acordes copiados:', perfumeOriginal.acordes);
       algumaCopiaFeita = true;
     }
     
+    // ✅ NOVO: Copia SLIDERS (Gênero, Clima, Ambiente, Hora)
+    if (perfumeOriginal.caracteristicas) {
+      const caracteristicas = perfumeOriginal.caracteristicas;
+      
+      // Gênero
+      if (caracteristicas.genero) {
+        const generoInput = document.getElementById('genero-value');
+        generoInput.value = caracteristicas.genero;
+        generoInput.dataset.avaliado = 'true';
+        
+        document.querySelectorAll('.genero-ponto').forEach(p => p.classList.remove('ativo'));
+        const pontoCerto = document.querySelector(`.genero-ponto[data-value="${caracteristicas.genero}"]`);
+        if (pontoCerto) {
+          pontoCerto.classList.add('ativo');
+          console.log('✅ Gênero copiado:', caracteristicas.genero);
+          algumaCopiaFeita = true;
+        }
+      }
+      
+      // Clima
+      if (caracteristicas.clima !== undefined) {
+        const climaInput = document.getElementById('clima-value');
+        climaInput.value = caracteristicas.clima;
+        climaInput.dataset.avaliado = 'true';
+        
+        document.querySelectorAll('.clima-ponto').forEach(p => p.classList.remove('ativo'));
+        const pontoCerto = document.querySelector(`.clima-ponto[data-value="${caracteristicas.clima}"]`);
+        if (pontoCerto) {
+          pontoCerto.classList.add('ativo');
+          console.log('✅ Clima copiado:', caracteristicas.clima);
+          algumaCopiaFeita = true;
+        }
+      }
+      
+      // Ambiente
+      if (caracteristicas.ambiente !== undefined) {
+        const ambienteInput = document.getElementById('ambiente-value');
+        ambienteInput.value = caracteristicas.ambiente;
+        ambienteInput.dataset.avaliado = 'true';
+        
+        document.querySelectorAll('.ambiente-ponto').forEach(p => p.classList.remove('ativo'));
+        const pontoCerto = document.querySelector(`.ambiente-ponto[data-value="${caracteristicas.ambiente}"]`);
+        if (pontoCerto) {
+          pontoCerto.classList.add('ativo');
+          console.log('✅ Ambiente copiado:', caracteristicas.ambiente);
+          algumaCopiaFeita = true;
+        }
+      }
+      
+      // Hora
+      if (caracteristicas.hora !== undefined) {
+        const horaInput = document.getElementById('hora-value');
+        horaInput.value = caracteristicas.hora;
+        horaInput.dataset.avaliado = 'true';
+        
+        document.querySelectorAll('.hora-ponto').forEach(p => p.classList.remove('ativo'));
+        const pontoCerto = document.querySelector(`.hora-ponto[data-value="${caracteristicas.hora}"]`);
+        if (pontoCerto) {
+          pontoCerto.classList.add('ativo');
+          console.log('✅ Hora copiado:', caracteristicas.hora);
+          algumaCopiaFeita = true;
+        }
+      }
+    }
+    
     if (algumaCopiaFeita) {
-      alert(`✅ Notas e acordes copiados de "${perfumeOriginal.nome}"!\n\nVocê pode editá-los se desejar.`);
+      alert(`✅ Dados copiados de "${perfumeOriginal.nome}"!\n\nNotas, acordes e características foram preenchidos.\nVocê pode editá-los se desejar.`);
     } else {
-      console.log('ℹ️ Perfume original não possui notas ou acordes cadastrados');
+      console.log('ℹ️ Perfume original não possui dados para copiar');
     }
     
   } catch (error) {
@@ -411,7 +478,7 @@ async function restaurarDadosContratipo(perfumeOriginalId, dadosJSON) {
       document.title = 'Editar Perfume';
       const submitButton = document.getElementById('adicionar');
       submitButton.textContent = 'Salvar Alterações';
-      submitButton.style.width = '130px';
+      submitButton.style.width = '131px';
     }
     
     console.log('✅ Todos os dados restaurados!');
@@ -652,7 +719,14 @@ async function carregarPerfumeParaEdicao() {
     document.title = 'Editar Perfume';
     const submitButton = document.getElementById('adicionar');
     submitButton.textContent = 'Salvar Alterações';
-    submitButton.style.width = '130px';
+    submitButton.style.width = '131px';
+
+    // ✅ NOVO: Mostra botão deletar
+    const btnDeletar = document.getElementById('deletar');
+    if (btnDeletar && usuarioAtual.email === EMAIL_ADMIN) {
+      btnDeletar.style.display = 'flex';
+      console.log('🗑️ Botão deletar habilitado (admin)');
+    }
     
     const perfumeRef = doc(db, "perfumes", perfumeId);
     const perfumeSnap = await getDoc(perfumeRef);
@@ -979,11 +1053,10 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       
       if (estaCadastrandoOriginal) {
         window.location.href = 'form-add-perf.html';
-      } 
-      // else {
-      //   // ✅ Verifica se é marca nova e se é admin
-      //   await verificarMarcaNovaEPerguntar(perfumeData.marca);
-      // }
+      } else {
+        // ✅ NOVO: Vai direto para página do perfume
+        window.location.href = `../perfumes/perfume.html?id=${id}`;
+      }
     }
     
   } catch (error) {
@@ -1062,3 +1135,75 @@ document.getElementById('btn-confirmar-url').addEventListener('click', () => {
     alert('Por favor, cole um link válido!');
   }
 });
+
+/**
+ * ✅ NOVO: Deleta perfume do banco de dados
+ */
+async function deletarPerfumeAtual() {
+  if (!perfumeId || !modoEdicao) {
+    alert('❌ Erro: Perfume não encontrado');
+    return;
+  }
+  
+  // Confirmação 1: Aviso inicial
+  const confirma1 = confirm(
+    '⚠️ ATENÇÃO!\n\n' +
+    'Você está prestes a DELETAR este perfume permanentemente.\n\n' +
+    'Esta ação NÃO PODE ser desfeita!\n\n' +
+    'Deseja continuar?'
+  );
+  
+  if (!confirma1) {
+    console.log('ℹ️ Deleção cancelada pelo usuário');
+    return;
+  }
+  
+  // Confirmação 2: Confirmação final
+  const confirma2 = confirm(
+    '🗑️ ÚLTIMA CONFIRMAÇÃO\n\n' +
+    'Tem certeza ABSOLUTA que deseja deletar este perfume?\n\n' +
+    'Clique em OK para DELETAR PERMANENTEMENTE.'
+  );
+  
+  if (!confirma2) {
+    console.log('ℹ️ Deleção cancelada na segunda confirmação');
+    return;
+  }
+  
+  const btnDeletar = document.getElementById('deletar');
+  const textoOriginal = btnDeletar.textContent;
+  btnDeletar.disabled = true;
+  btnDeletar.textContent = 'Deletando...';
+  
+  toggleLoading(true);
+  
+  try {
+    console.log('🗑️ Deletando perfume:', perfumeId);
+    
+    // Importa função de deletar do firebase-config
+    const { deletarPerfume } = await import('./firebase-config.js');
+    
+    await deletarPerfume(perfumeId, usuarioAtual.uid);
+    
+    console.log('✅ Perfume deletado com sucesso!');
+    
+    alert('✅ Perfume deletado com sucesso!');
+    
+    // Redireciona para página de perfil
+    window.location.href = '../perfil/perfil.html';
+    
+  } catch (error) {
+    console.error('❌ Erro ao deletar perfume:', error);
+    alert('❌ Erro ao deletar perfume:\n\n' + tratarErroFirebase(error));
+    
+    btnDeletar.disabled = false;
+    btnDeletar.textContent = textoOriginal;
+    toggleLoading(false);
+  }
+}
+
+// ✅ Event listener para o botão deletar
+const btnDeletar = document.getElementById('deletar');
+if (btnDeletar) {
+  btnDeletar.addEventListener('click', deletarPerfumeAtual);
+}

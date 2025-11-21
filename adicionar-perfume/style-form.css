@@ -151,6 +151,13 @@ select{
     width: 80px;
     height: 35px;
     color: #FFFFFF;
+    font-family: 'Inter';
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+#adicionar:hover {
+    background: #a85050;
 }
 #cancelar{
     border: 2px solid #C06060;
@@ -159,6 +166,13 @@ select{
     height: 35px;
     color: #C06060;
     background: transparent;
+    font-family: 'Inter';
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+#cancelar:hover {
+    background: rgba(192, 96, 96, 0.1);
 }
 
 /* ✅ Avaliação - SEMPRE VISÍVEL, SEM ANIMAÇÕES */
@@ -558,5 +572,64 @@ select{
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+#botoes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.botoes-esquerda {
+    display: flex;
+    gap: 10px;
+}
+
+/* ✅ NOVO: Botão Deletar */
+.btn-deletar {
+    background: transparent;
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 8px 10px;
+    height: 35px;
+    color: #dc3545;
+    font-family: 'Inter';
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-deletar:hover {
+    background: #dc3545;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.btn-deletar svg {
+    width: 16px;
+    height: 16px;
+}
+
+@media (max-width: 768px) {
+    #botoes {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .botoes-esquerda {
+        width: 100%;
+    }
+    
+    .btn-deletar {
+        width: 100%;
+        justify-content: center;
     }
 }

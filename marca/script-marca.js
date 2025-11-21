@@ -14,6 +14,7 @@ let nomeMarca = '';
 let marcaId = null;
 let filtroAtual = 'todos';
 let filtroGeneroAtual = 'todos';
+let visualizacaoAtual = 'grid';
 let ordenacaoAtual = 'nome-asc';
 let paisesDisponiveis = [];
 
@@ -501,6 +502,31 @@ function configurarEventos() {
             aplicarFiltrosEOrdenacao();
         });
     });
+
+    // ✅ NOVO: Toggle de visualização
+    document.querySelectorAll('.btn-visualizacao').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.btn-visualizacao').forEach(b => b.classList.remove('ativo'));
+            btn.classList.add('ativo');
+            visualizacaoAtual = btn.dataset.view;
+            atualizarVisualizacao();
+        });
+    });
+}
+
+/**
+ * ✅ NOVA: Atualiza modo de visualização (grid/lista)
+ */
+function atualizarVisualizacao() {
+    const grid = document.getElementById('grid-perfumes');
+    
+    if (visualizacaoAtual === 'lista') {
+        grid.classList.add('lista');
+        console.log('📋 Visualização em lista ativada');
+    } else {
+        grid.classList.remove('lista');
+        console.log('🔲 Visualização em grid ativada');
+    }
 }
 
 function aplicarFiltrosEOrdenacao() {
@@ -627,7 +653,25 @@ function criarCardPerfume(perfume) {
     
     const nome = document.createElement('div');
     nome.className = 'perfume-nome';
-    nome.textContent = perfume.nome;
+    
+    // ✅ Adiciona símbolo de gênero
+    let nomeComGenero = perfume.nome;
+    if (perfume.caracteristicas && perfume.caracteristicas.genero) {
+      const genero = perfume.caracteristicas.genero;
+      let simbolo = '';
+      
+      if (genero === 'masculino' || genero === 'um-pouco-masculino') {
+        simbolo = ' ♂';
+      } else if (genero === 'feminino' || genero === 'um-pouco-feminino') {
+        simbolo = ' ♀';
+      } else if (genero === 'compartilhavel') {
+        simbolo = ' ⚥';
+      }
+      
+      nomeComGenero += simbolo;
+    }
+    
+    nome.textContent = nomeComGenero;
     nome.title = perfume.nome;
     
     const status = document.createElement('span');
