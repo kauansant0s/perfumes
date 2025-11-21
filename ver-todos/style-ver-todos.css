@@ -426,3 +426,26 @@ body {
         height: 75px;
     }
 }
+/* ✅ Remove linha azul dos links nos cards */
+.perfume-card a {
+    text-decoration: none !important;
+    color: inherit;
+}
+
+.perfume-card a:hover,
+.perfume-card a:visited,
+.perfume-card a:active,
+.perfume-card a:focus {
+    text-decoration: none !important;
+    color: inherit;
+}
+
+/* ✅ Remove linha também dos nomes */
+.perfume-nome {
+    text-decoration: none !important;
+}
+
+/* ✅ Para o grid de ver-todos especificamente */
+.grid-perfumes a {
+    text-decoration: none !important;
+}

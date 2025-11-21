@@ -13,13 +13,13 @@ const coresAcordes = {
     'Abaunilhado': '#D4A574', 'Aldeídico': '#E8E8E8', 'Alcoólico': '#C9B8A8',
     'Almiscarado': '#F5E6D3', 'Ambarado': '#FFB347', 'Amadeirado': '#8B4513',
     'Animálico': '#654321', 'Aquático': '#4DD0E1', 'Aromático': '#7CB342',
-    'Atalcado': '#E8D5C4', 'Chipre': '#556B2F', 'Cítrico': '#FFA500',
+    'Atalcado': '#E8D5C4', 'Balsâmico': '#8B7355', 'Chipre': '#556B2F', 'Cítrico': '#FFA500',
     'Couro': '#654321', 'Cremoso': '#FFF8DC', 'Doce': '#FFB6C1',
     'Esfumaçado': '#696969', 'Especiado': '#CD853F', 'Floral': '#FF69B4',
     'Floral Amarelo': '#FFD700', 'Floral Branco': '#F5F5F5', 'Fougère': '#2E8B57',
     'Fresco': '#87CEEB', 'Frutado': '#FF6347', 'Gourmand': '#D2691E',
     'Herbal': '#6B8E23', 'Lactônico': '#FFF5EE', 'Metálico': '#B0B0B0', 
-    'Oriental': '#8B0000', 'Terroso': '#8B7355', 'Tropical': '#FF8C00', 'Verde': '#228B22'
+    'Resinoso': '#A0522D', 'Terroso': '#8B7355', 'Tropical': '#FF8C00', 'Verde': '#228B22'
 };
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -502,16 +502,36 @@ function renderizarReview() {
     const container = document.getElementById('reviews-container');
     
     if (perfumeData.review && perfumeData.review.texto && perfumeData.review.texto.trim() !== '') {
-        container.innerHTML = `
-            <div class="review-card">
-                <div class="review-header">
-                    <img src="${usuarioAtual.photoURL || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><circle fill="%23d9d9d9" cx="20" cy="20" r="20"/></svg>'}" alt="Foto do usuário" class="review-avatar">
-                    <span class="review-autor">${usuarioAtual.displayName || 'Usuário'}</span>
-                </div>
-                ${perfumeData.review.titulo ? `<h4 style="margin: 10px 0; font-size: 16px; font-weight: 600;">${perfumeData.review.titulo}</h4>` : ''}
-                <p class="review-texto">${perfumeData.review.texto}</p>
-            </div>
-        `;
+        // Limpa o container primeiro
+        container.innerHTML = '';
+        
+        // Cria os elementos
+        const reviewCard = document.createElement('div');
+        reviewCard.className = 'review-card';
+        
+        const reviewHeader = document.createElement('div');
+        reviewHeader.className = 'review-header';
+        
+        const avatar = document.createElement('img');
+        avatar.className = 'review-avatar';
+        avatar.alt = 'Foto do usuário';
+        avatar.src = usuarioAtual.photoURL || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><circle fill="%23d9d9d9" cx="20" cy="20" r="20"/></svg>';
+        
+        const autor = document.createElement('span');
+        autor.className = 'review-autor';
+        autor.textContent = usuarioAtual.displayName || 'Usuário';
+        
+        const texto = document.createElement('p');
+        texto.className = 'review-texto';
+        texto.textContent = perfumeData.review.texto;
+        
+        // Monta a estrutura
+        reviewHeader.appendChild(avatar);
+        reviewHeader.appendChild(autor);
+        reviewCard.appendChild(reviewHeader);
+        reviewCard.appendChild(texto);
+        container.appendChild(reviewCard);
+        
     } else {
         container.innerHTML = '<p class="sem-reviews">Nenhuma review ainda</p>';
     }

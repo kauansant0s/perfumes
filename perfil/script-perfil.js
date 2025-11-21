@@ -169,20 +169,19 @@ function criarCardPerfume(perfume) {
   const card = document.createElement('div');
   card.className = 'perfume-card';
   card.title = perfume.nome;
-  card.style.cursor = 'pointer';
-  card.setAttribute('role', 'button');
-  card.setAttribute('tabindex', '0');
   
-  card.onclick = () => {
-    window.location.href = `../perfumes/perfume.html?id=${perfume.id}`;
-  };
+  // ✅ NOVO: Usa <a> ao invés de onclick
+  const link = document.createElement('a');
+  link.href = `../perfumes/perfume.html?id=${perfume.id}`;
+  link.style.display = 'block';
+  link.style.width = '100%';
+  link.style.height = '100%';
+  link.style.textDecoration = 'none';
+  link.style.color = 'inherit';
   
-  // Acessibilidade - permitir navegação por teclado
-  card.onkeypress = (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      window.location.href = `../perfumes/perfume.html?id=${perfume.id}`;
-    }
-  };
+  // ✅ Acessibilidade
+  link.setAttribute('aria-label', `Ver detalhes de ${perfume.nome}`);
+  link.setAttribute('tabindex', '0');
   
   if (perfume.fotoURL && perfume.fotoURL.trim() !== '') {
     const img = document.createElement('img');
@@ -193,14 +192,15 @@ function criarCardPerfume(perfume) {
     img.style.objectFit = 'cover';
     
     img.onerror = () => {
-      card.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:10px;color:#666;text-align:center;padding:5px;background:#d9d9d9;">${perfume.nome}</div>`;
+      link.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:10px;color:#666;text-align:center;padding:5px;background:#d9d9d9;">${perfume.nome}</div>`;
     };
     
-    card.appendChild(img);
+    link.appendChild(img);
   } else {
-    card.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:10px;color:#666;text-align:center;padding:5px;background:#d9d9d9;">${perfume.nome}</div>`;
+    link.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:10px;color:#666;text-align:center;padding:5px;background:#d9d9d9;">${perfume.nome}</div>`;
   }
   
+  card.appendChild(link);
   return card;
 }
 

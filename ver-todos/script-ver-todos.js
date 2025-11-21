@@ -242,21 +242,12 @@ function renderizarPerfumes() {
 function criarCardPerfume(perfume) {
     const card = document.createElement('div');
     card.className = 'perfume-card';
-    card.setAttribute('role', 'button');
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('aria-label', `Ver detalhes de ${perfume.nome}`);
     
-    card.onclick = () => {
-        window.location.href = `../perfumes/perfume.html?id=${perfume.id}`;
-    };
-    
-    // Acessibilidade - navegação por teclado
-    card.onkeypress = (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            window.location.href = `../perfumes/perfume.html?id=${perfume.id}`;
-        }
-    };
+    // ✅ NOVO: Usa <a> ao invés de onclick
+    const link = document.createElement('a');
+    link.href = `../perfumes/perfume.html?id=${perfume.id}`;
+    link.setAttribute('aria-label', `Ver detalhes de ${perfume.nome}`);
+    link.setAttribute('tabindex', '0');
     
     const foto = document.createElement('div');
     foto.className = 'perfume-foto';
@@ -265,7 +256,7 @@ function criarCardPerfume(perfume) {
         const img = document.createElement('img');
         img.src = perfume.fotoURL;
         img.alt = perfume.nome;
-        img.loading = 'lazy'; // Lazy loading para performance
+        img.loading = 'lazy';
         
         img.onerror = () => {
             foto.innerHTML = `<div class="perfume-foto-placeholder">${perfume.nome}</div>`;
@@ -281,8 +272,9 @@ function criarCardPerfume(perfume) {
     nome.textContent = perfume.nome;
     nome.title = perfume.nome;
     
-    card.appendChild(foto);
-    card.appendChild(nome);
+    link.appendChild(foto);
+    link.appendChild(nome);
+    card.appendChild(link);
     
     return card;
 }

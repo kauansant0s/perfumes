@@ -135,7 +135,7 @@ body {
     width: 200px;
     height: 200px;
     margin: 0 auto 30px;
-    background: #fff;
+    background: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -250,12 +250,13 @@ h1 {
     display: flex;
     justify-content: center;
     gap: 20px;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
+    margin-top: -20px;
     flex-wrap: wrap;
 }
 
 .btn-filtro {
-    padding: 12px 30px;
+    padding: 10px 30px;
     background: #d9d9d9;
     color: #000;
     border: none;
@@ -286,14 +287,14 @@ h1 {
     justify-content: center;
     align-items: center;
     gap: 20px;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 select {
     padding: 10px 25px;
     background: #d9d9d9;
     border: none;
-    border-radius: 25px;
+    border-radius: 30px;
     font-size: 15px;
     font-family: 'Inter';
     font-weight: 500;
@@ -310,7 +311,7 @@ select:focus {
 .grid-perfumes {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 30px;
+    gap: 1px;
     padding: 20px;
 }
 
@@ -328,8 +329,8 @@ select:focus {
 }
 
 .perfume-foto {
-    width: 150px;
-    height: 150px;
+    width: 130px;
+    height: 130px;
     background: #fff;
     border-radius: 20px;
     overflow: hidden;
@@ -623,5 +624,78 @@ select:focus {
     
     .botoes-modal {
         flex-direction: column;
+    }
+}
+
+/* ✅ Remove linha azul dos links nos cards */
+.perfume-card a {
+    text-decoration: none !important;
+    color: inherit;
+}
+
+.perfume-card a:hover,
+.perfume-card a:visited,
+.perfume-card a:active,
+.perfume-card a:focus {
+    text-decoration: none !important;
+    color: inherit;
+}
+
+/* ✅ Remove linha também dos nomes */
+.perfume-nome {
+    text-decoration: none !important;
+}
+
+/* ✅ Para o grid de ver-todos especificamente */
+.grid-perfumes a {
+    text-decoration: none !important;
+}
+
+/* Filtros de Gênero */
+.filtros-genero {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    margin-top: -15px;
+    flex-wrap: wrap;
+}
+
+.btn-filtro-genero {
+    padding: 5px 15px;
+    background: rgba(132, 132, 132, 0.15);
+    color: #000;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 30px;
+    font-size: 12px;
+    font-family: 'Inter';
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.btn-filtro-genero:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-filtro-genero.ativo {
+    background: #C06060;
+    border-color: #C06060;
+    color: #000;
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .filtros-genero {
+        gap: 10px;
+    }
+    
+    .btn-filtro-genero {
+        padding: 8px 10px;
+        font-size: 14px;
     }
 }

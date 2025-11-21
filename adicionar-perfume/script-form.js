@@ -72,66 +72,16 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-/**
- * ✅ NOVO: Verifica se a marca é nova e pergunta se quer adicionar info
- */
-async function verificarMarcaNovaEPerguntar(nomeMarca) {
-  try {
-    // Só faz isso para o admin
-    if (usuarioAtual.email !== EMAIL_ADMIN) {
-      window.location.href = '../perfil/perfil.html';
-      return;
-    }
-    
-    // Busca a marca no Firebase
-    const marcasRef = collection(db, "marcas");
-    const q = query(marcasRef, where("nome", "==", nomeMarca));
-    const querySnapshot = await getDocs(q);
-    
-    if (querySnapshot.empty) {
-      window.location.href = '../perfil/perfil.html';
-      return;
-    }
-    
-    const marcaDoc = querySnapshot.docs[0];
-    const marcaData = marcaDoc.data();
-    
-    // Verifica se já tem site E logo cadastrados
-    if (marcaData.site && marcaData.logo) {
-      window.location.href = '../perfil/perfil.html';
-      return;
-    }
-    
-    // Pergunta se quer cadastrar agora
-    const querCadastrar = confirm(
-      `🎉 Perfume cadastrado com sucesso!\n\n` +
-      `Esta é a primeira vez que você cadastra um perfume da marca "${nomeMarca}".\n\n` +
-      `Deseja adicionar o link do site oficial e da logo agora?`
-    );
-    
-    if (querCadastrar) {
-      // Redireciona para página da marca
-      window.location.href = `../marca/marca.html?nome=${encodeURIComponent(nomeMarca)}`;
-    } else {
-      window.location.href = '../perfil/perfil.html';
-    }
-    
-  } catch (error) {
-    console.error('Erro ao verificar marca:', error);
-    window.location.href = '../perfil/perfil.html';
-  }
-}
-
 const notas = window.dadosNotas.notas;
 const ids = ["topo", "coracao", "fundo"];
 
 const acordes = [
   'Abaunilhado', 'Aldeídico', 'Alcoólico', 'Almiscarado', 'Ambarado',
   'Amadeirado', 'Animálico', 'Aquático', 'Aromático', 'Atalcado',
-  'Chipre', 'Cítrico', 'Couro', 'Cremoso', 'Doce', 'Esfumaçado',
+  'Balsâmico', 'Chipre', 'Cítrico', 'Couro', 'Cremoso', 'Doce', 'Esfumaçado',
   'Especiado', 'Floral', 'Floral Amarelo', 'Floral Branco', 'Fougère',
   'Fresco', 'Frutado', 'Gourmand', 'Herbal', 'Lactônico',
-  'Metálico', 'Oriental', 'Terroso', 'Tropical', 'Verde'
+  'Metálico', 'Resinoso', 'Terroso', 'Tropical', 'Verde'
 ];
 
 const acordesSelect = document.getElementById('acordes');

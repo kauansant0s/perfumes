@@ -422,3 +422,85 @@ export async function buscarPreferenciasUsuario(userId) {
     throw new Error(tratarErroFirebase(error));
   }
 }
+
+// ===== FUNÇÕES PARA MANIPULAR PAÍSES =====
+
+// Cache para países (igual às marcas)
+let paisesCache = null;
+let paisesCacheTime = null;
+
+/**
+ * Busca todos os países cadastrados (com cache)
+ * @returns {Promise<Array<string>>}
+ */
+export async function buscarPaises() {
+  try {
+    // Verifica se tem cache válido
+    const agora = Date.now();
+    if (paisesCache && paisesCacheTime && (agora - paisesCacheTime) < CACHE_DURATION) {
+      console.log('✅ Países carregados do cache');
+      return paisesCache;
+    }
+    
+    console.log('📡 Buscando países do Firestore...');
+    const querySnapshot = await getDocs(collection(db, "paises"));
+    const paises = [];
+    querySnapshot.forEach((doc) => {
+      paises.push(doc.data().nome);
+    });
+    
+    // Atualiza cache
+    paisesCache = paises.sort();
+    paisesCacheTime = agora;
+    
+    return paisesCache;
+  } catch (error) {
+    console.error("Erro ao buscar países:", error);
+    throw new Error(tratarErroFirebase(error));
+  }
+}
+
+/**
+ * Salva novo país
+ * @param {string} nomePais - Nome do país
+ */
+export async function salvarPais(nomePais) {
+  try {
+    if (!nomePais || nomePais.trim() === '') {
+      throw new Error('Nome do país não pode estar vazio');
+    }
+    
+    const paisNormalizado = nomePais.trim();
+    
+    // Verifica se já existe
+    const q = query(
+      collection(db, "paises"),
+      where("nome", "==", paisNormalizado)
+    );
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      await addDoc(collection(db, "paises"), {
+        nome: paisNormalizado,
+        dataCriacao: serverTimestamp()
+      });
+      console.log("✅ Novo país salvo:", paisNormalizado);
+      
+      // Invalida cache
+      paisesCache = null;
+      paisesCacheTime = null;
+    }
+  } catch (error) {
+    console.error("Erro ao salvar país:", error);
+    throw new Error(tratarErroFirebase(error));
+  }
+}
+
+/**
+ * Invalida cache de países
+ */
+export function invalidarCachePaises() {
+  paisesCache = null;
+  paisesCacheTime = null;
+  console.log('🗑️ Cache de países invalidado');
+}

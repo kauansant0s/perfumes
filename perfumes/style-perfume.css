@@ -509,16 +509,17 @@ hr {
     font-style: italic;
 }
 
-/* Reviews */
+/* Reviews - NOVO LAYOUT */
 .reviews-secao {
     margin-top: 30px;
 }
 
 .review-card {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 12px;
+    background: rgba(60, 66, 62, 0.4);
+    padding: 20px 25px;
+    border-radius: 16px;
     margin-bottom: 15px;
+    backdrop-filter: blur(10px);
 }
 
 .review-header {
@@ -529,27 +530,33 @@ hr {
 }
 
 .review-avatar {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background: #d9d9d9;
+    object-fit: cover;
+    flex-shrink: 0;
 }
 
 .review-autor {
-    font-weight: 600;
-    color: #000;
+    font-weight: 500;
+    color: #fff;
+    font-size: 15px;
 }
 
 .review-texto {
-    font-size: 14px;
-    line-height: 1.6;
-    color: #333;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #fff;
     margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .sem-reviews {
     text-align: center;
-    color: #666;
+    color: #999;
     font-style: italic;
     padding: 40px 0;
+    font-size: 15px;
 }

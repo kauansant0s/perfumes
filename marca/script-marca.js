@@ -1,5 +1,6 @@
 // marca/script-marca.js - COM EDIÇÃO ADMIN
-import { auth, buscarPerfumes, db } from '../adicionar-perfume/firebase-config.js';
+// marca/script-marca.js
+import { auth, buscarPerfumes, db, buscarPaises, salvarPais, invalidarCachePaises } from '../adicionar-perfume/firebase-config.js';
 import { collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { toggleLoading, criarPlaceholder } from '../adicionar-perfume/utils.js';
@@ -12,7 +13,9 @@ let usuarioAtual = null;
 let nomeMarca = '';
 let marcaId = null;
 let filtroAtual = 'todos';
+let filtroGeneroAtual = 'todos';
 let ordenacaoAtual = 'nome-asc';
+let paisesDisponiveis = [];
 
 // ✅ EMAIL DO ADMIN (seu email)
 const EMAIL_ADMIN = 'kauankssantos.12@gmail.com'; // ⚠️ ALTERE AQUI!
@@ -57,10 +60,38 @@ onAuthStateChanged(auth, async (user) => {
         toggleLoading(true);
         
         try {
-            await carregarPerfumesDaMarca();
+            // ✅ DEBUG: Testa carregar países
+            console.log('📡 Tentando carregar países...');
+            
+            try {
+                paisesDisponiveis = await buscarPaises();
+                console.log(`✅ ${paisesDisponiveis.length} países carregados`);
+            } catch (erroPaises) {
+                console.error('❌ ERRO ao carregar países:', erroPaises);
+                console.error('Tipo do erro:', erroPaises.name);
+                console.error('Mensagem:', erroPaises.message);
+                console.error('Stack:', erroPaises.stack);
+                // Continua mesmo com erro nos países
+                paisesDisponiveis = [];
+            }
+            
+            // ✅ DEBUG: Testa carregar perfumes
+            console.log('📡 Tentando carregar perfumes da marca...');
+            
+            try {
+                await carregarPerfumesDaMarca();
+                console.log('✅ Perfumes carregados com sucesso!');
+            } catch (erroPerfumes) {
+                console.error('❌ ERRO ao carregar perfumes:', erroPerfumes);
+                console.error('Tipo do erro:', erroPerfumes.name);
+                console.error('Mensagem:', erroPerfumes.message);
+                console.error('Stack:', erroPerfumes.stack);
+                throw erroPerfumes; // Re-lança o erro para mostrar na tela
+            }
+            
         } catch (error) {
-            console.error('❌ Erro ao carregar perfumes:', error);
-            alert('Erro ao carregar perfumes da marca');
+            console.error('❌ Erro GERAL ao inicializar:', error);
+            alert('❌ Erro ao carregar perfumes da marca.\n\nVeja o console (F12) para mais detalhes.\n\nErro: ' + error.message);
         } finally {
             toggleLoading(false);
         }
@@ -130,7 +161,16 @@ async function atualizarHeader() {
     const logoTemp = nomeMarca.substring(0, 3).toUpperCase();
     document.getElementById('logo-texto').textContent = logoTemp;
     
-    document.getElementById('total-perfumes').textContent = perfumesData.length;
+    // ✅ CORRIGIDO: Singular/Plural
+    const totalPerfumes = perfumesData.length;
+    const textoPerfumes = totalPerfumes === 1 ? 'perfume' : 'perfumes';
+    document.getElementById('total-perfumes').textContent = totalPerfumes;
+    
+    const totalPerfumesElement = document.querySelector('.total-perfumes');
+    if (totalPerfumesElement) {
+        totalPerfumesElement.innerHTML = `<span id="total-perfumes">${totalPerfumes}</span> ${textoPerfumes} em seu catálogo`;
+    }
+    
     document.title = `${nomeMarca} - Marca`;
     
     await buscarInfoMarcaFirebase();
@@ -171,6 +211,14 @@ async function buscarInfoMarcaFirebase() {
         // ✅ Se for admin, mostra botão de edição
         if (usuarioAtual.email === EMAIL_ADMIN) {
             mostrarBotaoEditarAdmin(marcaData);
+            if (!marcaData.site || !marcaData.logo) {
+                console.log('📝 Marca nova sem informações completas, abrindo modal...');
+                
+                // Aguarda um pouco para garantir que tudo carregou
+                setTimeout(() => {
+                    abrirModalEditarMarca(marcaData);
+                }, 800);
+            }
         }
         
     } catch (error) {
@@ -237,7 +285,13 @@ function abrirModalEditarMarca(marcaData) {
             
             <div class="campo-modal">
                 <label>País de Origem:</label>
-                <input type="text" id="input-pais-marca" placeholder="Ex: França" value="${marcaData.pais || ''}">
+                <input type="text" 
+                       id="input-pais-marca" 
+                       list="paises-list"
+                       placeholder="Ex: França" 
+                       value="${marcaData.pais || ''}"
+                       autocomplete="off">
+                <datalist id="paises-list"></datalist>
             </div>
             
             <div class="campo-modal">
@@ -253,6 +307,14 @@ function abrirModalEditarMarca(marcaData) {
     `;
     
     document.body.appendChild(modal);
+    
+    // ✅ Popula datalist com países
+    const datalist = document.getElementById('paises-list');
+    paisesDisponiveis.forEach(pais => {
+        const option = document.createElement('option');
+        option.value = pais;
+        datalist.appendChild(option);
+    });
     
     // Event listeners
     const closeBtn = modal.querySelector('.close-modal-marca');
@@ -292,13 +354,26 @@ async function salvarInfoMarca() {
         return;
     }
     
-    if (ano && (!/^\d{4}$/.test(ano) || parseInt(ano) < 1500 || parseInt(ano) > 2024)) {
+    if (ano && (!/^\d{4}$/.test(ano) || parseInt(ano) < 1500 || parseInt(ano) > 2025)) {
         alert('❌ Ano inválido. Use formato: 1921');
         return;
     }
     
     try {
         toggleLoading(true);
+        
+        // ✅ Salva país se for novo
+        if (pais && pais.trim() !== '') {
+            const paisTrimmed = pais.trim();
+            
+            if (!paisesDisponiveis.includes(paisTrimmed)) {
+                console.log('📝 Novo país detectado:', paisTrimmed);
+                await salvarPais(paisTrimmed);
+                paisesDisponiveis.push(paisTrimmed);
+                paisesDisponiveis.sort();
+                console.log('✅ Novo país adicionado:', paisTrimmed);
+            }
+        }
         
         const dadosParaAtualizar = {};
         if (site) dadosParaAtualizar.site = site;
@@ -417,16 +492,50 @@ function configurarEventos() {
         ordenacaoAtual = e.target.value;
         aplicarFiltrosEOrdenacao();
     });
+
+    document.querySelectorAll('.btn-filtro-genero').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.btn-filtro-genero').forEach(b => b.classList.remove('ativo'));
+            btn.classList.add('ativo');
+            filtroGeneroAtual = btn.dataset.genero;
+            aplicarFiltrosEOrdenacao();
+        });
+    });
 }
 
 function aplicarFiltrosEOrdenacao() {
+    // 1. Filtrar por status
     if (filtroAtual === 'todos') {
         perfumesFiltrados = [...perfumesData];
     } else {
         perfumesFiltrados = perfumesData.filter(p => p.status === filtroAtual);
     }
     
+    // ✅ NOVO: 2. Filtrar por gênero
+    if (filtroGeneroAtual !== 'todos') {
+        perfumesFiltrados = perfumesFiltrados.filter(p => {
+            if (!p.caracteristicas || !p.caracteristicas.genero) {
+                return false;
+            }
+            
+            const genero = p.caracteristicas.genero;
+            
+            if (filtroGeneroAtual === 'masculino') {
+                return genero === 'masculino' || genero === 'um-pouco-masculino';
+            } else if (filtroGeneroAtual === 'feminino') {
+                return genero === 'feminino' || genero === 'um-pouco-feminino';
+            } else if (filtroGeneroAtual === 'compartilhavel') {
+                return genero === 'compartilhavel';
+            }
+            
+            return false;
+        });
+    }
+    
+    // 3. Ordenar
     ordenarPerfumes();
+    
+    // 4. Renderizar
     renderizarPerfumes();
 }
 
@@ -493,9 +602,10 @@ function criarCardPerfume(perfume) {
     const card = document.createElement('div');
     card.className = 'perfume-card';
     
-    card.onclick = () => {
-        window.location.href = `../perfumes/perfume.html?id=${perfume.id}`;
-    };
+    // ✅ NOVO: Usa <a> ao invés de onclick
+    const link = document.createElement('a');
+    link.href = `../perfumes/perfume.html?id=${perfume.id}`;
+    link.setAttribute('aria-label', `Ver detalhes de ${perfume.nome}`);
     
     const foto = document.createElement('div');
     foto.className = 'perfume-foto';
@@ -534,11 +644,13 @@ function criarCardPerfume(perfume) {
         status.textContent = 'Quero ter';
     }
     
-    card.appendChild(foto);
-    card.appendChild(nome);
+    link.appendChild(foto);
+    link.appendChild(nome);
     if (perfume.status) {
-        card.appendChild(status);
+        link.appendChild(status);
     }
+    
+    card.appendChild(link);
     
     return card;
 }
