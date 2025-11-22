@@ -553,3 +553,69 @@ body {
         font-size: 15px;
     }
 }
+
+/* ✅ Container de informações */
+.perfume-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+/* ✅ Marca do perfume (só aparece em lista) */
+.perfume-marca {
+    font-size: 14px;
+    color: #2c2c2c;
+    display: none; /* Escondido por padrão (grid) */
+}
+
+/* ✅ Em visualização LISTA, mostra a marca */
+.grid-perfumes.lista .perfume-marca {
+    display: block;
+}
+
+/* ✅ Ajusta estrutura do link em lista */
+.grid-perfumes.lista .perfume-card a {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.grid-perfumes.lista .perfume-info {
+    flex: 1;
+}
+
+.grid-perfumes.lista .perfume-nome {
+    font-size: 18px;
+    font-weight: 500;
+    text-align: left;
+    max-width: none;
+    overflow: visible;
+    white-space: normal;
+}
+
+/* ✅ Símbolos de Gênero Coloridos */
+.simbolo-genero {
+    display: inline-block;
+    font-weight: 700;
+    margin-left: 8px;
+    font-size: 1.1em;
+}
+
+/* Masculino - Azul */
+.simbolo-genero.masculino {
+    color: #4A90E2;
+}
+
+/* Feminino - Rosa */
+.simbolo-genero.feminino {
+    color: #FF69B4;
+}
+
+/* Unissex - Verde */
+.simbolo-genero.unissex {
+    color: #2ecc71;
+    font-weight: 10;
+}

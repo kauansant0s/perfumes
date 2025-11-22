@@ -421,12 +421,89 @@ function atualizarLogo(urlLogo) {
     img.onload = () => {
         logoTexto.style.display = 'none';
         logoElement.appendChild(img);
+        
+        // ✅ NOVO: Aplica fundo especial baseado na marca
+        aplicarFundoLogo(logoElement, urlLogo);
+        
         console.log('✅ Logo carregada');
     };
     
     img.onerror = () => {
         console.log('❌ Erro ao carregar logo');
     };
+}
+
+/**
+ * ✅ NOVA FUNÇÃO: Aplica fundo da logo baseado na marca ou cor dominante
+ */
+function aplicarFundoLogo(logoElement, urlLogo) {
+    // ✅ Lista de exceções (marcas com fundo específico)
+    const excecoes = {
+        'Azza Parfums': '#000000',  // Preto
+        'Azzaparfums': '#000000',   // Preto (variação sem espaço)
+        'AZZA PARFUMS': '#000000'   // Preto (maiúsculas)
+    };
+    
+    // Verifica se a marca está nas exceções
+    const corExcecao = excecoes[nomeMarca] || 
+                       excecoes[nomeMarca.toLowerCase()] || 
+                       excecoes[nomeMarca.toUpperCase()];
+    
+    if (corExcecao) {
+        logoElement.style.background = corExcecao;
+        console.log(`🎨 Fundo especial aplicado para ${nomeMarca}: ${corExcecao}`);
+        return;
+    }
+    
+    // ✅ Para outras marcas, tenta extrair cor dominante
+    try {
+        const img = logoElement.querySelector('img');
+        if (img && img.complete) {
+            extrairCorDominante(img, logoElement);
+        }
+    } catch (error) {
+        console.log('ℹ️ Não foi possível extrair cor dominante, mantendo branco');
+    }
+}
+
+/**
+ * ✅ NOVA FUNÇÃO: Extrai cor dominante da imagem
+ */
+function extrairCorDominante(img, logoElement) {
+    try {
+        // Cria canvas temporário
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        
+        // Desenha imagem no canvas
+        ctx.drawImage(img, 0, 0);
+        
+        // Pega pixel do centro da imagem
+        const centerX = Math.floor(canvas.width / 2);
+        const centerY = Math.floor(canvas.height / 2);
+        const pixel = ctx.getImageData(centerX, centerY, 1, 1).data;
+        
+        // Converte para RGB
+        const r = pixel[0];
+        const g = pixel[1];
+        const b = pixel[2];
+        const a = pixel[3] / 255;
+        
+        // Se for transparente ou muito claro, mantém branco
+        if (a < 0.5 || (r > 240 && g > 240 && b > 240)) {
+            return;
+        }
+        
+        // Aplica cor extraída
+        logoElement.style.background = `rgb(${r}, ${g}, ${b})`;
+        console.log(`🎨 Cor extraída aplicada: rgb(${r}, ${g}, ${b})`);
+        
+    } catch (error) {
+        console.log('ℹ️ Erro ao extrair cor:', error.message);
+    }
 }
 
 function mostrarBotaoSite(urlSite) {
@@ -653,25 +730,33 @@ function criarCardPerfume(perfume) {
     
     const nome = document.createElement('div');
     nome.className = 'perfume-nome';
+    nome.textContent = perfume.nome;
     
-    // ✅ Adiciona símbolo de gênero
-    let nomeComGenero = perfume.nome;
+    // ✅ Adiciona símbolo de gênero COLORIDO
     if (perfume.caracteristicas && perfume.caracteristicas.genero) {
       const genero = perfume.caracteristicas.genero;
       let simbolo = '';
+      let classeGenero = '';
       
       if (genero === 'masculino' || genero === 'um-pouco-masculino') {
-        simbolo = ' ♂';
+        simbolo = '♂';
+        classeGenero = 'masculino';
       } else if (genero === 'feminino' || genero === 'um-pouco-feminino') {
-        simbolo = ' ♀';
+        simbolo = '♀';
+        classeGenero = 'feminino';
       } else if (genero === 'compartilhavel') {
-        simbolo = ' ⚥';
+        simbolo = '⚥';
+        classeGenero = 'unissex';
       }
       
-      nomeComGenero += simbolo;
+      if (simbolo) {
+        const spanSimbolo = document.createElement('span');
+        spanSimbolo.className = `simbolo-genero ${classeGenero}`;
+        spanSimbolo.textContent = simbolo;
+        nome.appendChild(spanSimbolo);
+      }
     }
     
-    nome.textContent = nomeComGenero;
     nome.title = perfume.nome;
     
     const status = document.createElement('span');

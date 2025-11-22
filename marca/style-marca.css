@@ -807,3 +807,27 @@ select:focus {
         font-size: 15px;
     }
 }
+
+/* ✅ Símbolos de Gênero Coloridos */
+.simbolo-genero {
+    display: inline-block;
+    font-weight: 700;
+    margin-left: 8px;
+    font-size: 1.1em;
+}
+
+/* Masculino - Azul */
+.simbolo-genero.masculino {
+    color: #4A90E2;
+}
+
+/* Feminino - Rosa */
+.simbolo-genero.feminino {
+    color: #FF69B4;
+}
+
+/* Unissex - Verde */
+.simbolo-genero.unissex {
+    color: #2ecc71;
+    font-weight: 10;
+}

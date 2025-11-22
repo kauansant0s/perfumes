@@ -266,7 +266,6 @@ function criarCardPerfume(perfume) {
     const card = document.createElement('div');
     card.className = 'perfume-card';
     
-    // ✅ NOVO: Usa <a> ao invés de onclick
     const link = document.createElement('a');
     link.href = `../perfumes/perfume.html?id=${perfume.id}`;
     link.setAttribute('aria-label', `Ver detalhes de ${perfume.nome}`);
@@ -290,13 +289,51 @@ function criarCardPerfume(perfume) {
         foto.innerHTML = `<div class="perfume-foto-placeholder">${perfume.nome}</div>`;
     }
     
+    // ✅ Container de informações (nome + marca)
+    const infoContainer = document.createElement('div');
+    infoContainer.className = 'perfume-info';
+    
     const nome = document.createElement('div');
     nome.className = 'perfume-nome';
     nome.textContent = perfume.nome;
+    
+    // ✅ Adiciona símbolo de gênero COLORIDO
+    if (perfume.caracteristicas && perfume.caracteristicas.genero) {
+      const genero = perfume.caracteristicas.genero;
+      let simbolo = '';
+      let classeGenero = '';
+      
+      if (genero === 'masculino' || genero === 'um-pouco-masculino') {
+        simbolo = '♂';
+        classeGenero = 'masculino';
+      } else if (genero === 'feminino' || genero === 'um-pouco-feminino') {
+        simbolo = '♀';
+        classeGenero = 'feminino';
+      } else if (genero === 'compartilhavel') {
+        simbolo = '⚥';
+        classeGenero = 'unissex';
+      }
+      
+      if (simbolo) {
+        const spanSimbolo = document.createElement('span');
+        spanSimbolo.className = `simbolo-genero ${classeGenero}`;
+        spanSimbolo.textContent = simbolo;
+        nome.appendChild(spanSimbolo);
+      }
+    }
+    
     nome.title = perfume.nome;
     
+    // ✅ Adiciona marca (só aparece em visualização lista)
+    const marca = document.createElement('div');
+    marca.className = 'perfume-marca';
+    marca.textContent = perfume.marca || '';
+    
+    infoContainer.appendChild(nome);
+    infoContainer.appendChild(marca);
+    
     link.appendChild(foto);
-    link.appendChild(nome);
+    link.appendChild(infoContainer);
     card.appendChild(link);
     
     return card;

@@ -1,18 +1,8 @@
-qnd clica em editar perfil, vai pra página de criar conta, mas com os dados já carregados
+                qnd clica em editar perfil, vai pra página de criar conta, mas com os dados já carregados
+
 ver se da pra colocar o link do lugar mais barato
-ver se da pra o banco dados baixar as imagens dos links dos perfumes, para não sair fora as imagens quando o link sair fora tbm
-
-        tentar fazer o fundo da logo da marca ficar igual ao fundo da foto da logo (usar como exemplo o azza parfums)
-
 criar as linhas nas marcas. na hora de adicionar um perfume eu posso escolher se eles pertecem a uma linha da marca. (ex. se eu adiciono um perfume da boticario, na hora que eu seleciono a marca, aparece do lado ou embaixo um select para eu escolher a linha dele, ai eu escolho entre as linhas, ou se ele é um perfume que não é de nenhuma linha só não seleciono nada, e tbm tem uma opção para eu criar uma linha nova)
 dps disso ai na pagina da marca aparece para eu escolher, usando como exemplo o boticario, aparece ali, malbec, zaad, botica 214, etc. a primeira opção e a opção é sempre todos, e a última é "sem linha". adicionar isso logo acima das quatro opções ali de todos, tenho, ja tive e quero ter. elas são no mesmo formato de pílula, a linha selecionada fica na cor vermelha do site e as outras cinza claro.
+criar botão de pesquisa que fica do lado do botão de menu, e qnd clica nele ai abre a barra de pesquisa
 
-        colocar cor nos simbolos, azul no masulino, rosa no feminino e, se der, no unissex, a metdade de cima azul, que é a masculina, e a metade de baixo rosa, que é o feminino. se não der, ai deixa com a cor verde. e colocar os simbolos na página de ver todos os perfumes tbm
-
-        na visão de lista em ver todos, quero que apareça o nome da marca embaixo do nome do perfume, em fonte menor e em cor mais fraca que o preto, tipo #5f5f5f
-
-
-
-
-        MSG PARA ENVIAR PARA O CLAUDE (tirar print da página da azza parfums)
-ok, agora colocar cor nos simbolos, azul no masculino, rosa no feminino e, se der, no unissex, a metade de cima azul, que é a masculina, e a metade de baixo rosa, que é o feminino. se não der, ai deixa com a cor verde. e colocar os simbolos na página de ver todos os perfumes tbm. tbm na visão de lista em ver todos, quero que apareça o nome da marca embaixo do nome do perfume, em fonte menor e em cor mais fraca que o preto, tipo #5f5f5f. outra coisa, da pra fazer o fundo da logo da marca da cor igual a foto da logo? por exemplo aqui na marca azza parfums, essa é a unica logo que achei da marca, mas fica assim estranho. se não der, tem como criar uma exceção para essa marca em específico e fazer o fundo da logo dela só ser preto?
+                ver a grossura do simbolo de unissex comparado com os outros
