@@ -2,7 +2,7 @@
 import { auth, db, buscarPerfumePorId, buscarPerfumes } from '../adicionar-perfume/firebase-config.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { toggleLoading, criarPlaceholder } from '../adicionar-perfume/utils.js';
+import { toggleLoading } from '../adicionar-perfume/utils.js';
 import { verificarAdmin, isAdmin } from '../adicionar-perfume/admin-config.js';
 
 console.log('=== Script perfume carregado ===');
@@ -208,6 +208,16 @@ async function renderizarPerfume() {
         const statusInput = document.querySelector(`input[value="${perfumeData.status}"]`);
         if (statusInput) {
             statusInput.checked = true;
+        }
+    }
+    
+    // ✅ NOVO: Link de compra (botão carrinho)
+    if (perfumeData.linkCompra && perfumeData.linkCompra.trim() !== '') {
+        const btnCarrinho = document.getElementById('btn-carrinho');
+        if (btnCarrinho) {
+            btnCarrinho.href = perfumeData.linkCompra;
+            btnCarrinho.style.display = 'flex';
+            console.log('🛒 Botão carrinho habilitado:', perfumeData.linkCompra);
         }
     }
     

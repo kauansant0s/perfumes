@@ -745,6 +745,11 @@ async function carregarPerfumeParaEdicao() {
     document.getElementById('marca').value = perfume.marca || '';
     document.getElementById('perfumista').value = perfume.perfumista || '';
     
+    // ✅ NOVO: Carrega link de compra
+    if (perfume.linkCompra) {
+      document.getElementById('link-compra').value = perfume.linkCompra;
+    }
+    
     if (perfume.review) {
       document.getElementById('titulo').value = perfume.review.titulo || '';
       document.getElementById('review').value = perfume.review.texto || '';
@@ -928,7 +933,8 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
         titulo: document.getElementById('titulo').value,
         texto: document.getElementById('review').value
       },
-      status: document.querySelector('input[name="status"]:checked')?.value || ''
+      status: document.querySelector('input[name="status"]:checked')?.value || '',
+      linkCompra: document.getElementById('link-compra').value.trim() // ✅ NOVO
     };
     
     const contratipoSelecionado = document.querySelector('input[name="contratipo"]:checked')?.value;

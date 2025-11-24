@@ -237,15 +237,27 @@
                 </div>
             </div>
             
-            <div class="status-buttons">
-                <input type="radio" id="tenho" name="status" value="tenho">
-                <label for="tenho">Tenho</label>
+            <!-- ✅ Status + Carrinho -->
+            <div class="status-carrinho-container">
+                <div class="status-buttons">
+                    <input type="radio" id="tenho" name="status" value="tenho">
+                    <label for="tenho">Tenho</label>
 
-                <input type="radio" id="ja-tive" name="status" value="ja-tive">
-                <label for="ja-tive">Já tive</label>
+                    <input type="radio" id="ja-tive" name="status" value="ja-tive">
+                    <label for="ja-tive">Já tive</label>
 
-                <input type="radio" id="quero-ter" name="status" value="quero-ter">
-                <label for="quero-ter">Quero ter</label>
+                    <input type="radio" id="quero-ter" name="status" value="quero-ter">
+                    <label for="quero-ter">Quero ter</label>
+                </div>
+                
+                <!-- ✅ NOVO: Botão Carrinho -->
+                <a href="#" id="btn-carrinho" class="btn-carrinho" target="_blank" rel="noopener noreferrer" style="display: none;" title="Ver na loja">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                </a>
             </div>
             
             <button class="btn-editar-icon" id="btn-editar" title="Editar perfume">
@@ -253,7 +265,6 @@
                     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
                 </svg>
             </button>
-        </aside>
         
         <!-- Coluna Direita - Informações -->
         <main class="conteudo-principal">

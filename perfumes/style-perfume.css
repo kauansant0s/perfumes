@@ -370,6 +370,7 @@ body {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    flex: 1;
 }
 
 .status-buttons input[type="radio"] {
@@ -385,6 +386,9 @@ body {
     font-size: 14px;
     color: #000;
     transition: all 0.2s;
+    flex: 1;
+    text-align: center;
+    min-width: 70px;
 }
 
 .status-buttons input[type="radio"]:checked + label {
@@ -810,4 +814,47 @@ hr {
         width: calc(100vw - 100px);
         right: 20px;
     }
+}
+
+/* ✅ Container Status + Carrinho */
+.status-carrinho-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ✅ Quando tem carrinho, botões ficam menores */
+.status-carrinho-container:has(.btn-carrinho[style*="flex"]) .status-buttons label,
+.status-carrinho-container:has(.btn-carrinho[style*="display: flex"]) .status-buttons label {
+    padding: 10px 14px;
+    font-size: 12px;
+    min-width: 60px;
+}
+
+/* ✅ Botão Carrinho */
+.btn-carrinho {
+    width: 48px;
+    height: 48px;
+    background: #C06060;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+    text-decoration: none;
+}
+
+.btn-carrinho:hover {
+    background: #a85050;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.btn-carrinho svg {
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
 }

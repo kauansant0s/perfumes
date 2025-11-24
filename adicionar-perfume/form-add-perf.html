@@ -264,7 +264,6 @@
         <input type="text" id="perfumista" class="campo" name="perfumista" placeholder="Nome do perfumista">
       </div>
 
-      <!-- É contratipo -->
       <div class="campo-contratipo">
         <label>É contratipo?</label>
         <div class="radio-inline">
@@ -276,11 +275,15 @@
         </div>
       </div>
 
-      <!-- Campo "De qual perfume" - Select com perfumes cadastrados -->
       <div id="campo-perfume-original" class="campo-perfume-original">
         <select id="perfume-original" name="perfume-original">
           <option value="">Selecione o perfume original...</option>
         </select>
+      </div>
+
+      <div>
+        <label for="link-compra">Link de compra:</label><br>
+        <input type="url" id="link-compra" class="campo" name="link-compra" placeholder="https://exemplo.com/perfume" style="background: transparent;">
       </div>
 
       <div>
@@ -295,7 +298,6 @@
           <button type="submit" id="adicionar">Adicionar</button>
         </div>
         
-        <!-- ✅ NOVO: Botão deletar -->
         <button type="button" id="deletar" class="btn-deletar" style="display: none;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="3 6 5 6 21 6"></polyline>
