@@ -1,13 +1,11 @@
 // script-form.js - COMPLETO COM VERIFICAÇÃO DE MARCA NOVA
 import { auth, salvarPerfume, uploadFotoPerfume, buscarMarcas, salvarMarca, buscarPerfumes, invalidarCachePerfumes, buscarPerfumePorId } from './firebase-config.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { toggleLoading, tratarErroFirebase, processarFotoUrl } from './utils.js';
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { toggleLoading, tratarErroFirebase } from './utils.js';
+import { verificarAdmin, isAdmin } from './admin-config.js';
 
 const db = getFirestore();
-
-// ✅ EMAIL DO ADMIN
-const EMAIL_ADMIN = 'seu-email@gmail.com'; // ⚠️ ALTERE AQUI!
 
 let usuarioAtual = null;
 let marcasDisponiveis = [];
@@ -33,6 +31,9 @@ onAuthStateChanged(auth, async (user) => {
   if (user) {
     usuarioAtual = user;
     console.log('✅ Usuário logado:', user.email);
+    
+    // ✅ NOVO: Verifica se é admin
+    await verificarAdmin(user);
     
     toggleLoading(true);
     
@@ -721,9 +722,9 @@ async function carregarPerfumeParaEdicao() {
     submitButton.textContent = 'Salvar Alterações';
     submitButton.style.width = '131px';
 
-    // ✅ NOVO: Mostra botão deletar
+    // ✅ NOVO: Mostra botão deletar (APENAS para admin)
     const btnDeletar = document.getElementById('deletar');
-    if (btnDeletar && usuarioAtual.email === EMAIL_ADMIN) {
+    if (btnDeletar && isAdmin()) {
       btnDeletar.style.display = 'flex';
       console.log('🗑️ Botão deletar habilitado (admin)');
     }
@@ -1024,6 +1025,16 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
     if (modoEdicao && perfumeId) {
       console.log('📝 Atualizando perfume:', perfumeId);
       
+      // ✅ NOVO: Verifica permissão ANTES de atualizar
+      try {
+        await verificarPermissaoEdicao(perfumeId);
+      } catch (error) {
+        alert('❌ ' + error.message);
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = textoOriginal;
+        return;
+      }
+      
       const perfumeRef = doc(db, "perfumes", perfumeId);
       await updateDoc(perfumeRef, perfumeData);
       
@@ -1137,11 +1148,46 @@ document.getElementById('btn-confirmar-url').addEventListener('click', () => {
 });
 
 /**
+ * ✅ NOVA: Verifica se usuário pode editar/deletar perfume
+ */
+async function verificarPermissaoEdicao(perfumeId) {
+  try {
+    const perfumeRef = doc(db, "perfumes", perfumeId);
+    const perfumeSnap = await getDoc(perfumeRef);
+    
+    if (!perfumeSnap.exists()) {
+      throw new Error('Perfume não encontrado');
+    }
+    
+    const perfumeData = perfumeSnap.data();
+    
+    // Verifica se é o dono OU se é admin
+    if (perfumeData.userId !== usuarioAtual.uid && !isAdmin()) {
+      throw new Error('Você não tem permissão para editar este perfume');
+    }
+    
+    return true;
+    
+  } catch (error) {
+    console.error('❌ Erro ao verificar permissão:', error);
+    throw error;
+  }
+}
+
+/**
  * ✅ NOVO: Deleta perfume do banco de dados
  */
 async function deletarPerfumeAtual() {
   if (!perfumeId || !modoEdicao) {
     alert('❌ Erro: Perfume não encontrado');
+    return;
+  }
+
+  // ✅ NOVO: Verifica permissão ANTES de deletar
+  try {
+    await verificarPermissaoEdicao(perfumeId);
+  } catch (error) {
+    alert('❌ ' + error.message);
     return;
   }
   

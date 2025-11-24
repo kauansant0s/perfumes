@@ -1,5 +1,5 @@
-// script-criar-conta.js
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+// script-criar-conta.js - COMPLETO
+import { getAuth, createUserWithEmailAndPassword, updateProfile, updateEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
@@ -27,16 +27,6 @@ console.log('Modo edição:', modoEdicao);
 if (modoEdicao) {
   document.getElementById('titulo-pagina').textContent = 'Editar Perfil';
   document.getElementById('btn-submit').textContent = 'Salvar Alterações';
-  
-  // Oculta campos de email e senha
-  document.getElementById('campo-email').style.display = 'none';
-  document.getElementById('campo-senha').style.display = 'none';
-  document.getElementById('campo-confirmar-senha').style.display = 'none';
-  
-  // Remove required dos campos ocultos
-  document.getElementById('email').removeAttribute('required');
-  document.getElementById('senha').removeAttribute('required');
-  document.getElementById('confirmar-senha').removeAttribute('required');
   
   // Aguarda autenticação e carrega dados
   auth.onAuthStateChanged((user) => {
@@ -110,9 +100,14 @@ document.getElementById('btn-cancelar').addEventListener('click', () => {
 document.getElementById('form-criar-conta').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const nome = document.getElementById('nome').value;
+  const nome = document.getElementById('nome').value.trim();
   const btnSubmit = document.getElementById('btn-submit');
   const textoOriginal = btnSubmit.textContent;
+  
+  if (!nome) {
+    alert('Por favor, preencha o nome!');
+    return;
+  }
   
   btnSubmit.disabled = true;
   btnSubmit.textContent = modoEdicao ? 'Salvando...' : 'Criando conta...';
@@ -131,9 +126,17 @@ document.getElementById('form-criar-conta').addEventListener('submit', async (e)
       // Faz upload da nova foto se houver
       if (fotoInput.files.length > 0) {
         const file = fotoInput.files[0];
+        
+        // Valida tamanho (máx 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          throw new Error('Imagem muito grande. Máximo 5MB');
+        }
+        
         const storageRef = ref(storage, `perfis/${user.uid}`);
+        console.log('📤 Fazendo upload da foto...');
         await uploadBytes(storageRef, file);
         photoURL = await getDownloadURL(storageRef);
+        console.log('✅ Foto enviada!');
       }
       
       // Atualiza o perfil
@@ -142,16 +145,24 @@ document.getElementById('form-criar-conta').addEventListener('submit', async (e)
         photoURL: photoURL
       });
       
-      alert('Perfil atualizado com sucesso!');
+      console.log('✅ Perfil atualizado!');
+      alert('✅ Perfil atualizado com sucesso!');
       window.location.href = '../perfil/perfil.html';
       
     } else {
       // ===== MODO CRIAR CONTA =====
-      const email = document.getElementById('email').value;
+      const email = document.getElementById('email').value.trim();
       const senha = document.getElementById('senha').value;
       const confirmarSenha = document.getElementById('confirmar-senha').value;
       
       // Validações
+      if (!email || !senha) {
+        alert('Por favor, preencha todos os campos!');
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = textoOriginal;
+        return;
+      }
+      
       if (senha !== confirmarSenha) {
         alert('As senhas não coincidem!');
         btnSubmit.disabled = false;
@@ -184,6 +195,7 @@ document.getElementById('form-criar-conta').addEventListener('submit', async (e)
       }
 
       // Cria o usuário
+      console.log('📝 Criando conta...');
       const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
       const user = userCredential.user;
 
@@ -192,9 +204,17 @@ document.getElementById('form-criar-conta').addEventListener('submit', async (e)
       // Faz upload da foto se existir
       if (fotoInput.files.length > 0) {
         const file = fotoInput.files[0];
+        
+        // Valida tamanho
+        if (file.size > 5 * 1024 * 1024) {
+          throw new Error('Imagem muito grande. Máximo 5MB');
+        }
+        
         const storageRef = ref(storage, `perfis/${user.uid}`);
+        console.log('📤 Fazendo upload da foto...');
         await uploadBytes(storageRef, file);
         photoURL = await getDownloadURL(storageRef);
+        console.log('✅ Foto enviada!');
       }
 
       // Atualiza o perfil com nome e foto
@@ -203,12 +223,13 @@ document.getElementById('form-criar-conta').addEventListener('submit', async (e)
         photoURL: photoURL
       });
 
-      alert('Conta criada com sucesso!');
+      console.log('✅ Conta criada!');
+      alert('✅ Conta criada com sucesso!');
       window.location.href = '../login/login.html';
     }
 
   } catch (error) {
-    console.error('Erro:', error);
+    console.error('❌ Erro:', error);
     
     let mensagem = modoEdicao ? 'Erro ao atualizar perfil. ' : 'Erro ao criar conta. ';
     
@@ -222,11 +243,15 @@ document.getElementById('form-criar-conta').addEventListener('submit', async (e)
       case 'auth/weak-password':
         mensagem += 'Senha muito fraca.';
         break;
+      case 'storage/unauthorized':
+        mensagem += 'Erro ao fazer upload da foto.';
+        break;
       default:
         mensagem += error.message;
     }
     
     alert(mensagem);
+  } finally {
     btnSubmit.disabled = false;
     btnSubmit.textContent = textoOriginal;
   }

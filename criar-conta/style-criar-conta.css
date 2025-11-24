@@ -3,9 +3,7 @@
 body {
     background: #3c423e;
     font-family: 'Inter';
-    margin-left: 70px;
-    margin-right: 70px;
-    margin-top: 50px;
+    margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
@@ -20,6 +18,14 @@ body {
     gap: 30px;
     width: 100%;
     max-width: 500px;
+    padding: 40px 20px;
+}
+
+h1 {
+    color: #fff;
+    font-size: 36px;
+    font-weight: 400;
+    margin: 0;
 }
 
 /* Área da foto */
@@ -39,10 +45,12 @@ body {
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    transition: all 0.3s;
 }
 
 .quadrado-foto:hover {
-    background: #d9d9d9c5;
+    background: #c5c5c5;
+    transform: scale(1.05);
 }
 
 .texto-foto {
@@ -60,7 +68,7 @@ body {
 
 /* Formulário */
 #form-criar-conta {
-    width: 120%;
+    width: 100%;
 }
 
 .campo-grupo {
@@ -69,53 +77,98 @@ body {
 
 .campo-grupo label {
     display: block;
-    margin-bottom: -18px;
-    color: #000000;
+    margin-bottom: 8px;
+    color: #fff;
     font-size: 16px;
+    font-weight: 500;
 }
 
 .campo-texto {
     width: 100%;
     border: 1px solid #C06060;
     border-radius: 8px;
-    height: 35px;
-    padding: 0 12px;
+    height: 45px;
+    padding: 0 15px;
     background: transparent;
     color: #fff;
-    font-size: 14px;
+    font-size: 15px;
     font-family: 'Inter';
     box-sizing: border-box;
+    transition: all 0.3s;
 }
 
 .campo-texto:focus {
     outline: none;
     border-color: #d69191;
+    box-shadow: 0 0 0 3px rgba(192, 96, 96, 0.2);
 }
 
 .campo-texto::placeholder {
     color: #999;
 }
 
-/* Botão */
+/* Botões lado a lado */
+.botoes {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-cancelar,
 .btn-criar {
-    width: 20%;
-    height: 45px;
-    background: #C06060;
-    border: none;
+    flex: 1;
+    height: 50px;
     border-radius: 8px;
-    color: #fff;
     font-size: 16px;
     font-weight: 600;
     font-family: 'Inter';
     cursor: pointer;
-    margin-top: 10px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-cancelar {
+    background: transparent;
+    border: 2px solid #C06060;
+    color: #C06060;
+}
+
+.btn-cancelar:hover {
+    background: rgba(192, 96, 96, 0.1);
+    transform: translateY(-2px);
+}
+
+.btn-criar {
+    background: #C06060;
+    border: none;
+    color: #fff;
 }
 
 .btn-criar:hover {
     background: #a85050;
+    transform: translateY(-2px);
 }
 
 .btn-criar:disabled {
     background: #999;
     cursor: not-allowed;
+    transform: none;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    
+    h1 {
+        font-size: 28px;
+    }
+    
+    .quadrado-foto {
+        width: 140px;
+        height: 140px;
+    }
 }

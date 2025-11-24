@@ -14,6 +14,27 @@
       <line x1="3" y1="18" x2="21" y2="18"></line>
     </svg>
   </button>
+
+<!-- Pesquisa Animada -->
+<div class="pesquisa-container">
+    <div class="barra-pesquisa-global" id="barra-pesquisa">
+        <input type="text" 
+               id="input-pesquisa-global" 
+               placeholder="Pesquisar perfumes ou marcas...">
+    </div>
+    <button class="btn-pesquisa-toggle" id="btn-pesquisa-toggle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+        </svg>
+    </button>
+</div>
+
+<!-- Resultados da Pesquisa -->
+<div class="resultados-pesquisa" id="resultados-pesquisa"></div>
+
+<!-- Overlay -->
+<div class="pesquisa-overlay" id="pesquisa-overlay"></div>
   
   <div class="menu-lateral" id="menu-lateral">
     <div class="menu-header">
@@ -138,33 +159,57 @@
     </main>
   </div>
 
-  <!-- Modal para adicionar perfume -->
-  <div id="modal-adicionar" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h3 id="modal-titulo">Adicionar perfume</h3>
-      
-      <div id="lista-perfumes-modal">
-        <!-- Lista de perfumes será carregada aqui -->
-      </div>
-      
-      <button id="btn-cadastrar-novo" class="btn-cadastrar-novo">
-        + Cadastrar novo perfume
-      </button>
+<!-- Modal para adicionar perfume -->
+<div id="modal-adicionar" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3 id="modal-titulo">Adicionar perfume</h3>
+    
+    <!-- ✅ NOVO: Barra de pesquisa -->
+    <div class="pesquisa-modal">
+      <input type="text" 
+             id="pesquisa-modal-adicionar" 
+             placeholder="Pesquisar perfume..." 
+             autocomplete="off">
+      <svg class="icone-pesquisa-modal" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
     </div>
+    
+    <div id="lista-perfumes-modal">
+      <!-- Lista de perfumes será carregada aqui -->
+    </div>
+      
+    <button id="btn-cadastrar-novo" class="btn-cadastrar-novo">
+      + Cadastrar novo perfume
+    </button>
   </div>
+</div>
 
-  <!-- Modal para Top 5 -->
-  <div id="modal-top5" class="modal">
-    <div class="modal-content">
-      <span class="close-top5">&times;</span>
-      <h3>Adicionar ao Top 5</h3>
-      
-      <div id="lista-perfumes-top5">
-        <!-- Lista de perfumes cadastrados -->
-      </div>
+<!-- Modal para Top 5 -->
+<div id="modal-top5" class="modal">
+  <div class="modal-content">
+    <span class="close-top5">&times;</span>
+    <h3 id="titulo-modal-top5">Adicionar ao Top 5</h3>
+    
+    <!-- ✅ NOVO: Barra de pesquisa -->
+    <div class="pesquisa-modal">
+      <input type="text" 
+             id="pesquisa-top5" 
+             placeholder="Pesquisar perfume..." 
+             autocomplete="off">
+      <svg class="icone-pesquisa-modal" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+    </div>
+    
+    <div id="lista-perfumes-top5">
+      <!-- Lista de perfumes cadastrados -->
     </div>
   </div>
+</div>
 
   <script type="module" src="script-perfil.js"></script>
 </body>

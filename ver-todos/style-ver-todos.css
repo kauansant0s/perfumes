@@ -364,7 +364,6 @@ body {
     max-width: 100px;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
     font-weight: 500;
 }
 
@@ -600,13 +599,13 @@ body {
 .simbolo-genero {
     display: inline-block;
     font-weight: 700;
-    margin-left: 8px;
+    margin-left: 2px;
     font-size: 1.1em;
 }
 
 /* Masculino - Azul */
 .simbolo-genero.masculino {
-    color: #4A90E2;
+    color: #1d87ff;
 }
 
 /* Feminino - Rosa */
@@ -618,4 +617,231 @@ body {
 .simbolo-genero.unissex {
     color: #2ecc71;
     font-weight: 10;
+}
+
+/* ✅ Barra de Pesquisa Animada */
+.pesquisa-container {
+    position: fixed;
+    top: 20px;
+    right: 78px;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+}
+
+.btn-pesquisa-toggle {
+    width: 48px;
+    height: 48px;
+    background: #C06060;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative;
+    z-index: 2;
+}
+
+.btn-pesquisa-toggle:hover {
+    background: #a85050;
+    transform: scale(1.05);
+}
+
+.barra-pesquisa-global {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 48px;
+    width: 48px;
+    background: rgba(192, 96, 96, 0.321);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all 0.2s cubic-bezier(0.5, -0.2, 0.2, 1);
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.barra-pesquisa-global.expandida {
+    width: 400px;
+    padding-right: 60px;
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.barra-pesquisa-global input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 15px;
+    font-family: 'Inter';
+    outline: none;
+    opacity: 0;
+    transition: opacity 0.3s 0.1s;
+}
+
+.barra-pesquisa-global.expandida input {
+    opacity: 1;
+}
+
+.barra-pesquisa-global input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Resultados da Pesquisa */
+.resultados-pesquisa {
+    position: fixed;
+    top: 78px;
+    right: 78px;
+    width: 400px;
+    max-height: 500px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.resultados-pesquisa.mostrar {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.resultados-pesquisa::-webkit-scrollbar {
+    width: 8px;
+}
+
+.resultados-pesquisa::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.resultados-pesquisa::-webkit-scrollbar-thumb {
+    background: #C06060;
+    border-radius: 10px;
+}
+
+.secao-resultado {
+    padding: 15px;
+}
+
+.secao-resultado h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.item-resultado {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: #000;
+}
+
+.item-resultado:hover {
+    background: rgba(192, 96, 96, 0.1);
+}
+
+.resultado-foto {
+    width: 50px;
+    height: 50px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.resultado-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.resultado-foto-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #999;
+    text-align: center;
+    padding: 5px;
+}
+
+.resultado-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.resultado-nome {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    margin: 0 0 4px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.resultado-subtitulo {
+    font-size: 12px;
+    color: #666;
+    margin: 0;
+}
+
+.sem-resultados {
+    padding: 30px 20px;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+}
+
+/* Overlay para fechar pesquisa */
+.pesquisa-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    display: none;
+}
+
+.pesquisa-overlay.ativo {
+    display: block;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .barra-pesquisa-global.expandida {
+        width: calc(100vw - 100px);
+    }
+    
+    .resultados-pesquisa {
+        width: calc(100vw - 100px);
+        right: 20px;
+    }
 }

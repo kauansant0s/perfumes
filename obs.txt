@@ -1,8 +1,26 @@
-                qnd clica em editar perfil, vai pra página de criar conta, mas com os dados já carregados
-
 ver se da pra colocar o link do lugar mais barato
 criar as linhas nas marcas. na hora de adicionar um perfume eu posso escolher se eles pertecem a uma linha da marca. (ex. se eu adiciono um perfume da boticario, na hora que eu seleciono a marca, aparece do lado ou embaixo um select para eu escolher a linha dele, ai eu escolho entre as linhas, ou se ele é um perfume que não é de nenhuma linha só não seleciono nada, e tbm tem uma opção para eu criar uma linha nova)
 dps disso ai na pagina da marca aparece para eu escolher, usando como exemplo o boticario, aparece ali, malbec, zaad, botica 214, etc. a primeira opção e a opção é sempre todos, e a última é "sem linha". adicionar isso logo acima das quatro opções ali de todos, tenho, ja tive e quero ter. elas são no mesmo formato de pílula, a linha selecionada fica na cor vermelha do site e as outras cinza claro.
-criar botão de pesquisa que fica do lado do botão de menu, e qnd clica nele ai abre a barra de pesquisa
+avisar que eu quis dizer trocar pelos botões na página do perfume, que tem logo abaixo das avaliações
 
-                ver a grossura do simbolo de unissex comparado com os outros
+ver o pq os perfumes não estão carregando mostrar mensagem abaixo
+não ta carregando os perfumes
+
+script-perfume.js:8 === Script perfume carregado ===
+admin-config.js:36 ✅ Usuário é admin (via email)
+script-perfume.js:124 Carregando perfume: abPaNZzWEjUzOFqwmAaZ
+script-perfume.js:141 Erro ao carregar perfume: 
+carregarPerfume @ script-perfume.js:141
+(anonymous) @ script-perfume.js:64
+await in (anonymous)
+(anonymous) @ auth_impl.ts:681
+Promise.then
+registerStateListener @ auth_impl.ts:681
+onAuthStateChanged @ auth_impl.ts:482
+onAuthStateChanged @ index.ts:210
+(anonymous) @ script-perfume.js:57
+
+ta dando isso no console
+
+
+fazer todos os avisos e caixas de confirmação personalizados, ao inves de ser o padrão do navegador

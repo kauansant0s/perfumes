@@ -157,13 +157,16 @@ function atualizarVisualizacao() {
     }
 }
 
-/**
- * Aplica filtros e ordenação
- */
+// Aplica filtros e ordenação
 function aplicarFiltrosEOrdenacao() {
     // 1. Filtrar por status
     if (filtroAtual === 'todos') {
-        perfumesFiltrados = [...perfumesData];
+        // ✅ NOVO: Mostra APENAS perfumes com status definido
+        perfumesFiltrados = perfumesData.filter(p => 
+            p.status === 'tenho' || 
+            p.status === 'ja-tive' || 
+            p.status === 'quero-ter'
+        );
     } else {
         perfumesFiltrados = perfumesData.filter(p => p.status === filtroAtual);
     }
@@ -338,3 +341,198 @@ function criarCardPerfume(perfume) {
     
     return card;
 }
+
+// ✅ Sistema de Pesquisa Animada
+(function() {
+    const btnToggle = document.getElementById('btn-pesquisa-toggle');
+    const barraPesquisa = document.getElementById('barra-pesquisa');
+    const inputPesquisa = document.getElementById('input-pesquisa-global');
+    const resultadosDiv = document.getElementById('resultados-pesquisa');
+    const overlay = document.getElementById('pesquisa-overlay');
+    
+    let pesquisaAberta = false;
+    let timeoutPesquisa;
+    
+    // Toggle pesquisa
+    if (btnToggle) {
+        btnToggle.addEventListener('click', () => {
+            pesquisaAberta = !pesquisaAberta;
+            
+            if (pesquisaAberta) {
+                barraPesquisa.classList.add('expandida');
+                overlay.classList.add('ativo');
+                setTimeout(() => inputPesquisa.focus(), 400);
+            } else {
+                fecharPesquisa();
+            }
+        });
+    }
+    
+    // Fecha pesquisa
+    function fecharPesquisa() {
+        pesquisaAberta = false;
+        barraPesquisa.classList.remove('expandida');
+        resultadosDiv.classList.remove('mostrar');
+        overlay.classList.remove('ativo');
+        inputPesquisa.value = '';
+    }
+    
+    // Overlay fecha pesquisa
+    if (overlay) {
+        overlay.addEventListener('click', fecharPesquisa);
+    }
+    
+    // ESC fecha pesquisa
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && pesquisaAberta) {
+            fecharPesquisa();
+        }
+    });
+    
+    // Pesquisa com debounce
+    if (inputPesquisa) {
+        inputPesquisa.addEventListener('input', (e) => {
+            clearTimeout(timeoutPesquisa);
+            
+            const termo = e.target.value.toLowerCase().trim();
+            
+            if (!termo) {
+                resultadosDiv.classList.remove('mostrar');
+                return;
+            }
+            
+            timeoutPesquisa = setTimeout(() => {
+                realizarPesquisa(termo);
+            }, 300);
+        });
+    }
+    
+    // Realiza pesquisa
+    async function realizarPesquisa(termo) {
+        try {
+            // Busca perfumes
+            const perfumesFiltrados = perfumesData.filter(p => 
+                p.nome.toLowerCase().includes(termo) ||
+                p.marca.toLowerCase().includes(termo)
+            );
+            
+            // Busca marcas únicas com logo
+            const marcasUnicas = new Map();
+            
+            // ✅ Primeiro, identifica marcas únicas
+            perfumesData.forEach(p => {
+                if (p.marca.toLowerCase().includes(termo)) {
+                    if (!marcasUnicas.has(p.marca)) {
+                        marcasUnicas.set(p.marca, {
+                            nome: p.marca,
+                            qtd: perfumesData.filter(pf => pf.marca === p.marca).length,
+                            logo: null // Será carregado depois
+                        });
+                    }
+                }
+            });
+            
+            const marcasFiltradas = Array.from(marcasUnicas.values());
+            
+            // ✅ Busca logos das marcas no Firebase
+            if (marcasFiltradas.length > 0) {
+                try {
+                    const { collection, query, where, getDocs } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+                    const { db } = await import('../adicionar-perfume/firebase-config.js');
+                    
+                    for (const marca of marcasFiltradas) {
+                        const q = query(collection(db, "marcas"), where("nome", "==", marca.nome));
+                        const querySnapshot = await getDocs(q);
+                        
+                        if (!querySnapshot.empty) {
+                            const marcaData = querySnapshot.docs[0].data();
+                            if (marcaData.logo) {
+                                marca.logo = marcaData.logo;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.log('⚠️ Erro ao buscar logos:', error);
+                }
+            }
+            
+            // Renderiza resultados
+            renderizarResultados(perfumesFiltrados, marcasFiltradas, termo);
+            
+        } catch (error) {
+            console.error('Erro ao pesquisar:', error);
+        }
+    }
+    
+    // Renderiza resultados
+    function renderizarResultados(perfumes, marcas, termo) {
+        let html = '';
+        
+        if (perfumes.length === 0 && marcas.length === 0) {
+            html = `<div class="sem-resultados">Nenhum resultado para "<strong>${termo}</strong>"</div>`;
+        } else {
+            // Perfumes
+            if (perfumes.length > 0) {
+                html += `
+                    <div class="secao-resultado">
+                        <h3>Perfumes (${perfumes.length})</h3>
+                `;
+                
+                perfumes.slice(0, 5).forEach(p => {
+                    html += `
+                        <a href="../perfumes/perfume.html?id=${p.id}" class="item-resultado">
+                            <div class="resultado-foto">
+                                ${p.fotoURL ? 
+                                    `<img src="${p.fotoURL}" alt="${p.nome}">` :
+                                    `<div class="resultado-foto-placeholder">${p.nome}</div>`
+                                }
+                            </div>
+                            <div class="resultado-info">
+                                <p class="resultado-nome">${p.nome}</p>
+                                <p class="resultado-subtitulo">${p.marca}</p>
+                            </div>
+                        </a>
+                    `;
+                });
+                
+                html += `</div>`;
+            }
+            
+            // Marcas
+            if (marcas.length > 0) {
+                html += `
+                    <div class="secao-resultado">
+                        <h3>Marcas (${marcas.length})</h3>
+                `;
+                
+                marcas.slice(0, 5).forEach(m => {
+                    // ✅ Logo: usa logo do Firebase ou iniciais
+                    const logoHtml = m.logo ? 
+                        `<img src="${m.logo}" alt="${m.nome}" style="width: 100%; height: 100%; object-fit: contain;">` :
+                        `<div class="resultado-foto-placeholder" style="font-size: 16px; font-weight: 700; color: #666;">
+                            ${m.nome.substring(0, 2).toUpperCase()}
+                        </div>`;
+                    
+                    html += `
+                        <a href="../marca/marca.html?nome=${encodeURIComponent(m.nome)}" 
+                           class="item-resultado"
+                           onclick="fecharPesquisa()">
+                            <div class="resultado-foto" style="background: #fff;">
+                                ${logoHtml}
+                            </div>
+                            <div class="resultado-info">
+                                <p class="resultado-nome">${m.nome}</p>
+                                <p class="resultado-subtitulo">${m.qtd} ${m.qtd === 1 ? 'perfume' : 'perfumes'}</p>
+                            </div>
+                        </a>
+                    `;
+                });
+                
+                html += `</div>`;
+            }
+        }
+        
+        resultadosDiv.innerHTML = html;
+        resultadosDiv.classList.add('mostrar');
+    }
+})();
