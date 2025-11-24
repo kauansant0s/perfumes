@@ -23,4 +23,6 @@ onAuthStateChanged @ index.ts:210
 ta dando isso no console
 
 
+
 fazer todos os avisos e caixas de confirmação personalizados, ao inves de ser o padrão do navegador
+ver se o botão de trocar senha está funcionando na hora de editar perfil
