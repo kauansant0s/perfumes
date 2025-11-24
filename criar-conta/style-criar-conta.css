@@ -172,3 +172,23 @@ h1 {
         height: 140px;
     }
 }
+
+/* ✅ Botão Trocar Senha */
+.btn-trocar-senha {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 2px dashed #C06060;
+    border-radius: 8px;
+    color: #C06060;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'Inter';
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-trocar-senha:hover {
+    background: rgba(192, 96, 96, 0.1);
+    border-style: solid;
+}

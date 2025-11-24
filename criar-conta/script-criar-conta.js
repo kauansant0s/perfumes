@@ -24,9 +24,52 @@ const modoEdicao = urlParams.get('editar') === 'true';
 console.log('Modo edição:', modoEdicao);
 
 // Se está em modo de edição, carrega dados do usuário
+// Se está em modo de edição, carrega dados do usuário
 if (modoEdicao) {
   document.getElementById('titulo-pagina').textContent = 'Editar Perfil';
   document.getElementById('btn-submit').textContent = 'Salvar Alterações';
+  
+  // ✅ Email fica readonly (não pode trocar)
+  const emailInput = document.getElementById('email');
+  emailInput.setAttribute('readonly', true);
+  
+  // ✅ Mostra botão de trocar senha
+  document.getElementById('campo-botao-senha').style.display = 'block';
+  
+  // ✅ Event listener do botão trocar senha
+  document.getElementById('btn-trocar-senha').addEventListener('click', () => {
+    const campoSenha = document.getElementById('campo-senha');
+    const campoConfirmar = document.getElementById('campo-confirmar-senha');
+    const btnTrocar = document.getElementById('btn-trocar-senha');
+    
+    if (campoSenha.style.display === 'none') {
+      // Mostra campos de senha
+      campoSenha.style.display = 'block';
+      campoConfirmar.style.display = 'block';
+      btnTrocar.textContent = '❌ Cancelar troca de senha';
+      btnTrocar.style.borderColor = '#999';
+      btnTrocar.style.color = '#999';
+      
+      // Torna campos obrigatórios
+      document.getElementById('senha').setAttribute('required', 'required');
+      document.getElementById('confirmar-senha').setAttribute('required', 'required');
+    } else {
+      // Esconde campos de senha
+      campoSenha.style.display = 'none';
+      campoConfirmar.style.display = 'none';
+      btnTrocar.textContent = '🔒 Deseja trocar a senha?';
+      btnTrocar.style.borderColor = '#C06060';
+      btnTrocar.style.color = '#C06060';
+      
+      // Remove obrigatoriedade
+      document.getElementById('senha').removeAttribute('required');
+      document.getElementById('confirmar-senha').removeAttribute('required');
+      
+      // Limpa valores
+      document.getElementById('senha').value = '';
+      document.getElementById('confirmar-senha').value = '';
+    }
+  });
   
   // Aguarda autenticação e carrega dados
   auth.onAuthStateChanged((user) => {
@@ -137,6 +180,37 @@ document.getElementById('form-criar-conta').addEventListener('submit', async (e)
         await uploadBytes(storageRef, file);
         photoURL = await getDownloadURL(storageRef);
         console.log('✅ Foto enviada!');
+      }
+      
+      // Atualiza a senha SE os campos estiverem preenchidos
+      const senha = document.getElementById('senha').value;
+      const confirmarSenha = document.getElementById('confirmar-senha').value;
+      
+      if (senha || confirmarSenha) {
+        // Validações de senha
+        if (senha !== confirmarSenha) {
+          throw new Error('As senhas não coincidem!');
+        }
+        
+        if (senha.length < 8) {
+          throw new Error('A senha deve ter pelo menos 8 caracteres!');
+        }
+        
+        const temNumero = /\d/.test(senha);
+        const temEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(senha);
+        
+        if (!temNumero) {
+          throw new Error('A senha deve conter pelo menos 1 número!');
+        }
+        
+        if (!temEspecial) {
+          throw new Error('A senha deve conter pelo menos 1 caractere especial!');
+        }
+        
+        // Atualiza senha
+        const { updatePassword } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
+        await updatePassword(user, senha);
+        console.log('✅ Senha atualizada!');
       }
       
       // Atualiza o perfil

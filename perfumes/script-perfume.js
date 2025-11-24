@@ -1,7 +1,7 @@
 // perfumes/script-perfume.js - ATUALIZADO COM SLIDERS E NOVA DESCRIÇÃO
-import { auth, db, buscarPerfumePorId } from '../adicionar-perfume/firebase-config.js';
+import { auth, db, buscarPerfumePorId, buscarPerfumes } from '../adicionar-perfume/firebase-config.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { toggleLoading, criarPlaceholder } from '../adicionar-perfume/utils.js';
 import { verificarAdmin, isAdmin } from '../adicionar-perfume/admin-config.js';
 

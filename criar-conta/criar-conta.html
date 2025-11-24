@@ -25,17 +25,24 @@
 
       <div class="campo-grupo" id="campo-email">
         <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email" class="campo-texto" required>
+        <input type="email" id="email" name="email" class="campo-texto" required readonly>
       </div>
 
-      <div class="campo-grupo" id="campo-senha">
-        <label for="senha">Senha:</label><br>
-        <input type="password" id="senha" name="senha" class="campo-texto" required>
+      <!-- ✅ NOVO: Botão para trocar senha (só aparece em modo edição) -->
+      <div class="campo-grupo" id="campo-botao-senha" style="display: none;">
+        <button type="button" id="btn-trocar-senha" class="btn-trocar-senha">
+          🔒 Deseja trocar a senha?
+        </button>
       </div>
 
-      <div class="campo-grupo" id="campo-confirmar-senha">
-        <label for="confirmar-senha">Confirmar senha:</label><br>
-        <input type="password" id="confirmar-senha" name="confirmar-senha" class="campo-texto" required>
+      <div class="campo-grupo" id="campo-senha" style="display: none;">
+        <label for="senha">Nova senha:</label><br>
+        <input type="password" id="senha" name="senha" class="campo-texto">
+      </div>
+
+      <div class="campo-grupo" id="campo-confirmar-senha" style="display: none;">
+        <label for="confirmar-senha">Confirmar nova senha:</label><br>
+        <input type="password" id="confirmar-senha" name="confirmar-senha" class="campo-texto">
       </div>
 
       <div class="botoes">
