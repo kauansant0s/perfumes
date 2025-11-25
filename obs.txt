@@ -1,5 +1,8 @@
 criar as linhas nas marcas. na hora de adicionar um perfume eu posso escolher se eles pertecem a uma linha da marca. (ex. se eu adiciono um perfume da boticario, na hora que eu seleciono a marca, aparece do lado ou embaixo um select para eu escolher a linha dele, ai eu escolho entre as linhas, ou se ele é um perfume que não é de nenhuma linha só não seleciono nada, e tbm tem uma opção para eu criar uma linha nova)
 dps disso ai na pagina da marca aparece para eu escolher, usando como exemplo o boticario, aparece ali, malbec, zaad, botica 214, etc. a primeira opção e a opção é sempre todos, e a última é "sem linha". adicionar isso logo acima das quatro opções ali de todos, tenho, ja tive e quero ter. elas são no mesmo formato de pílula, a linha selecionada fica na cor vermelha do site e as outras cinza claro.
-mandar o script-criar-conta.js e pedir para deixar o email editável
 criar uma verificação de dois passos com código sendo enviado pelo email para criar conta, entrar de um novo dispositivo ou trocar a senha
 fazer obrigatório ter pelo menos dois acordes no formulário
+poder adicionar mais de um site de compra, ai quando clica no botão do carrinho de compra, abre todos os sites adicionados mostrando o valor, e fica organizado do menor valor a vista ao maior, e por ultimo os que estão fora de estoque
+o email ainda não está editável
+pedir para o claude continuar
+está dizendo q eu n tenho permissão para realizar esta ação quando clico para cadastrar perfume, acho que tem mudar algo nas permissões do firebase

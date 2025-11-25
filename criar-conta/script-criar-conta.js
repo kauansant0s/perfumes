@@ -3,7 +3,6 @@ import { getAuth, createUserWithEmailAndPassword, updateProfile, updateEmail, de
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 import { getFirestore, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { customAlert, customConfirm, showToast } from '../adicionar-perfume/custom-dialogs.js';
 
 // Configuração do Firebase
 const firebaseConfig = {
@@ -35,60 +34,51 @@ if (modoEdicao) {
   if (btnDeletarConta) {
     btnDeletarConta.style.display = 'flex';
   }
-
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      console.log('Carregando dados do usuário:', user.email);
-      carregarDadosUsuario(user);
-    } else {
-      customAlert('Você precisa estar logado!', '⚠️ Erro').then(() => {
-        window.location.href = '../login/login.html';
-      });
-    }
-  });
-  
-  // ✅ Email fica readonly (não pode trocar)
-  const emailInput = document.getElementById('email');
-  emailInput.setAttribute('readonly', true);
   
   // ✅ Mostra botão de trocar senha
-  document.getElementById('campo-botao-senha').style.display = 'block';
+  const campoBotaoSenha = document.getElementById('campo-botao-senha');
+  if (campoBotaoSenha) {
+    campoBotaoSenha.style.display = 'block';
+  }
   
   // ✅ Event listener do botão trocar senha
-  document.getElementById('btn-trocar-senha').addEventListener('click', () => {
-    const campoSenha = document.getElementById('campo-senha');
-    const campoConfirmar = document.getElementById('campo-confirmar-senha');
-    const btnTrocar = document.getElementById('btn-trocar-senha');
-    
-    if (campoSenha.style.display === 'none') {
-      // Mostra campos de senha
-      campoSenha.style.display = 'block';
-      campoConfirmar.style.display = 'block';
-      btnTrocar.textContent = '❌ Cancelar troca de senha';
-      btnTrocar.style.borderColor = '#999';
-      btnTrocar.style.color = '#999';
+  const btnTrocarSenha = document.getElementById('btn-trocar-senha');
+  if (btnTrocarSenha) {
+    btnTrocarSenha.addEventListener('click', () => {
+      const campoSenha = document.getElementById('campo-senha');
+      const campoConfirmar = document.getElementById('campo-confirmar-senha');
+      const btnTrocar = document.getElementById('btn-trocar-senha');
       
-      // Torna campos obrigatórios
-      document.getElementById('senha').setAttribute('required', 'required');
-      document.getElementById('confirmar-senha').setAttribute('required', 'required');
-    } else {
-      // Esconde campos de senha
-      campoSenha.style.display = 'none';
-      campoConfirmar.style.display = 'none';
-      btnTrocar.textContent = '🔒 Deseja trocar a senha?';
-      btnTrocar.style.borderColor = '#C06060';
-      btnTrocar.style.color = '#C06060';
-      
-      // Remove obrigatoriedade
-      document.getElementById('senha').removeAttribute('required');
-      document.getElementById('confirmar-senha').removeAttribute('required');
-      
-      // Limpa valores
-      document.getElementById('senha').value = '';
-      document.getElementById('confirmar-senha').value = '';
-    }
-  });
-  
+      if (campoSenha.style.display === 'none') {
+        // Mostra campos de senha
+        campoSenha.style.display = 'block';
+        campoConfirmar.style.display = 'block';
+        btnTrocar.textContent = '❌ Cancelar troca de senha';
+        btnTrocar.style.borderColor = '#999';
+        btnTrocar.style.color = '#999';
+        
+        // Torna campos obrigatórios
+        document.getElementById('senha').setAttribute('required', 'required');
+        document.getElementById('confirmar-senha').setAttribute('required', 'required');
+      } else {
+        // Esconde campos de senha
+        campoSenha.style.display = 'none';
+        campoConfirmar.style.display = 'none';
+        btnTrocar.textContent = '🔒 Deseja trocar a senha?';
+        btnTrocar.style.borderColor = '#C06060';
+        btnTrocar.style.color = '#C06060';
+        
+        // Remove obrigatoriedade
+        document.getElementById('senha').removeAttribute('required');
+        document.getElementById('confirmar-senha').removeAttribute('required');
+        
+        // Limpa valores
+        document.getElementById('senha').value = '';
+        document.getElementById('confirmar-senha').value = '';
+      }
+    });
+  }
+
   // Aguarda autenticação e carrega dados
   auth.onAuthStateChanged((user) => {
     if (user) {
@@ -166,7 +156,7 @@ document.getElementById('form-criar-conta').addEventListener('submit', async (e)
   const textoOriginal = btnSubmit.textContent;
   
   if (!nome) {
-    await customAlert('Por favor, preencha o nome!', '⚠️ Campo Obrigatório');
+    alert('Por favor, preencha o nome!');
     return;
   }
   
@@ -342,7 +332,7 @@ document.getElementById('form-criar-conta').addEventListener('submit', async (e)
         mensagem += error.message;
     }
     
-    await customAlert(mensagem, '❌ Erro');
+    alert(mensagem);
   } finally {
     btnSubmit.disabled = false;
     btnSubmit.textContent = textoOriginal;
@@ -356,15 +346,12 @@ async function deletarConta() {
   const user = auth.currentUser;
   
   if (!user) {
-    await customAlert('Você precisa estar logado!', '⚠️ Erro');
+    alert('Você precisa estar logado!');
     return;
   }
   
   // Confirmação 1
-  const confirma1 = await customConfirm(
-    `⚠️ ATENÇÃO! Esta ação é IRREVERSÍVEL!\n\nVocê está prestes a deletar sua conta permanentemente.\n\nTodos os seus perfumes cadastrados serão perdidos.\n\nTem certeza que deseja continuar?`,
-    '🗑️ Deletar Conta'
-  );
+  const confirma1 = confirm('⚠️ ATENÇÃO! Esta ação é IRREVERSÍVEL!\n\nVocê está prestes a deletar sua conta permanentemente.\n\nTodos os seus perfumes cadastrados serão perdidos.\n\nTem certeza que deseja continuar?');
   
   if (!confirma1) {
     console.log('Deleção cancelada pelo usuário');
@@ -476,7 +463,7 @@ async function deletarConta() {
     
     console.log('✅ Conta deletada com sucesso!');
     
-    await customAlert('Sua conta foi deletada com sucesso.\n\nEsperamos te ver novamente!', '✅ Conta Deletada');
+    alert('Sua conta foi deletada com sucesso.\n\nEsperamos te ver novamente!');
     
     // Redireciona para página de login
     window.location.href = '../login/login.html';
@@ -494,7 +481,7 @@ async function deletarConta() {
       mensagem += error.message;
     }
     
-    await customAlert(mensagem, '❌ Erro');
+    alert(mensagem);
     
     btnDeletar.disabled = false;
     btnDeletar.textContent = textoOriginal;

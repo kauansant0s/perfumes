@@ -1,6 +1,5 @@
 // script-form.js - COMPLETO COM VERIFICAÇÃO DE MARCA NOVA
-import { auth, salvarPerfume, uploadFotoPerfume, buscarMarcas, salvarMarca, buscarPerfumes, invalidarCachePerfumes, buscarPerfumePorId } from './firebase-config.js';
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { auth, salvarPerfume, uploadFotoPerfume, buscarMarcas, salvarMarca, buscarPerfumes, invalidarCachePerfumes, buscarPerfumePorId, buscarLinhas, salvarLinha } from './firebase-config.js';import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { toggleLoading, tratarErroFirebase } from './utils.js';
 import { verificarAdmin, isAdmin } from './admin-config.js';
@@ -10,6 +9,7 @@ const db = getFirestore();
 let usuarioAtual = null;
 let marcasDisponiveis = [];
 let perfumeOriginalInstance = null;
+let linhasDisponiveis = {};
 
 let contratipoEmCadastro = false;
 let perfumeContratipoId = null;
@@ -41,6 +41,10 @@ onAuthStateChanged(auth, async (user) => {
       marcasDisponiveis = await buscarMarcas();
       console.log(`✅ ${marcasDisponiveis.length} marcas carregadas`);
       inicializarAutocompleteMarca();
+
+      // Carrega linhas
+      linhasDisponiveis = await buscarLinhas();
+      console.log('✅ Linhas carregadas:', Object.keys(linhasDisponiveis).length, 'marcas');
       
       await inicializarSelectPerfumeOriginal();
       
@@ -132,6 +136,75 @@ function inicializarAutocompleteMarca() {
   
   console.log(`✅ Autocomplete inicializado com ${marcasDisponiveis.length} marcas`);
 }
+
+// Event listener para quando a marca mudar
+const inputMarca = document.getElementById('marca');
+inputMarca.addEventListener('change', atualizarLinhasPorMarca);
+inputMarca.addEventListener('blur', atualizarLinhasPorMarca);
+
+function atualizarLinhasPorMarca() {
+  const marca = document.getElementById('marca').value.trim();
+  const selectLinha = document.getElementById('linha');
+  
+  // Limpa opções antigas
+  selectLinha.innerHTML = '<option value="">Nenhuma</option><option value="__CRIAR_NOVA__">+ Criar nova linha</option>';
+  
+  // Adiciona linhas da marca
+  if (marca && linhasDisponiveis[marca]) {
+    linhasDisponiveis[marca].forEach(linha => {
+      const option = document.createElement('option');
+      option.value = linha;
+      option.textContent = linha;
+      selectLinha.appendChild(option);
+    });
+    console.log(`✅ ${linhasDisponiveis[marca].length} linhas carregadas para ${marca}`);
+  }
+}
+
+// Event listener para criar nova linha
+document.getElementById('linha').addEventListener('change', async (e) => {
+  if (e.target.value === '__CRIAR_NOVA__') {
+    const marca = document.getElementById('marca').value.trim();
+    
+    if (!marca) {
+      alert('Selecione uma marca primeiro!');
+      e.target.value = '';
+      return;
+    }
+    
+    const novaLinha = prompt('Digite o nome da nova linha:');
+    
+    if (novaLinha && novaLinha.trim() !== '') {
+      const linhaTrimmed = novaLinha.trim();
+      
+      try {
+        // Salva linha no Firebase
+        await salvarLinha(marca, linhaTrimmed);
+        
+        // Atualiza cache local
+        if (!linhasDisponiveis[marca]) {
+          linhasDisponiveis[marca] = [];
+        }
+        linhasDisponiveis[marca].push(linhaTrimmed);
+        
+        // Atualiza select
+        atualizarLinhasPorMarca();
+        
+        // Seleciona a nova linha
+        document.getElementById('linha').value = linhaTrimmed;
+        
+        alert('✅ Linha criada com sucesso!');
+        
+      } catch (error) {
+        console.error('Erro ao criar linha:', error);
+        alert('Erro ao criar linha: ' + error.message);
+        e.target.value = '';
+      }
+    } else {
+      e.target.value = '';
+    }
+  }
+});
 
 async function puxarNotasEAcordesDoOriginal(perfumeOriginalId) {
   try {
@@ -742,6 +815,16 @@ async function carregarPerfumeParaEdicao() {
     document.getElementById('nome').value = perfume.nome || '';
     document.getElementById('marca').value = perfume.marca || '';
     document.getElementById('perfumista').value = perfume.perfumista || '';
+
+    // Carrega linha
+    if (perfume.marca) {
+      setTimeout(() => {
+        atualizarLinhasPorMarca();
+        if (perfume.linha) {
+          document.getElementById('linha').value = perfume.linha;
+        }
+      }, 500);
+    }
     
     // ✅ NOVO: Carrega link de compra
     if (perfume.linkCompra) {
@@ -919,6 +1002,7 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
     const perfumeData = {
       nome: document.getElementById('nome').value,
       marca: document.getElementById('marca').value,
+      linha: document.getElementById('linha').value || null,
       notas: {
         topo: Array.from(document.getElementById('topo').selectedOptions).map(opt => opt.value).filter(v => v),
         coracao: Array.from(document.getElementById('coracao').selectedOptions).map(opt => opt.value).filter(v => v),

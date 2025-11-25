@@ -504,3 +504,103 @@ export function invalidarCachePaises() {
   paisesCacheTime = null;
   console.log('🗑️ Cache de países invalidado');
 }
+
+// ===== FUNÇÕES PARA MANIPULAR LINHAS =====
+
+// Cache para linhas (por marca)
+let linhasCache = null;
+let linhasCacheTime = null;
+
+/**
+ * Busca todas as linhas de todas as marcas (com cache)
+ * @returns {Promise<Object>} { 'Marca': ['Linha1', 'Linha2'] }
+ */
+export async function buscarLinhas() {
+  try {
+    // Verifica cache
+    const agora = Date.now();
+    if (linhasCache && linhasCacheTime && (agora - linhasCacheTime) < CACHE_DURATION) {
+      console.log('✅ Linhas carregadas do cache');
+      return linhasCache;
+    }
+    
+    console.log('📡 Buscando linhas do Firestore...');
+    const querySnapshot = await getDocs(collection(db, "linhas"));
+    const linhas = {};
+    
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (!linhas[data.marca]) {
+        linhas[data.marca] = [];
+      }
+      linhas[data.marca].push(data.nome);
+    });
+    
+    // Ordena linhas de cada marca
+    Object.keys(linhas).forEach(marca => {
+      linhas[marca].sort();
+    });
+    
+    // Atualiza cache
+    linhasCache = linhas;
+    linhasCacheTime = agora;
+    
+    return linhas;
+  } catch (error) {
+    console.error("Erro ao buscar linhas:", error);
+    throw new Error(tratarErroFirebase(error));
+  }
+}
+
+/**
+ * Salva nova linha para uma marca
+ * @param {string} marca - Nome da marca
+ * @param {string} nomeLinha - Nome da linha
+ */
+export async function salvarLinha(marca, nomeLinha) {
+  try {
+    if (!marca || marca.trim() === '') {
+      throw new Error('Marca não pode estar vazia');
+    }
+    
+    if (!nomeLinha || nomeLinha.trim() === '') {
+      throw new Error('Nome da linha não pode estar vazio');
+    }
+    
+    const marcaNormalizada = marca.trim();
+    const linhaNormalizada = nomeLinha.trim();
+    
+    // Verifica se já existe
+    const q = query(
+      collection(db, "linhas"),
+      where("marca", "==", marcaNormalizada),
+      where("nome", "==", linhaNormalizada)
+    );
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      await addDoc(collection(db, "linhas"), {
+        marca: marcaNormalizada,
+        nome: linhaNormalizada,
+        dataCriacao: serverTimestamp()
+      });
+      console.log("✅ Nova linha salva:", linhaNormalizada, "para", marcaNormalizada);
+      
+      // Invalida cache
+      linhasCache = null;
+      linhasCacheTime = null;
+    }
+  } catch (error) {
+    console.error("Erro ao salvar linha:", error);
+    throw new Error(tratarErroFirebase(error));
+  }
+}
+
+/**
+ * Invalida cache de linhas
+ */
+export function invalidarCacheLinhas() {
+  linhasCache = null;
+  linhasCacheTime = null;
+  console.log('🗑️ Cache de linhas invalidado');
+}
