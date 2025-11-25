@@ -345,7 +345,6 @@ function salvarDadosAtuaisEIrParaOriginal() {
     nome: document.getElementById('nome').value,
     marca: document.getElementById('marca').value,
     perfumista: document.getElementById('perfumista').value,
-    tituloReview: document.getElementById('titulo').value,
     textoReview: document.getElementById('review').value,
     status: document.querySelector('input[name="status"]:checked')?.value || '',
     fotoURL: document.getElementById('foto-url').value,
@@ -381,7 +380,6 @@ async function restaurarDadosContratipo(perfumeOriginalId, dadosJSON) {
     document.getElementById('nome').value = dados.nome || '';
     document.getElementById('marca').value = dados.marca || '';
     document.getElementById('perfumista').value = dados.perfumista || '';
-    document.getElementById('titulo').value = dados.tituloReview || '';
     document.getElementById('review').value = dados.textoReview || '';
     document.getElementById('foto-url').value = dados.fotoURL || '';
     
@@ -751,7 +749,6 @@ async function carregarPerfumeParaEdicao() {
     }
     
     if (perfume.review) {
-      document.getElementById('titulo').value = perfume.review.titulo || '';
       document.getElementById('review').value = perfume.review.texto || '';
     }
     
@@ -930,7 +927,6 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       acordes: Array.from(document.getElementById('acordes').selectedOptions).map(opt => opt.value).filter(v => v),
       perfumista: document.getElementById('perfumista').value,
       review: {
-        titulo: document.getElementById('titulo').value,
         texto: document.getElementById('review').value
       },
       status: document.querySelector('input[name="status"]:checked')?.value || '',
