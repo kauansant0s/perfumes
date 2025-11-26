@@ -5,3 +5,4 @@ tentar fazer upload de foto de perfil
 pedir pro claude continuar
 deixar a barra abaixo do campo do acordes sempre visivel
 dps que eu escolho 2 acordes ele mostra um aviso pedindo para eu escolher dois acordes, ai eu clico em ok e ele fica carregando, porém ele só faz isso qnd eu seleciono os acordes clicando com enter, se eu escolher clicando com o mouse ele não faz, mas ele só aparece depois que eu seleciono os acordes, tem que estar sempre visivel. e a barra vai se dividindo conforme eu for adicionando acordes
+e ele tbm n deixa eu salvar, aparece o mesmo aviso dizendo que tenho selecionar dois acordes ou dexar vazio e eu clico em ok e ele fica só carregando
