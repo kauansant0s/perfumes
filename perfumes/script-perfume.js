@@ -389,26 +389,41 @@ function classificarNota(nota) {
 }
 
 function renderizarAcordes() {
-    const acordesLista = document.getElementById('acordes-lista');
-    acordesLista.innerHTML = '';
+  const acordesLista = document.getElementById('acordes-lista');
+  acordesLista.innerHTML = '';
+  
+  if (perfumeData.acordes && perfumeData.acordes.length > 0) {
+    // ✅ Se tem intensidades, ordena por intensidade (maior para menor)
+    let acordesOrdenados = [...perfumeData.acordes];
     
-    if (perfumeData.acordes && perfumeData.acordes.length > 0) {
-        perfumeData.acordes.forEach(acorde => {
-            const tag = document.createElement('span');
-            tag.className = 'acorde-tag';
-            tag.textContent = acorde;
-            tag.style.backgroundColor = coresAcordes[acorde] || '#999';
-            
-            const cor = coresAcordes[acorde] || '#999';
-            if (corClara(cor)) {
-                tag.style.color = '#333';
-            }
-            
-            acordesLista.appendChild(tag);
-        });
-    } else {
-        acordesLista.innerHTML = '<span class="sem-info">Acordes não informados</span>';
+    if (perfumeData.acordesIntensidade) {
+      acordesOrdenados.sort((a, b) => {
+        const intensidadeA = perfumeData.acordesIntensidade[a] || 0;
+        const intensidadeB = perfumeData.acordesIntensidade[b] || 0;
+        return intensidadeB - intensidadeA; // Maior primeiro
+      });
     }
+    
+    acordesOrdenados.forEach(acorde => {
+      const intensidade = perfumeData.acordesIntensidade?.[acorde] || (100 / acordesOrdenados.length);
+      const cor = coresAcordes[acorde] || '#999';
+      
+      // Cria barra de acorde
+      const barra = document.createElement('div');
+      barra.className = 'acorde-barra';
+      barra.style.width = intensidade + '%';
+      barra.style.backgroundColor = cor;
+      barra.textContent = acorde;
+      
+      if (corClara(cor)) {
+        barra.style.color = '#333';
+      }
+      
+      acordesLista.appendChild(barra);
+    });
+  } else {
+    acordesLista.innerHTML = '<span class="sem-info">Acordes não informados</span>';
+  }
 }
 
 function corClara(cor) {

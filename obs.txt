@@ -1,5 +1,5 @@
 criar uma verificação de dois passos com código sendo enviado pelo email para criar conta, entrar de um novo dispositivo ou trocar a senha
 fazer obrigatório ter pelo menos dois acordes no formulário
 poder adicionar mais de um site de compra, ai quando clica no botão do carrinho de compra, abre todos os sites adicionados mostrando o valor, e fica organizado do menor valor a vista ao maior, e por ultimo os que estão fora de estoque
-refazer a parte dos acordes no figma, com o minimo de dois acordes, com barras que deslizam, etc
 tentar fazer upload de foto de perfil
+pedir pro claude continuar

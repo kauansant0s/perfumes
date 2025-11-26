@@ -261,10 +261,18 @@
       </fieldset>
 
       <div>
-        <label for="acordes">Acordes:</label><br>
+        <label for="acordes">Acordes (mínimo 2, máximo 8):</label><br>
         <select name="acordes" id="acordes" multiple>
           <option value="">Selecione</option>
         </select>
+        
+        <!-- ✅ NOVO: Barra de intensidade dos acordes -->
+        <div id="acordes-intensidade-container" style="display: none;">
+          <small style="color: #666; font-size: 12px; margin-top: 10px; display: block;">
+            Arraste as linhas brancas para definir a intensidade de cada acorde
+          </small>
+          <div id="acordes-barra" class="acordes-barra"></div>
+        </div>
       </div>
 
       <div>
@@ -321,5 +329,4 @@
   <script type="module" src="firebase-config.js"></script>
   <script type="module" src="script-form.js"></script>
 </body>
-
 </html>

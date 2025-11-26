@@ -99,17 +99,229 @@ acordes.forEach(acorde => {
 });
 
 const acordesInstance = new TomSelect('#acordes', {
-  maxItems: null,
+  maxItems: 8, // ✅ Máximo 8 acordes
   create: false,
   sortField: { field: "text", direction: "asc" },
-  placeholder: "Pesquise e selecione acordes...",
+  placeholder: "Pesquise e selecione acordes (mín. 2, máx. 8)...",
   plugins: ["remove_button"],
   dropdownParent: 'body',
   onItemAdd: function() {
     this.setTextboxValue('');
     this.refreshOptions();
+    atualizarBarraAcordes(); // ✅ Atualiza barra ao adicionar
+  },
+  onItemRemove: function() {
+    atualizarBarraAcordes(); // ✅ Atualiza barra ao remover
   }
 });
+
+// ===== SISTEMA DE BARRA DE INTENSIDADE DOS ACORDES =====
+
+let acordesIntensidade = {}; // { 'Acorde': porcentagem }
+let dragState = null;
+
+/**
+ * Atualiza a barra visual de intensidade dos acordes
+ */
+function atualizarBarraAcordes() {
+  const acordesSelecionados = acordesInstance.getValue();
+  const container = document.getElementById('acordes-intensidade-container');
+  const barra = document.getElementById('acordes-barra');
+  
+  // Se tem menos de 2 ou mais de 8, esconde
+  if (acordesSelecionados.length < 2) {
+    container.style.display = 'none';
+    return;
+  }
+  
+  if (acordesSelecionados.length > 8) {
+    alert('Máximo de 8 acordes permitidos!');
+    return;
+  }
+  
+  // Mostra container
+  container.style.display = 'block';
+  
+  // Inicializa intensidades iguais se for novo
+  acordesSelecionados.forEach(acorde => {
+    if (!acordesIntensidade[acorde]) {
+      acordesIntensidade[acorde] = 100 / acordesSelecionados.length;
+    }
+  });
+  
+  // Remove acordes que não estão mais selecionados
+  Object.keys(acordesIntensidade).forEach(acorde => {
+    if (!acordesSelecionados.includes(acorde)) {
+      delete acordesIntensidade[acorde];
+    }
+  });
+  
+  // Normaliza porcentagens para somar 100%
+  normalizarIntensidades(acordesSelecionados);
+  
+  // Renderiza barra
+  renderizarBarraAcordes(acordesSelecionados);
+}
+
+/**
+ * Normaliza as intensidades para somarem 100%
+ */
+function normalizarIntensidades(acordes) {
+  const total = acordes.reduce((sum, acorde) => sum + (acordesIntensidade[acorde] || 0), 0);
+  
+  if (total === 0) {
+    // Divide igualmente
+    acordes.forEach(acorde => {
+      acordesIntensidade[acorde] = 100 / acordes.length;
+    });
+  } else if (Math.abs(total - 100) > 0.01) {
+    // Normaliza para 100%
+    acordes.forEach(acorde => {
+      acordesIntensidade[acorde] = (acordesIntensidade[acorde] / total) * 100;
+    });
+  }
+}
+
+/**
+ * Renderiza a barra visual
+ */
+function renderizarBarraAcordes(acordes) {
+  const barra = document.getElementById('acordes-barra');
+  barra.innerHTML = '';
+  
+  let posicaoAcumulada = 0;
+  
+  acordes.forEach((acorde, index) => {
+    const porcentagem = acordesIntensidade[acorde];
+    const cor = coresAcordes[acorde] || '#999';
+    
+    // Cria seção do acorde
+    const secao = document.createElement('div');
+    secao.className = 'acorde-secao';
+    secao.style.width = porcentagem + '%';
+    secao.style.backgroundColor = cor;
+    secao.textContent = acorde;
+    secao.dataset.acorde = acorde;
+    
+    // Calcula cor do texto (claro/escuro)
+    if (corClara(cor)) {
+      secao.style.color = '#333';
+      secao.style.textShadow = '0 1px 2px rgba(255, 255, 255, 0.5)';
+    }
+    
+    barra.appendChild(secao);
+    
+    posicaoAcumulada += porcentagem;
+    
+    // Adiciona divisor (exceto no último)
+    if (index < acordes.length - 1) {
+      const divisor = document.createElement('div');
+      divisor.className = 'acorde-divisor';
+      divisor.style.left = posicaoAcumulada + '%';
+      divisor.dataset.index = index;
+      
+      // Event listeners de arrastar
+      divisor.addEventListener('mousedown', iniciarArrastar);
+      
+      barra.appendChild(divisor);
+    }
+  });
+}
+
+/**
+ * Inicia o arrasto do divisor
+ */
+function iniciarArrastar(e) {
+  e.preventDefault();
+  
+  const divisor = e.target;
+  const index = parseInt(divisor.dataset.index);
+  
+  dragState = {
+    divisor,
+    index,
+    inicioPosicao: e.clientX
+  };
+  
+  divisor.classList.add('dragging');
+  
+  document.addEventListener('mousemove', arrastar);
+  document.addEventListener('mouseup', pararArrastar);
+}
+
+/**
+ * Arrasta o divisor
+ */
+function arrastar(e) {
+  if (!dragState) return;
+  
+  const barra = document.getElementById('acordes-barra');
+  const rect = barra.getBoundingClientRect();
+  const larguraBarra = rect.width;
+  
+  // Calcula nova posição em porcentagem
+  const x = e.clientX - rect.left;
+  const novaPorcentagem = (x / larguraBarra) * 100;
+  
+  // Limita entre 5% e 95% para não deixar seção muito pequena
+  const porcentagemLimitada = Math.max(5, Math.min(95, novaPorcentagem));
+  
+  const acordes = acordesInstance.getValue();
+  const index = dragState.index;
+  
+  const acordeEsquerda = acordes[index];
+  const acordeDireita = acordes[index + 1];
+  
+  // Calcula soma atual das duas seções
+  const somaAtual = acordesIntensidade[acordeEsquerda] + acordesIntensidade[acordeDireita];
+  
+  // Calcula nova posição do divisor considerando acordes anteriores
+  let posicaoAnterior = 0;
+  for (let i = 0; i < index; i++) {
+    posicaoAnterior += acordesIntensidade[acordes[i]];
+  }
+  
+  // Nova largura da seção esquerda
+  let novaLarguraEsquerda = porcentagemLimitada - posicaoAnterior;
+  novaLarguraEsquerda = Math.max(5, Math.min(somaAtual - 5, novaLarguraEsquerda));
+  
+  // Atualiza intensidades
+  acordesIntensidade[acordeEsquerda] = novaLarguraEsquerda;
+  acordesIntensidade[acordeDireita] = somaAtual - novaLarguraEsquerda;
+  
+  // Re-renderiza
+  renderizarBarraAcordes(acordes);
+  
+  // Reaplica estado de dragging
+  const novosDivisores = document.querySelectorAll('.acorde-divisor');
+  if (novosDivisores[index]) {
+    novosDivisores[index].classList.add('dragging');
+  }
+}
+
+/**
+ * Para o arrasto
+ */
+function pararArrastar() {
+  if (dragState) {
+    dragState.divisor.classList.remove('dragging');
+    dragState = null;
+  }
+  
+  document.removeEventListener('mousemove', arrastar);
+  document.removeEventListener('mouseup', pararArrastar);
+}
+
+// Função auxiliar já existe, mas vou garantir
+function corClara(cor) {
+  const rgb = parseInt(cor.slice(1), 16);
+  const r = (rgb >> 16) & 0xff;
+  const g = (rgb >>  8) & 0xff;
+  const b = (rgb >>  0) & 0xff;
+  
+  const luminosidade = 0.299 * r + 0.587 * g + 0.114 * b;
+  return luminosidade > 186;
+}
 
 acordesInstance.wrapper.style.width = '93%';
 acordesInstance.wrapper.style.marginBottom = '10px';
@@ -1060,6 +1272,23 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
   
   toggleLoading(true);
   
+  // ✅ Valida acordes
+  const acordesSelecionados = Array.from(document.getElementById('acordes').selectedOptions).map(opt => opt.value).filter(v => v);
+
+  if (acordesSelecionados.length > 0 && acordesSelecionados.length < 2) {
+    alert('Selecione pelo menos 2 acordes ou deixe vazio.');
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = textoOriginal;
+    return;
+  }
+
+  if (acordesSelecionados.length > 8) {
+    alert('Máximo de 8 acordes permitidos!');
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = textoOriginal;
+    return;
+  }
+
   try {
     const perfumeData = {
       nome: document.getElementById('nome').value,
@@ -1071,6 +1300,7 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
         fundo: Array.from(document.getElementById('fundo').selectedOptions).map(opt => opt.value).filter(v => v)
       },
       acordes: Array.from(document.getElementById('acordes').selectedOptions).map(opt => opt.value).filter(v => v),
+      acordesIntensidade: acordesIntensidade, // ✅ Salva intensidades
       perfumista: document.getElementById('perfumista').value,
       review: {
         texto: document.getElementById('review').value
