@@ -17,6 +17,8 @@ let filtroGeneroAtual = 'todos';
 let visualizacaoAtual = 'grid';
 let ordenacaoAtual = 'nome-asc';
 let paisesDisponiveis = [];
+let filtroLinhaAtual = ''; // Linha selecionada
+let linhasDisponiveis = []; // Linhas da marca
 
 const urlParams = new URLSearchParams(window.location.search);
 nomeMarca = urlParams.get('nome');
@@ -154,9 +156,44 @@ async function carregarPerfumesDaMarca() {
         atualizarEstatisticas();
         aplicarFiltrosEOrdenacao();
         
+        // ✅ NOVO: Carrega linhas da marca
+        carregarLinhasDaMarca();
+        
     } catch (error) {
         console.error('❌ Erro ao carregar perfumes:', error);
         throw error;
+    }
+}
+
+/**
+ * ✅ NOVA: Carrega linhas disponíveis da marca
+ */
+function carregarLinhasDaMarca() {
+    // Extrai linhas únicas dos perfumes
+    linhasDisponiveis = [...new Set(
+        perfumesData
+            .filter(p => p.linha && p.linha.trim() !== '')
+            .map(p => p.linha)
+    )].sort();
+    
+    console.log(`✅ ${linhasDisponiveis.length} linhas encontradas`);
+    
+    // Se tem linhas, mostra o select
+    if (linhasDisponiveis.length > 0) {
+        const selectLinha = document.getElementById('filtro-linha');
+        selectLinha.style.display = 'block';
+        
+        // Limpa e recria opções
+        selectLinha.innerHTML = '<option value="">Todas as linhas</option>';
+        
+        linhasDisponiveis.forEach(linha => {
+            const option = document.createElement('option');
+            option.value = linha;
+            option.textContent = linha;
+            selectLinha.appendChild(option);
+        });
+        
+        console.log('✅ Select de linhas populado');
     }
 }
 
@@ -575,6 +612,12 @@ function configurarEventos() {
         aplicarFiltrosEOrdenacao();
     });
 
+    // ✅ NOVO: Filtro de linhas
+    document.getElementById('filtro-linha').addEventListener('change', (e) => {
+        filtroLinhaAtual = e.target.value;
+        aplicarFiltrosEOrdenacao();
+    });
+
     document.querySelectorAll('.btn-filtro-genero').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.btn-filtro-genero').forEach(b => b.classList.remove('ativo'));
@@ -639,10 +682,16 @@ function aplicarFiltrosEOrdenacao() {
         });
     }
     
-    // 3. Ordenar
+    // ✅ NOVO: 3. Filtrar por linha
+    if (filtroLinhaAtual && filtroLinhaAtual !== '') {
+        perfumesFiltrados = perfumesFiltrados.filter(p => p.linha === filtroLinhaAtual);
+        console.log(`📋 Filtrado por linha "${filtroLinhaAtual}": ${perfumesFiltrados.length} perfumes`);
+    }
+    
+    // 4. Ordenar
     ordenarPerfumes();
     
-    // 4. Renderizar
+    // 5. Renderizar
     renderizarPerfumes();
 }
 

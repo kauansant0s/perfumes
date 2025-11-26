@@ -150,7 +150,7 @@
                 <option value="data-desc">Mais recente</option>
                 <option value="data-asc">Mais antigo</option>
             </select>
-            <!-- ✅ NOVO: Toggle de visualização -->
+            
             <div class="toggle-visualizacao">
                 <button class="btn-visualizacao ativo" data-view="grid" title="Visualização em grade">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -171,6 +171,11 @@
                     </svg>
                 </button>
             </div>
+
+            <!-- ✅ NOVO: Filtro de Linhas -->
+            <select id="filtro-linha" style="display: none;">
+                <option value="">Todas as linhas</option>
+            </select>
         </div>
         
         <!-- Grid de Perfumes -->

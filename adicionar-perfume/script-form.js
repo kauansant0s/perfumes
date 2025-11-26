@@ -142,12 +142,67 @@ const inputMarca = document.getElementById('marca');
 inputMarca.addEventListener('change', atualizarLinhasPorMarca);
 inputMarca.addEventListener('blur', atualizarLinhasPorMarca);
 
+// ✅ NOVO: Event listener para auto-selecionar linha baseada no nome
+const inputNome = document.getElementById('nome');
+inputNome.addEventListener('input', autoSelecionarLinha);
+inputNome.addEventListener('blur', autoSelecionarLinha);
+
+/**
+ * ✅ NOVA: Auto-seleciona linha se o nome do perfume começar com o nome da linha
+ */
+function autoSelecionarLinha() {
+  const nome = document.getElementById('nome').value.trim().toLowerCase();
+  const marca = document.getElementById('marca').value.trim();
+  const selectLinha = document.getElementById('linha');
+  
+  // Se não tem nome ou marca, não faz nada
+  if (!nome || !marca) return;
+  
+  // Se já tem uma linha selecionada manualmente, não altera
+  if (selectLinha.value && selectLinha.value !== '' && selectLinha.dataset.autoSelected !== 'true') {
+    return;
+  }
+  
+  // Busca linhas da marca atual
+  const linhasDaMarca = linhasDisponiveis[marca] || [];
+  
+  // Procura por linha que começa com o mesmo nome
+  for (const linha of linhasDaMarca) {
+    const linhaLower = linha.toLowerCase();
+    
+    // Verifica se o nome do perfume começa com o nome da linha
+    if (nome.startsWith(linhaLower)) {
+      selectLinha.value = linha;
+      selectLinha.dataset.autoSelected = 'true'; // Marca como auto-selecionado
+      console.log(`✅ Linha "${linha}" auto-selecionada para "${nome}"`);
+      
+      // Mostra feedback visual
+      selectLinha.style.background = '#e8f5e9';
+      setTimeout(() => {
+        selectLinha.style.background = '';
+      }, 1000);
+      
+      return;
+    }
+  }
+  
+  // Se não encontrou correspondência e estava auto-selecionado, desmarca
+  if (selectLinha.dataset.autoSelected === 'true') {
+    selectLinha.value = '';
+    selectLinha.dataset.autoSelected = 'false';
+  }
+}
+
 function atualizarLinhasPorMarca() {
   const marca = document.getElementById('marca').value.trim();
   const selectLinha = document.getElementById('linha');
   
   // Limpa opções antigas
   selectLinha.innerHTML = '<option value="">Nenhuma</option><option value="__CRIAR_NOVA__">+ Criar nova linha</option>';
+  
+  // ✅ Reseta flag de auto-seleção
+  selectLinha.dataset.autoSelected = 'false';
+  selectLinha.value = '';
   
   // Adiciona linhas da marca
   if (marca && linhasDisponiveis[marca]) {
@@ -163,6 +218,11 @@ function atualizarLinhasPorMarca() {
 
 // Event listener para criar nova linha
 document.getElementById('linha').addEventListener('change', async (e) => {
+  // ✅ Marca que foi alterado manualmente (não é auto-seleção)
+  if (e.target.value !== '__CRIAR_NOVA__') {
+    e.target.dataset.autoSelected = 'false';
+  }
+
   if (e.target.value === '__CRIAR_NOVA__') {
     const marca = document.getElementById('marca').value.trim();
     
@@ -821,7 +881,9 @@ async function carregarPerfumeParaEdicao() {
       setTimeout(() => {
         atualizarLinhasPorMarca();
         if (perfume.linha) {
-          document.getElementById('linha').value = perfume.linha;
+          const selectLinha = document.getElementById('linha');
+          selectLinha.value = perfume.linha;
+          selectLinha.dataset.autoSelected = 'false'; // Marca como seleção manual
         }
       }, 500);
     }

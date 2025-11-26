@@ -307,6 +307,25 @@ select:focus {
     box-shadow: 0 0 0 3px rgba(192, 96, 96, 0.3);
 }
 
+/* ✅ Select de linha */
+#filtro-linha {
+    padding: 10px 25px;
+    background: #d9d9d9;
+    border: none;
+    border-radius: 30px;
+    font-size: 15px;
+    font-family: 'Inter';
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    max-width: 200px;
+}
+
+#filtro-linha:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(192, 96, 96, 0.3);
+}
+
 /* Grid de Perfumes */
 .grid-perfumes {
     display: grid;
