@@ -10,7 +10,6 @@ let usuarioAtual = null;
 let marcasDisponiveis = [];
 let perfumeOriginalInstance = null;
 let linhasDisponiveis = {};
-
 let contratipoEmCadastro = false;
 let perfumeContratipoId = null;
 
@@ -98,8 +97,22 @@ acordes.forEach(acorde => {
   acordesSelect.appendChild(option);
 });
 
+// ✅ CORES DOS ACORDES (necessário para a barra)
+const coresAcordes = {
+  'Abaunilhado': '#D4A574', 'Aldeídico': '#E8E8E8', 'Alcoólico': '#C9B8A8',
+  'Almiscarado': '#F5E6D3', 'Ambarado': '#FFB347', 'Amadeirado': '#8B4513',
+  'Animálico': '#654321', 'Aquático': '#4DD0E1', 'Aromático': '#7CB342',
+  'Atalcado': '#E8D5C4', 'Balsâmico': '#8B7355', 'Chipre': '#556B2F', 'Cítrico': '#FFA500',
+  'Couro': '#654321', 'Cremoso': '#FFF8DC', 'Doce': '#FFB6C1',
+  'Esfumaçado': '#696969', 'Especiado': '#CD853F', 'Floral': '#FF69B4',
+  'Floral Amarelo': '#FFD700', 'Floral Branco': '#F5F5F5', 'Fougère': '#2E8B57',
+  'Fresco': '#87CEEB', 'Frutado': '#FF6347', 'Gourmand': '#D2691E',
+  'Herbal': '#6B8E23', 'Lactônico': '#FFF5EE', 'Metálico': '#B0B0B0', 
+  'Resinoso': '#A0522D', 'Terroso': '#8B7355', 'Tropical': '#FF8C00', 'Verde': '#228B22'
+};
+
 const acordesInstance = new TomSelect('#acordes', {
-  maxItems: 8, // ✅ Máximo 8 acordes
+  maxItems: 8,
   create: false,
   sortField: { field: "text", direction: "asc" },
   placeholder: "Pesquise e selecione acordes (mín. 2, máx. 8)...",
@@ -108,39 +121,44 @@ const acordesInstance = new TomSelect('#acordes', {
   onItemAdd: function() {
     this.setTextboxValue('');
     this.refreshOptions();
-    atualizarBarraAcordes(); // ✅ Atualiza barra ao adicionar
+    atualizarBarraAcordes();
   },
   onItemRemove: function() {
-    atualizarBarraAcordes(); // ✅ Atualiza barra ao remover
+    atualizarBarraAcordes();
   }
 });
 
-// ===== SISTEMA DE BARRA DE INTENSIDADE DOS ACORDES =====
+acordesInstance.wrapper.style.width = '93%';
+acordesInstance.wrapper.style.marginBottom = '10px';
 
 let acordesIntensidade = {}; // { 'Acorde': porcentagem }
 let dragState = null;
 
 /**
  * Atualiza a barra visual de intensidade dos acordes
+ * ✅ SEMPRE VISÍVEL - mostra estado vazio ou com acordes
  */
 function atualizarBarraAcordes() {
   const acordesSelecionados = acordesInstance.getValue();
   const container = document.getElementById('acordes-intensidade-container');
   const barra = document.getElementById('acordes-barra');
   
-  // Se tem menos de 2 ou mais de 8, esconde
-  if (acordesSelecionados.length < 2) {
-    container.style.display = 'none';
-    return;
-  }
-  
-  if (acordesSelecionados.length > 8) {
-    alert('Máximo de 8 acordes permitidos!');
-    return;
-  }
-  
-  // Mostra container
+  // ✅ Container SEMPRE visível
   container.style.display = 'block';
+  
+  // Se não tem acordes, mostra mensagem
+  if (acordesSelecionados.length === 0) {
+    barra.innerHTML = '<div class="mensagem-vazia">Adicione acordes para configurar as intensidades</div>';
+    return;
+  }
+  
+  // Se tem apenas 1 acorde, mostra mensagem
+  if (acordesSelecionados.length === 1) {
+    barra.innerHTML = '<div class="mensagem-aviso">Adicione pelo menos mais 1 acorde</div>';
+    return;
+  }
+  
+  // ✅ Se tem 2+ acordes, mostra barra normal
   
   // Inicializa intensidades iguais se for novo
   acordesSelecionados.forEach(acorde => {
@@ -263,7 +281,7 @@ function arrastar(e) {
   const x = e.clientX - rect.left;
   const novaPorcentagem = (x / larguraBarra) * 100;
   
-  // Limita entre 5% e 95% para não deixar seção muito pequena
+  // Limita entre 5% e 95%
   const porcentagemLimitada = Math.max(5, Math.min(95, novaPorcentagem));
   
   const acordes = acordesInstance.getValue();
@@ -275,7 +293,7 @@ function arrastar(e) {
   // Calcula soma atual das duas seções
   const somaAtual = acordesIntensidade[acordeEsquerda] + acordesIntensidade[acordeDireita];
   
-  // Calcula nova posição do divisor considerando acordes anteriores
+  // Calcula nova posição do divisor
   let posicaoAnterior = 0;
   for (let i = 0; i < index; i++) {
     posicaoAnterior += acordesIntensidade[acordes[i]];
@@ -304,7 +322,7 @@ function arrastar(e) {
  */
 function pararArrastar() {
   if (dragState) {
-    dragState.divisor.classList.remove('dragging');
+    dragState.divisor?.classList?.remove('dragging');
     dragState = null;
   }
   
@@ -312,7 +330,9 @@ function pararArrastar() {
   document.removeEventListener('mouseup', pararArrastar);
 }
 
-// Função auxiliar já existe, mas vou garantir
+/**
+ * Verifica se cor é clara (para texto)
+ */
 function corClara(cor) {
   const rgb = parseInt(cor.slice(1), 16);
   const r = (rgb >> 16) & 0xff;
@@ -323,8 +343,10 @@ function corClara(cor) {
   return luminosidade > 186;
 }
 
-acordesInstance.wrapper.style.width = '93%';
-acordesInstance.wrapper.style.marginBottom = '10px';
+// ✅ Inicializa barra vazia ao carregar página
+setTimeout(() => {
+  atualizarBarraAcordes();
+}, 500);
 
 function inicializarAutocompleteMarca() {
   const inputMarca = document.getElementById('marca');
@@ -350,14 +372,20 @@ function inicializarAutocompleteMarca() {
 }
 
 // Event listener para quando a marca mudar
-const inputMarca = document.getElementById('marca');
-inputMarca.addEventListener('change', atualizarLinhasPorMarca);
-inputMarca.addEventListener('blur', atualizarLinhasPorMarca);
+setTimeout(() => {
+  const inputMarca = document.getElementById('marca');
+  if (inputMarca) {
+    inputMarca.addEventListener('change', atualizarLinhasPorMarca);
+    inputMarca.addEventListener('blur', atualizarLinhasPorMarca);
+  }
 
-// ✅ NOVO: Event listener para auto-selecionar linha baseada no nome
-const inputNome = document.getElementById('nome');
-inputNome.addEventListener('input', autoSelecionarLinha);
-inputNome.addEventListener('blur', autoSelecionarLinha);
+  // ✅ NOVO: Event listener para auto-selecionar linha baseada no nome
+  const inputNome = document.getElementById('nome');
+  if (inputNome) {
+    inputNome.addEventListener('input', autoSelecionarLinha);
+    inputNome.addEventListener('blur', autoSelecionarLinha);
+  }
+}, 100);
 
 /**
  * ✅ NOVA: Auto-seleciona linha se o nome do perfume começar com o nome da linha
@@ -1272,20 +1300,34 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
   
   toggleLoading(true);
   
-  // ✅ Valida acordes
-  const acordesSelecionados = Array.from(document.getElementById('acordes').selectedOptions).map(opt => opt.value).filter(v => v);
+  // ✅ Valida acordes SEM ALERT
+  const acordesSelecionados = acordesInstance.getValue();
 
-  if (acordesSelecionados.length > 0 && acordesSelecionados.length < 2) {
-    alert('Selecione pelo menos 2 acordes ou deixe vazio.');
-    btnSubmit.disabled = false;
-    btnSubmit.textContent = textoOriginal;
+  // Validação silenciosa - apenas impede de salvar
+  if (acordesSelecionados.length === 1) {
+    console.warn('⚠️ Adicione pelo menos 2 acordes ou deixe vazio');
+    submitButton.disabled = false;
+    submitButton.textContent = textoOriginal;
+    
+    // Mostra mensagem na própria barra
+    const barra = document.getElementById('acordes-barra');
+    barra.innerHTML = '<div class="mensagem-erro">⚠️ Adicione pelo menos mais 1 acorde</div>';
+    
+    // Scroll suave até os acordes
+    document.getElementById('acordes').scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
 
   if (acordesSelecionados.length > 8) {
-    alert('Máximo de 8 acordes permitidos!');
-    btnSubmit.disabled = false;
-    btnSubmit.textContent = textoOriginal;
+    console.warn('⚠️ Máximo de 8 acordes');
+    submitButton.disabled = false;
+    submitButton.textContent = textoOriginal;
+    
+    // Mostra mensagem na própria barra
+    const barra = document.getElementById('acordes-barra');
+    barra.innerHTML = '<div class="mensagem-erro">⚠️ Máximo de 8 acordes atingido</div>';
+    
+    document.getElementById('acordes').scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
 
@@ -1299,8 +1341,8 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
         coracao: Array.from(document.getElementById('coracao').selectedOptions).map(opt => opt.value).filter(v => v),
         fundo: Array.from(document.getElementById('fundo').selectedOptions).map(opt => opt.value).filter(v => v)
       },
-      acordes: Array.from(document.getElementById('acordes').selectedOptions).map(opt => opt.value).filter(v => v),
-      acordesIntensidade: acordesIntensidade, // ✅ Salva intensidades
+      acordes: acordesSelecionados,
+      acordesIntensidade: acordesSelecionados.length >= 2 ? acordesIntensidade : {}, // ✅ Só salva se tiver 2+
       perfumista: document.getElementById('perfumista').value,
       review: {
         texto: document.getElementById('review').value

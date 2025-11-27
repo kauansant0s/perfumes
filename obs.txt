@@ -2,7 +2,6 @@ criar uma verificação de dois passos com código sendo enviado pelo email para
 fazer obrigatório ter pelo menos dois acordes no formulário
 poder adicionar mais de um site de compra, ai quando clica no botão do carrinho de compra, abre todos os sites adicionados mostrando o valor, e fica organizado do menor valor a vista ao maior, e por ultimo os que estão fora de estoque
 tentar fazer upload de foto de perfil
-pedir pro claude continuar
-deixar a barra abaixo do campo do acordes sempre visivel
-dps que eu escolho 2 acordes ele mostra um aviso pedindo para eu escolher dois acordes, ai eu clico em ok e ele fica carregando, porém ele só faz isso qnd eu seleciono os acordes clicando com enter, se eu escolher clicando com o mouse ele não faz, mas ele só aparece depois que eu seleciono os acordes, tem que estar sempre visivel. e a barra vai se dividindo conforme eu for adicionando acordes
-e ele tbm n deixa eu salvar, aparece o mesmo aviso dizendo que tenho selecionar dois acordes ou dexar vazio e eu clico em ok e ele fica só carregando
+deixar os sliders sempre visiveis na pagina de perfume
+enquanto eu não deslizar as linhas brancas dos acordes no formulário, a barra deve ser dividia em tamanho igual para cada acorde, não sei se é impressão minha mas parece que eu vou adicionando acordes e ela não vai se dividindo igualmente. e qnd eu volto para editar um perfume, elas não estão do exato mesmo jeito que deixei quando criei ou quando editei pelo última vez
+fazer uma tela de review para usuários não-admin similar à do formulário só que só com o necessário para a review

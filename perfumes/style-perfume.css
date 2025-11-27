@@ -477,22 +477,20 @@ hr {
 .acordes-lista {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    max-width: 600px;
+    /* gap: 1px; */
+    max-width: 100%;
 }
 
 .acorde-barra {
-    height: 45px;
-    border-radius: 8px;
+    height: 30px;
+    border-radius: 40px;
     display: flex;
     align-items: center;
     padding: 0 15px;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 400;
     color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     min-width: 60px;
 }
 

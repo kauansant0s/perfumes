@@ -637,7 +637,7 @@ select{
 /* ===== BARRA DE INTENSIDADE DOS ACORDES ===== */
 #acordes-intensidade-container {
   margin-top: 15px;
-  padding: 15px;
+  padding: 10px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
 }
@@ -645,7 +645,7 @@ select{
 .acordes-barra {
   position: relative;
   width: 100%;
-  height: 60px;
+  height: 30px;
   background: #f0f0f0;
   border-radius: 8px;
   display: flex;
@@ -676,7 +676,7 @@ select{
 .acorde-divisor {
   position: absolute;
   top: 0;
-  width: 4px;
+  width: 3px;
   height: 100%;
   background: #fff;
   cursor: ew-resize;
@@ -687,13 +687,13 @@ select{
 
 .acorde-divisor:hover {
   background: #f0f0f0;
-  width: 6px;
+  width: 4px;
 }
 
 .acorde-divisor.dragging {
   background: #e0e0e0;
-  width: 8px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  width: 5px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 }
 
 /* Feedback visual */
@@ -704,4 +704,49 @@ select{
 @keyframes pulseAcorde {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.02); }
+}
+
+/* ===== MENSAGENS NA BARRA DE ACORDES ===== */
+.mensagem-vazia,
+.mensagem-aviso,
+.mensagem-erro {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.mensagem-vazia {
+  background: #f0f0f0;
+  color: #999;
+  font-style: italic;
+}
+
+.mensagem-aviso {
+  background: linear-gradient(135deg, #ffd89b 0%, #ffb347 100%);
+  color: #333;
+  animation: pulseAviso 2s ease-in-out infinite;
+}
+
+.mensagem-erro {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: #fff;
+  font-weight: 600;
+  animation: shake 0.5s ease;
+}
+
+@keyframes pulseAviso {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
 }

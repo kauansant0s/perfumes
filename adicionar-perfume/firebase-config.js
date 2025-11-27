@@ -114,6 +114,16 @@ function validarPerfume(perfumeData) {
   if (!perfumeData.marca?.trim()) {
     erros.push('Marca é obrigatória');
   }
+
+  // ✅ Validação de acordes corrigida
+  if (perfumeData.acordes) {
+    if (perfumeData.acordes.length === 1) {
+      erros.push('Adicione pelo menos 2 acordes ou deixe vazio');
+    }
+    if (perfumeData.acordes.length > 8) {
+      erros.push('Máximo de 8 acordes permitidos');
+    }
+  }
   
   // Status NÃO é mais obrigatório - pode ser vazio/indefinido
   // O perfume pode existir sem status específico
