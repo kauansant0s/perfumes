@@ -2,6 +2,7 @@ criar uma verificação de dois passos com código sendo enviado pelo email para
 poder adicionar mais de um site de compra, ai quando clica no botão do carrinho de compra, abre todos os sites adicionados mostrando o valor, e fica organizado do menor valor a vista ao maior, e por ultimo os que estão fora de estoque
 deixar os sliders sempre visiveis na pagina de perfume
 fazer uma tela de review para usuários não-admin similar à do formulário só que só com o necessário para a review
+criar uma página com todos os perfumes, que eu posso pesquisar por acordes notas, perfumistas, marcas, etc
 
 
 script-criar-conta.js:25 Modo edição: true
@@ -26,5 +27,6 @@ connection.ts:88  POST https://firebasestorage.googleapis.com/v0/b/meus-pefumes.
 send @ connection.ts:88
 doTheRequest @ request.ts:114
 (anonymous) @ backoff.ts:78
+
 
 isso é o console qnd tento fazer upload da foto de perfil
