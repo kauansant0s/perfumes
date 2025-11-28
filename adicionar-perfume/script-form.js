@@ -181,28 +181,50 @@ function atualizarBarraAcordes() {
   renderizarBarraAcordes(acordesSelecionados);
 }
 
-/**
- * Normaliza as intensidades para somarem 100%
- */
+// Normaliza as intensidades para somarem 100%
 function normalizarIntensidades(acordes) {
-  const total = acordes.reduce((sum, acorde) => sum + (acordesIntensidade[acorde] || 0), 0);
+  // ✅ Arredonda todos os valores primeiro
+  acordes.forEach(acorde => {
+    acordesIntensidade[acorde] = Math.round(acordesIntensidade[acorde] || 0);
+  });
+  
+  let total = acordes.reduce((sum, acorde) => sum + acordesIntensidade[acorde], 0);
   
   if (total === 0) {
-    // Divide igualmente
-    acordes.forEach(acorde => {
-      acordesIntensidade[acorde] = 100 / acordes.length;
+    // ✅ Divide igualmente em INTEIROS
+    const porcaoPadrao = Math.floor(100 / acordes.length);
+    const resto = 100 - (porcaoPadrao * acordes.length);
+    
+    acordes.forEach((acorde, index) => {
+      // ✅ Distribui o resto no ÚLTIMO acorde
+      if (index === acordes.length - 1) {
+        acordesIntensidade[acorde] = porcaoPadrao + resto;
+      } else {
+        acordesIntensidade[acorde] = porcaoPadrao;
+      }
     });
-  } else if (Math.abs(total - 100) > 0.01) {
-    // Normaliza para 100%
+  } else if (total !== 100) {
+    // ✅ Ajusta para somar exatamente 100
+    const diferenca = 100 - total;
+    
+    // Adiciona/remove a diferença no maior acorde
+    let maiorAcorde = acordes[0];
     acordes.forEach(acorde => {
-      acordesIntensidade[acorde] = (acordesIntensidade[acorde] / total) * 100;
+      if (acordesIntensidade[acorde] > acordesIntensidade[maiorAcorde]) {
+        maiorAcorde = acorde;
+      }
+    });
+    
+    acordesIntensidade[maiorAcorde] += diferenca;
+    
+    // Garante que nenhum fique abaixo de 5% ou acima de 95%
+    acordes.forEach(acorde => {
+      acordesIntensidade[acorde] = Math.max(5, Math.min(95, acordesIntensidade[acorde]));
     });
   }
 }
 
-/**
- * Renderiza a barra visual
- */
+// Renderiza a barra visual
 function renderizarBarraAcordes(acordes) {
   const barra = document.getElementById('acordes-barra');
   barra.innerHTML = '';
@@ -210,7 +232,8 @@ function renderizarBarraAcordes(acordes) {
   let posicaoAcumulada = 0;
   
   acordes.forEach((acorde, index) => {
-    const porcentagem = acordesIntensidade[acorde];
+    // ✅ Arredonda para inteiro
+    const porcentagem = Math.round(acordesIntensidade[acorde]);
     const cor = coresAcordes[acorde] || '#999';
     
     // Cria seção do acorde
@@ -218,13 +241,31 @@ function renderizarBarraAcordes(acordes) {
     secao.className = 'acorde-secao';
     secao.style.width = porcentagem + '%';
     secao.style.backgroundColor = cor;
-    secao.textContent = acorde;
     secao.dataset.acorde = acorde;
+    
+    // ✅ NOVO: Container para nome + porcentagem
+    const conteudo = document.createElement('div');
+    conteudo.className = 'acorde-conteudo';
+    
+    const nomeSpan = document.createElement('span');
+    nomeSpan.className = 'acorde-nome';
+    nomeSpan.textContent = acorde;
+    
+    const porcentagemSpan = document.createElement('span');
+    porcentagemSpan.className = 'acorde-porcentagem';
+    porcentagemSpan.textContent = porcentagem + '%';
+    
+    conteudo.appendChild(nomeSpan);
+    conteudo.appendChild(porcentagemSpan);
+    secao.appendChild(conteudo);
     
     // Calcula cor do texto (claro/escuro)
     if (corClara(cor)) {
       secao.style.color = '#333';
-      secao.style.textShadow = '0 1px 2px rgba(255, 255, 255, 0.5)';
+      conteudo.style.textShadow = '0 1px 2px rgba(255, 255, 255, 0.5)';
+    } else {
+      secao.style.color = '#fff';
+      conteudo.style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.3)';
     }
     
     barra.appendChild(secao);
@@ -303,9 +344,20 @@ function arrastar(e) {
   let novaLarguraEsquerda = porcentagemLimitada - posicaoAnterior;
   novaLarguraEsquerda = Math.max(5, Math.min(somaAtual - 5, novaLarguraEsquerda));
   
-  // Atualiza intensidades
-  acordesIntensidade[acordeEsquerda] = novaLarguraEsquerda;
-  acordesIntensidade[acordeDireita] = somaAtual - novaLarguraEsquerda;
+  // ✅ Atualiza intensidades com INTEIROS
+  acordesIntensidade[acordeEsquerda] = Math.round(novaLarguraEsquerda);
+  acordesIntensidade[acordeDireita] = Math.round(somaAtual - novaLarguraEsquerda);
+  
+  // ✅ Garante que soma exatamente a somaAtual
+  const somaReal = acordesIntensidade[acordeEsquerda] + acordesIntensidade[acordeDireita];
+  if (somaReal !== Math.round(somaAtual)) {
+    const diferenca = Math.round(somaAtual) - somaReal;
+    acordesIntensidade[acordeDireita] += diferenca;
+  }
+  
+  // ✅ Garante limites 5-95%
+  acordesIntensidade[acordeEsquerda] = Math.max(5, Math.min(95, acordesIntensidade[acordeEsquerda]));
+  acordesIntensidade[acordeDireita] = Math.max(5, Math.min(95, acordesIntensidade[acordeDireita]));
   
   // Re-renderiza
   renderizarBarraAcordes(acordes);
@@ -1196,6 +1248,17 @@ async function carregarPerfumeParaEdicao() {
         const acordesInstance = document.getElementById('acordes').tomselect;
         if (acordesInstance) {
           acordesInstance.setValue(perfume.acordes);
+          
+          // ✅ NOVO: Restaura intensidades salvas
+          if (perfume.acordesIntensidade) {
+            acordesIntensidade = { ...perfume.acordesIntensidade };
+            console.log('✅ Intensidades restauradas:', acordesIntensidade);
+          }
+          
+          // Atualiza barra após restaurar
+          setTimeout(() => {
+            atualizarBarraAcordes();
+          }, 300);
         }
       }
       
@@ -1342,7 +1405,7 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
         fundo: Array.from(document.getElementById('fundo').selectedOptions).map(opt => opt.value).filter(v => v)
       },
       acordes: acordesSelecionados,
-      acordesIntensidade: acordesSelecionados.length >= 2 ? acordesIntensidade : {}, // ✅ Só salva se tiver 2+
+      acordesIntensidade: acordesSelecionados.length >= 2 ? { ...acordesIntensidade } : {}, // ✅ Clone do objeto
       perfumista: document.getElementById('perfumista').value,
       review: {
         texto: document.getElementById('review').value
@@ -1499,6 +1562,17 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
     submitButton.textContent = textoOriginal;
   }
 });
+
+// ✅ DEBUG: Log das intensidades sendo salvas
+    if (acordesSelecionados.length >= 2) {
+      console.log('📊 Salvando acordes com intensidades:');
+      acordesSelecionados.forEach(acorde => {
+        console.log(`  - ${acorde}: ${acordesIntensidade[acorde]}%`);
+      });
+      
+      const total = Object.values(acordesIntensidade).reduce((a, b) => a + b, 0);
+      console.log(`  ✅ Total: ${total}%`);
+    }
 
 document.getElementById('cancelar').addEventListener('click', () => {
   if (confirm('Deseja cancelar? Todos os dados serão perdidos.')) {
