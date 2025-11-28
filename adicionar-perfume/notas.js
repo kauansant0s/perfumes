@@ -1296,6 +1296,7 @@ window.dadosNotas = {
     "Periwinkle",
     "Pesto",
     "Petalia",
+    "Petitgrain",
     "Petrichor",
     "Petroleum",
     "Petunia",
@@ -1744,4 +1745,5 @@ window.dadosNotas = {
     "Ópio",
     "Óxido de Rosa"
   ]
+
 }
