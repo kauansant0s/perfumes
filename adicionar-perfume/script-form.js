@@ -1563,17 +1563,6 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
   }
 });
 
-// ✅ DEBUG: Log das intensidades sendo salvas
-    if (acordesSelecionados.length >= 2) {
-      console.log('📊 Salvando acordes com intensidades:');
-      acordesSelecionados.forEach(acorde => {
-        console.log(`  - ${acorde}: ${acordesIntensidade[acorde]}%`);
-      });
-      
-      const total = Object.values(acordesIntensidade).reduce((a, b) => a + b, 0);
-      console.log(`  ✅ Total: ${total}%`);
-    }
-
 document.getElementById('cancelar').addEventListener('click', () => {
   if (confirm('Deseja cancelar? Todos os dados serão perdidos.')) {
     sessionStorage.removeItem('cadastrandoPerfumeOriginal');
