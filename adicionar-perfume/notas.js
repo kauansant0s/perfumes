@@ -1072,6 +1072,7 @@ window.dadosNotas = {
     "Maçã",
     "Maçã Assada",
     "Maçã Crocante",
+    "Maçã Verde",
     "Maçã Vermelha",
     "Mel",
     "Melancia",
@@ -1747,3 +1748,4 @@ window.dadosNotas = {
   ]
 
 }
+
