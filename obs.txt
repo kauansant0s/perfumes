@@ -4,6 +4,7 @@ deixar os sliders sempre visiveis na pagina de perfume
 fazer uma tela de review para usuários não-admin similar à do formulário só que só com o necessário para a review
 criar uma página com todos os perfumes, que eu posso pesquisar por acordes notas, perfumistas, marcas, etc
 pegar as porcentagens na hora de pegar os dados do perfume original qnd for contratipo
+adicionar acordes limpeza e assabonetado
 
 
 script-criar-conta.js:25 Modo edição: true
@@ -31,4 +32,5 @@ doTheRequest @ request.ts:114
 
 
 isso é o console qnd tento fazer upload da foto de perfil
+
 
