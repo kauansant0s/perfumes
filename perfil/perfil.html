@@ -98,6 +98,14 @@
         </svg>
         Editar perfil
       </button>
+
+      <!-- ✅ NOVO: Botão Estatísticas -->
+      <button id="btn-estatisticas" class="btn-estatisticas">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        </svg>
+        Estatísticas
+      </button>
       
       <div class="assinatura-atual">
         <h3>Assinatura atual</h3>
@@ -208,6 +216,24 @@
     <div id="lista-perfumes-top5">
       <!-- Lista de perfumes cadastrados -->
     </div>
+  </div>
+</div>
+
+<!-- ✅ Modal Estatísticas -->
+<div id="modal-estatisticas" class="modal">
+  <div class="modal-content modal-estatisticas">
+    <span class="close-estatisticas">&times;</span>
+    
+    <!-- Header -->
+    <div class="modal-stats-header">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+      </svg>
+      <h2>Suas Estatísticas</h2>
+    </div>
+    
+    <!-- Content será preenchido pelo JS -->
+    <div id="conteudo-estatisticas"></div>
   </div>
 </div>
 
