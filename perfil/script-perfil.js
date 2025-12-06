@@ -989,13 +989,11 @@ async function calcularEstatisticas() {
     .sort((a, b) => b.count - a.count)[0];
 
     // ✅ NOVO: Top 3 marcas com mais perfumes possuídos (Tenho + Já tive)
-const top3Marcas = Object.entries(marcas)
+// ✅ Top 3 marcas - Por QUANTIDADE possuída (Tenho + Já tive)
+const top3MarcasQuantidade = Object.entries(marcas)
   .map(([nome, data]) => {
-    // Conta quantos perfumes "tenho" e "já tive" dessa marca
     const perfumesDaMarca = perfumesData.filter(p => p.marca === nome);
     const tenhoJaTive = perfumesDaMarca.filter(p => p.status === 'tenho' || p.status === 'ja-tive').length;
-    
-    // Encontra o perfume mais bem avaliado dessa marca
     const perfumesAvaliadosMarca = perfumesDaMarca.filter(p => p.avaliacoes && p.avaliacoes.media);
     const melhorPerfume = perfumesAvaliadosMarca.length > 0
       ? perfumesAvaliadosMarca.sort((a, b) => b.avaliacoes.media - a.avaliacoes.media)[0]
@@ -1003,43 +1001,79 @@ const top3Marcas = Object.entries(marcas)
     
     return {
       nome,
-      totalPerfumes: data.count,
       tenhoJaTive,
-      media: data.avaliacoes > 0 ? data.somaAvaliacoes / data.avaliacoes : 0,
+      qtdAvaliados: perfumesAvaliadosMarca.length,
+      media: perfumesAvaliadosMarca.length > 0 
+        ? perfumesAvaliadosMarca.reduce((sum, p) => sum + p.avaliacoes.media, 0) / perfumesAvaliadosMarca.length 
+        : 0,
       melhorPerfume: melhorPerfume ? {
         nome: melhorPerfume.nome,
         nota: melhorPerfume.avaliacoes.media
       } : null
     };
   })
-  .filter(m => m.tenhoJaTive > 0) // Apenas marcas que você tem ou já teve
-  .sort((a, b) => b.tenhoJaTive - a.tenhoJaTive) // Ordena por quantidade possuída
-  .slice(0, 3); // Top 3
+  .filter(m => m.tenhoJaTive > 0)
+  .sort((a, b) => b.tenhoJaTive - a.tenhoJaTive)
+  .slice(0, 3);
+
+// ✅ Top 3 marcas - Por MELHOR AVALIAÇÃO (mínimo 2 avaliados)
+const top3MarcasAvaliacao = Object.entries(marcas)
+  .map(([nome, data]) => {
+    const perfumesDaMarca = perfumesData.filter(p => p.marca === nome);
+    const tenhoJaTive = perfumesDaMarca.filter(p => p.status === 'tenho' || p.status === 'ja-tive').length;
+    const perfumesAvaliadosMarca = perfumesDaMarca.filter(p => p.avaliacoes && p.avaliacoes.media);
+    const melhorPerfume = perfumesAvaliadosMarca.length > 0
+      ? perfumesAvaliadosMarca.sort((a, b) => b.avaliacoes.media - a.avaliacoes.media)[0]
+      : null;
+    
+    return {
+      nome,
+      tenhoJaTive,
+      qtdAvaliados: perfumesAvaliadosMarca.length,
+      media: perfumesAvaliadosMarca.length > 0 
+        ? perfumesAvaliadosMarca.reduce((sum, p) => sum + p.avaliacoes.media, 0) / perfumesAvaliadosMarca.length 
+        : 0,
+      melhorPerfume: melhorPerfume ? {
+        nome: melhorPerfume.nome,
+        nota: melhorPerfume.avaliacoes.media
+      } : null
+    };
+  })
+  .filter(m => m.qtdAvaliados >= 2) // ✅ Mínimo 2 perfumes avaliados
+  .sort((a, b) => b.media - a.media) // ✅ Ordena por média de avaliação
+  .slice(0, 3);
   
   // ✅ NOVO: Acordes favoritos baseados nas avaliações
   // Calcula a média de avaliação para cada acorde
   const acordesComAvaliacoes = {};
-  
+
   perfumesAvaliados.forEach(p => {
     if (p.acordes && Array.isArray(p.acordes)) {
-      p.acordes.forEach(acorde => {
+      p.acordes.forEach((acorde, idx) => {
         if (!acordesComAvaliacoes[acorde]) {
           acordesComAvaliacoes[acorde] = {
             somaAvaliacoes: 0,
-            count: 0
+            count: 0,
+            destaque: 0  // ✅ Conta perfumes com esse acorde entre os 2 primeiros
           };
         }
         acordesComAvaliacoes[acorde].somaAvaliacoes += p.avaliacoes.media;
         acordesComAvaliacoes[acorde].count++;
+        
+        // ✅ Se o acorde está entre os 2 primeiros
+        if (idx <= 1) {
+          acordesComAvaliacoes[acorde].destaque++;
+        }
       });
     }
   });
-  
+
   // Calcula média por acorde e ordena
   const acordesFavoritos = Object.entries(acordesComAvaliacoes)
     .map(([nome, data]) => ({
       nome,
       count: data.count,
+      destaque: data.destaque,  // ✅ Quantidade em destaque
       mediaAvaliacao: data.somaAvaliacoes / data.count,
       percentual: Math.round((data.count / perfumesAvaliados.length) * 100)
     }))
@@ -1095,10 +1129,11 @@ const top3Marcas = Object.entries(marcas)
   return {
     mediaAvaliacoes,
     totalPerfumes: perfumesData.length,
-    totalAvaliacoes: perfumesAvaliados.length, // ✅ Perfumes avaliados
-    totalPossuidos, // ✅ NOVO: Tenho + Já tive
+    totalAvaliacoes: perfumesAvaliados.length,
+    totalPossuidos,
     marcaMaisAvaliada,
-    top3Marcas, // ✅ NOVO
+    top3MarcasQuantidade,  // ✅ Por quantidade
+    top3MarcasAvaliacao,   // ✅ Por avaliação
     acordesFavoritos,
     perfumeMaisCaroTenho,
     perfumeMaisCaroQuero,
@@ -1148,12 +1183,12 @@ function renderizarEstatisticas(stats) {
         <div class="stat-card-title">Perfumes Avaliados</div>
         <div class="stat-card-subtitle">com notas</div>
       </div>
-
-      <!-- Grid: Acordes Favoritos + Melhores Avaliações -->
-      <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; margin-bottom: 20px;">
+    </div>
     
-    <!-- Acordes favoritos -->
-    <div class="stats-section">
+    <!-- Grid: Acordes Favoritos + Melhores Avaliações (2 colunas) -->
+    <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; margin-bottom: 20px;">
+      
+      <!-- Acordes favoritos -->
       ${stats.acordesFavoritos.length > 0 ? `
         <div class="stats-section">
           <div class="stats-section-title">
@@ -1161,61 +1196,80 @@ function renderizarEstatisticas(stats) {
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
             </svg>
             Acordes Favoritos
-            </div>
-              <div style="font-size: 11px; color: #999; margin-bottom: 12px;">
-                Baseado nas suas avaliações
-            </div>
+          </div>
+          <div style="font-size: 11px; color: #999; margin-bottom: 12px;">
+            Baseado nas suas avaliações
+          </div>
           ${stats.acordesFavoritos.map(acorde => `
-          <div class="progress-item">
-            <div class="progress-label">
-              <span class="progress-label-name">${acorde.nome}</span>
-              <span class="progress-label-value">
-                ${acorde.mediaAvaliacao.toFixed(1)} ⭐
-              </span>
-            </div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" style="width: ${(acorde.mediaAvaliacao / 5) * 100}%;"></div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-
-      <!-- Melhores avaliações - TOP 6 -->
-      <div class="stats-section">
-        <div class="stats-section-title">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-          </svg>
-          Melhores Avaliações
-        </div>
-        <ul class="top-list">
-          ${stats.melhoresAvaliacoes.map((perfume, idx) => `
-            <li class="top-list-item">
-              <span class="top-list-item-rank">#${idx + 1}</span>
-              <div class="top-list-item-info">
-                <div class="top-list-item-name">${perfume.nome}</div>
-                <div class="top-list-item-subtitle">${perfume.marca}</div>
+            <div class="progress-item">
+              <div class="progress-label">
+                <span class="progress-label-name">${acorde.nome}</span>
+                <span class="progress-label-value">
+                  ${acorde.mediaAvaliacao.toFixed(1)} ⭐ • ${acorde.destaque} em destaque
+                </span>
               </div>
-              <span class="top-list-item-value">${perfume.avaliacoes.media.toFixed(1)} ⭐</span>
-            </li>
-            `).join('')}
-            </ul>
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill" style="width: ${(acorde.mediaAvaliacao / 5) * 100}%;"></div>
+              </div>
             </div>
-          </div>
-      ` : ''}
-
-    <!-- ✅ Top 3 Marcas - HORIZONTAL -->
-    ${stats.top3Marcas.length > 0 ? `
-      <div class="stats-section stat-highlight">
-        <div class="stats-section-title">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="8" r="7"></circle>
-            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-          </svg>
-          Top 3 Marcas
+          `).join('')}
         </div>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-          ${stats.top3Marcas.map((marca, idx) => `
+      ` : ''}
+      
+      <!-- Melhores avaliações - TOP 6 em 2 colunas -->
+      ${stats.melhoresAvaliacoes.length > 0 ? `
+        <div class="stats-section">
+          <div class="stats-section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+            </svg>
+            Melhores Avaliações
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            ${stats.melhoresAvaliacoes.map((perfume, idx) => `
+              <a href="../perfumes/perfume.html?id=${perfume.id}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: block;">
+                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; display: flex; align-items: center; gap: 10px; transition: all 0.2s; cursor: pointer;">
+                  <span class="top-list-item-rank">#${idx + 1}</span>
+                  <div style="flex: 1; min-width: 0;">
+                    <div class="top-list-item-name">${perfume.nome}</div>
+                    <div class="top-list-item-subtitle">${perfume.marca}</div>
+                  </div>
+                  <span class="top-list-item-value">${perfume.avaliacoes.media.toFixed(1)} ⭐</span>
+                </div>
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''}
+      
+    </div>
+    
+    <!-- ✅ Top 3 Marcas com Toggle -->
+    ${(stats.top3MarcasQuantidade.length > 0 || stats.top3MarcasAvaliacao.length > 0) ? `
+      <div class="stats-section stat-highlight">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+          <div class="stats-section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="7"></circle>
+              <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+            </svg>
+            Top 3 Marcas
+          </div>
+          
+          <!-- Toggle de ordenação -->
+          <div style="display: flex; gap: 10px;">
+            <button onclick="toggleMarcas('quantidade')" id="btn-marcas-qtd" class="btn-toggle-marcas ativo" style="padding: 8px 16px; background: #C06060; color: #fff; border: 2px solid #C06060; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+              Por Quantidade
+            </button>
+            <button onclick="toggleMarcas('avaliacao')" id="btn-marcas-aval" class="btn-toggle-marcas" style="padding: 8px 16px; background: transparent; color: #C06060; border: 2px solid #C06060; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+              Por Avaliação
+            </button>
+          </div>
+        </div>
+        
+        <!-- Marcas por Quantidade -->
+        <div id="marcas-quantidade" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+          ${stats.top3MarcasQuantidade.map((marca, idx) => `
             <div style="background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%); padding: 20px; border-radius: 12px; border: 2px solid ${idx === 0 ? '#C06060' : '#e9ecef'};">
               <div style="text-align: center; margin-bottom: 12px;">
                 <div style="font-size: 32px; margin-bottom: 8px;">
@@ -1245,7 +1299,69 @@ function renderizarEstatisticas(stats) {
             </div>
           `).join('')}
         </div>
+        
+        <!-- Marcas por Avaliação -->
+        <div id="marcas-avaliacao" style="display: none; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+          ${stats.top3MarcasAvaliacao.map((marca, idx) => `
+            <div style="background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%); padding: 20px; border-radius: 12px; border: 2px solid ${idx === 0 ? '#C06060' : '#e9ecef'};">
+              <div style="text-align: center; margin-bottom: 12px;">
+                <div style="font-size: 32px; margin-bottom: 8px;">
+                  ${idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}
+                </div>
+                <h3 style="font-size: 20px; font-weight: 700; color: ${idx === 0 ? '#C06060' : '#000'}; margin: 0;">
+                  ${marca.nome}
+                </h3>
+              </div>
+              <div style="text-align: center; font-size: 18px; font-weight: 600; color: #666; margin-bottom: 12px;">
+                ${marca.qtdAvaliados} ${marca.qtdAvaliados === 1 ? 'avaliado' : 'avaliados'}
+              </div>
+              <div style="font-size: 14px; color: #666; text-align: center; margin-bottom: 8px;">
+                <strong>Média:</strong> ${marca.media.toFixed(1)} ⭐
+              </div>
+              ${marca.melhorPerfume ? `
+                <div style="margin-top: 12px; padding: 12px; background: rgba(192, 96, 96, 0.05); border-radius: 8px; text-align: center;">
+                  <strong style="color: #C06060; font-size: 12px;">Mais bem avaliado:</strong>
+                  <div style="margin-top: 6px; font-size: 13px; font-weight: 600;">
+                    ${marca.melhorPerfume.nome}
+                  </div>
+                  <div style="font-size: 14px; color: #C06060; font-weight: 700; margin-top: 4px;">
+                    ${marca.melhorPerfume.nota.toFixed(1)} ⭐
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          `).join('')}
+        </div>
       </div>
     ` : ''}
+
+    <script>
+      function toggleMarcas(tipo) {
+        const btnQtd = document.getElementById('btn-marcas-qtd');
+        const btnAval = document.getElementById('btn-marcas-aval');
+        const divQtd = document.getElementById('marcas-quantidade');
+        const divAval = document.getElementById('marcas-avaliacao');
+        
+        if (tipo === 'quantidade') {
+          btnQtd.classList.add('ativo');
+          btnAval.classList.remove('ativo');
+          btnQtd.style.background = '#C06060';
+          btnQtd.style.color = '#fff';
+          btnAval.style.background = 'transparent';
+          btnAval.style.color = '#C06060';
+          divQtd.style.display = 'grid';
+          divAval.style.display = 'none';
+        } else {
+          btnAval.classList.add('ativo');
+          btnQtd.classList.remove('ativo');
+          btnAval.style.background = '#C06060';
+          btnAval.style.color = '#fff';
+          btnQtd.style.background = 'transparent';
+          btnQtd.style.color = '#C06060';
+          divQtd.style.display = 'none';
+          divAval.style.display = 'grid';
+        }
+      }
+    </script>
   `;
 }

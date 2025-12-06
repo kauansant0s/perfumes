@@ -1057,3 +1057,10 @@ body {
         padding: 20px;
     }
 }
+
+/* ✅ Hover nas Melhores Avaliações */
+.stats-section a[href*="perfume.html"] > div:hover {
+    background: #e9ecef !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
