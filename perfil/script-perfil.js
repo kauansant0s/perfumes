@@ -987,6 +987,34 @@ async function calcularEstatisticas() {
       media: data.avaliacoes > 0 ? data.somaAvaliacoes / data.avaliacoes : 0
     }))
     .sort((a, b) => b.count - a.count)[0];
+
+    // ✅ NOVO: Top 3 marcas com mais perfumes possuídos (Tenho + Já tive)
+const top3Marcas = Object.entries(marcas)
+  .map(([nome, data]) => {
+    // Conta quantos perfumes "tenho" e "já tive" dessa marca
+    const perfumesDaMarca = perfumesData.filter(p => p.marca === nome);
+    const tenhoJaTive = perfumesDaMarca.filter(p => p.status === 'tenho' || p.status === 'ja-tive').length;
+    
+    // Encontra o perfume mais bem avaliado dessa marca
+    const perfumesAvaliadosMarca = perfumesDaMarca.filter(p => p.avaliacoes && p.avaliacoes.media);
+    const melhorPerfume = perfumesAvaliadosMarca.length > 0
+      ? perfumesAvaliadosMarca.sort((a, b) => b.avaliacoes.media - a.avaliacoes.media)[0]
+      : null;
+    
+    return {
+      nome,
+      totalPerfumes: data.count,
+      tenhoJaTive,
+      media: data.avaliacoes > 0 ? data.somaAvaliacoes / data.avaliacoes : 0,
+      melhorPerfume: melhorPerfume ? {
+        nome: melhorPerfume.nome,
+        nota: melhorPerfume.avaliacoes.media
+      } : null
+    };
+  })
+  .filter(m => m.tenhoJaTive > 0) // Apenas marcas que você tem ou já teve
+  .sort((a, b) => b.tenhoJaTive - a.tenhoJaTive) // Ordena por quantidade possuída
+  .slice(0, 3); // Top 3
   
   // ✅ NOVO: Acordes favoritos baseados nas avaliações
   // Calcula a média de avaliação para cada acorde
@@ -1036,11 +1064,14 @@ async function calcularEstatisticas() {
     jaTive: perfumesData.filter(p => p.status === 'ja-tive').length,
     queroTer: perfumesData.filter(p => p.status === 'quero-ter').length
   };
+
+  // ✅ NOVO: Total de perfumes possuídos (apenas "Tenho")
+  const totalPossuidos = statusDistribuicao.tenho;
   
-  // Melhores avaliações
+  // Melhores avaliações - TOP 6
   const melhoresAvaliacoes = perfumesAvaliados
-    .sort((a, b) => b.avaliacoes.media - a.avaliacoes.media)
-    .slice(0, 3);
+  .sort((a, b) => b.avaliacoes.media - a.avaliacoes.media)
+  .slice(0, 6);
   
   // Mês com mais cadastros
   const meses = {};
@@ -1065,7 +1096,9 @@ async function calcularEstatisticas() {
     mediaAvaliacoes,
     totalPerfumes: perfumesData.length,
     totalAvaliacoes: perfumesAvaliados.length, // ✅ Perfumes avaliados
+    totalPossuidos, // ✅ NOVO: Tenho + Já tive
     marcaMaisAvaliada,
+    top3Marcas, // ✅ NOVO
     acordesFavoritos,
     perfumeMaisCaroTenho,
     perfumeMaisCaroQuero,
@@ -1099,10 +1132,10 @@ function renderizarEstatisticas(stats) {
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
-          <span class="stat-card-value">${stats.totalPerfumes}</span>
+          <span class="stat-card-value">${stats.totalPossuidos}</span>
         </div>
-        <div class="stat-card-title">Total de Perfumes</div>
-        <div class="stat-card-subtitle">cadastrados</div>
+        <div class="stat-card-title">Total de Perfumes Possuídos</div>
+        <div class="stat-card-subtitle">que você tem</div>
       </div>
       
       <div class="stat-card">
@@ -1115,46 +1148,12 @@ function renderizarEstatisticas(stats) {
         <div class="stat-card-title">Perfumes Avaliados</div>
         <div class="stat-card-subtitle">com notas</div>
       </div>
-      
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <svg class="stat-card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-            <line x1="7" y1="7" x2="7.01" y2="7"></line>
-          </svg>
-          <span class="stat-card-value">${preferenciasUsuario?.top5?.length || 0}</span>
-        </div>
-        <div class="stat-card-title">Top 5</div>
-        <div class="stat-card-subtitle">favoritos escolhidos</div>
-      </div>
-    </div>
+
+      <!-- Grid: Acordes Favoritos + Melhores Avaliações -->
+      <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; margin-bottom: 20px;">
     
-    <!-- Marca favorita -->
-    ${stats.marcaMaisAvaliada ? `
-      <div class="stats-section stat-highlight">
-        <div class="stats-section-title">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="8" r="7"></circle>
-            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-          </svg>
-          Marca Favorita
-        </div>
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <div>
-            <h3 style="font-size: 28px; font-weight: 700; color: #C06060; margin: 0;">${stats.marcaMaisAvaliada.nome}</h3>
-            <p style="font-size: 14px; color: #666; margin: 8px 0 0 0;">
-              ${stats.marcaMaisAvaliada.count} perfumes • 
-              Média: ${stats.marcaMaisAvaliada.media.toFixed(1)} ⭐
-            </p>
-          </div>
-          <div style="font-size: 60px;">🏆</div>
-        </div>
-      </div>
-    ` : ''}
-    
-    <!-- Grid de 2 colunas -->
-    <div class="stats-grid-2">
-      <!-- Acordes favoritos -->
+    <!-- Acordes favoritos -->
+    <div class="stats-section">
       ${stats.acordesFavoritos.length > 0 ? `
         <div class="stats-section">
           <div class="stats-section-title">
@@ -1162,71 +1161,26 @@ function renderizarEstatisticas(stats) {
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
             </svg>
             Acordes Favoritos
-            <span style="font-size: 12px; color: #999; font-weight: 400; margin-left: 8px;">
-              (baseado nas suas avaliações)
-            </span>
-          </div>
-          ${stats.acordesFavoritos.map(acorde => `
-            <div class="progress-item">
-              <div class="progress-label">
-                <span class="progress-label-name">${acorde.nome}</span>
-                <span class="progress-label-value">
-                  Média: ${acorde.mediaAvaliacao.toFixed(1)} ⭐ (${acorde.count} perfumes)
-                </span>
-              </div>
-              <div class="progress-bar-container">
-                <div class="progress-bar-fill" style="width: ${(acorde.mediaAvaliacao / 5) * 100}%;"></div>
-              </div>
             </div>
-          `).join('')}
-        </div>
-      ` : ''}
-      
-      <!-- Distribuição por status -->
-      <div class="stats-section">
-        <div class="stats-section-title">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="8" y1="6" x2="21" y2="6"></line>
-            <line x1="8" y1="12" x2="21" y2="12"></line>
-            <line x1="8" y1="18" x2="21" y2="18"></line>
-            <line x1="3" y1="6" x2="3.01" y2="6"></line>
-            <line x1="3" y1="12" x2="3.01" y2="12"></line>
-            <line x1="3" y1="18" x2="3.01" y2="18"></line>
-          </svg>
-          Distribuição
-        </div>
-        <div class="progress-item">
-          <div class="progress-label">
-            <span class="progress-label-name">Tenho</span>
-            <span class="progress-label-value">${stats.statusDistribuicao.tenho}/${stats.totalPerfumes}</span>
+              <div style="font-size: 11px; color: #999; margin-bottom: 12px;">
+                Baseado nas suas avaliações
+            </div>
+          ${stats.acordesFavoritos.map(acorde => `
+          <div class="progress-item">
+            <div class="progress-label">
+              <span class="progress-label-name">${acorde.nome}</span>
+              <span class="progress-label-value">
+                ${acorde.mediaAvaliacao.toFixed(1)} ⭐
+              </span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: ${(acorde.mediaAvaliacao / 5) * 100}%;"></div>
+            </div>
           </div>
-          <div class="progress-bar-container">
-            <div class="progress-bar-fill" style="width: ${(stats.statusDistribuicao.tenho / stats.totalPerfumes) * 100}%; background: linear-gradient(90deg, #10b981 0%, #059669 100%);"></div>
-          </div>
-        </div>
-        <div class="progress-item">
-          <div class="progress-label">
-            <span class="progress-label-name">Já tive</span>
-            <span class="progress-label-value">${stats.statusDistribuicao.jaTive}/${stats.totalPerfumes}</span>
-          </div>
-          <div class="progress-bar-container">
-            <div class="progress-bar-fill" style="width: ${(stats.statusDistribuicao.jaTive / stats.totalPerfumes) * 100}%; background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);"></div>
-          </div>
-        </div>
-        <div class="progress-item">
-          <div class="progress-label">
-            <span class="progress-label-name">Quero ter</span>
-            <span class="progress-label-value">${stats.statusDistribuicao.queroTer}/${stats.totalPerfumes}</span>
-          </div>
-          <div class="progress-bar-container">
-            <div class="progress-bar-fill" style="width: ${(stats.statusDistribuicao.queroTer / stats.totalPerfumes) * 100}%; background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);"></div>
-          </div>
-        </div>
+        `).join('')}
       </div>
-    </div>
-    
-    <!-- Melhores avaliações -->
-    ${stats.melhoresAvaliacoes.length > 0 ? `
+
+      <!-- Melhores avaliações - TOP 6 -->
       <div class="stats-section">
         <div class="stats-section-title">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1244,56 +1198,53 @@ function renderizarEstatisticas(stats) {
               </div>
               <span class="top-list-item-value">${perfume.avaliacoes.media.toFixed(1)} ⭐</span>
             </li>
-          `).join('')}
-        </ul>
-      </div>
-    ` : ''}
-    
-    <!-- Perfumes mais caros -->
-    <div class="stats-grid-2">
-      ${stats.perfumeMaisCaroTenho ? `
-        <div class="stats-section" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981;">
-          <div class="stats-section-title" style="color: #065f46;">
-            💰 Mais caro que você tem
+            `).join('')}
+            </ul>
+            </div>
           </div>
-          <h3 style="font-size: 20px; font-weight: 700; margin: 0;">${stats.perfumeMaisCaroTenho.nome}</h3>
-          <p style="font-size: 14px; color: #666; margin: 8px 0 0 0;">
-            ${stats.perfumeMaisCaroTenho.marca} • R$ ${stats.perfumeMaisCaroTenho.preco}
-          </p>
-        </div>
       ` : ''}
-      
-      ${stats.perfumeMaisCaroQuero ? `
-        <div class="stats-section" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
-          <div class="stats-section-title" style="color: #1e40af;">
-            🎯 Mais caro que você quer
-          </div>
-          <h3 style="font-size: 20px; font-weight: 700; margin: 0;">${stats.perfumeMaisCaroQuero.nome}</h3>
-          <p style="font-size: 14px; color: #666; margin: 8px 0 0 0;">
-            ${stats.perfumeMaisCaroQuero.marca} • R$ ${stats.perfumeMaisCaroQuero.preco}
-          </p>
-        </div>
-      ` : ''}
-    </div>
-    
-    <!-- Mês mais ativo -->
-    ${stats.mesComMaisCadastros.count > 0 ? `
-      <div class="stats-section" style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border-color: #6366f1;">
-        <div class="stats-section-title" style="color: #3730a3;">
+
+    <!-- ✅ Top 3 Marcas - HORIZONTAL -->
+    ${stats.top3Marcas.length > 0 ? `
+      <div class="stats-section stat-highlight">
+        <div class="stats-section-title">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
+            <circle cx="12" cy="8" r="7"></circle>
+            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
           </svg>
-          Mês mais ativo
+          Top 3 Marcas
         </div>
-        <h3 style="font-size: 24px; font-weight: 700; margin: 0;">
-          ${stats.mesComMaisCadastros.mes.charAt(0).toUpperCase() + stats.mesComMaisCadastros.mes.slice(1)} ${stats.mesComMaisCadastros.ano}
-        </h3>
-        <p style="font-size: 14px; color: #666; margin: 8px 0 0 0;">
-          ${stats.mesComMaisCadastros.count} perfumes cadastrados
-        </p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+          ${stats.top3Marcas.map((marca, idx) => `
+            <div style="background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%); padding: 20px; border-radius: 12px; border: 2px solid ${idx === 0 ? '#C06060' : '#e9ecef'};">
+              <div style="text-align: center; margin-bottom: 12px;">
+                <div style="font-size: 32px; margin-bottom: 8px;">
+                  ${idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}
+                </div>
+                <h3 style="font-size: 20px; font-weight: 700; color: ${idx === 0 ? '#C06060' : '#000'}; margin: 0;">
+                  ${marca.nome}
+                </h3>
+              </div>
+              <div style="text-align: center; font-size: 18px; font-weight: 600; color: #666; margin-bottom: 12px;">
+                ${marca.tenhoJaTive} ${marca.tenhoJaTive === 1 ? 'perfume' : 'perfumes'}
+              </div>
+              <div style="font-size: 14px; color: #666; text-align: center; margin-bottom: 8px;">
+                <strong>Média:</strong> ${marca.media > 0 ? marca.media.toFixed(1) + ' ⭐' : 'Sem avaliações'}
+              </div>
+              ${marca.melhorPerfume ? `
+                <div style="margin-top: 12px; padding: 12px; background: rgba(192, 96, 96, 0.05); border-radius: 8px; text-align: center;">
+                  <strong style="color: #C06060; font-size: 12px;">Mais bem avaliado:</strong>
+                  <div style="margin-top: 6px; font-size: 13px; font-weight: 600;">
+                    ${marca.melhorPerfume.nome}
+                  </div>
+                  <div style="font-size: 14px; color: #C06060; font-weight: 700; margin-top: 4px;">
+                    ${marca.melhorPerfume.nota.toFixed(1)} ⭐
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          `).join('')}
+        </div>
       </div>
     ` : ''}
   `;
