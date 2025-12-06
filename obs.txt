@@ -6,8 +6,7 @@ criar uma página com todos os perfumes, que eu posso pesquisar por acordes nota
 pegar as porcentagens na hora de pegar os dados do perfume original qnd for contratipo
 adicionar acordes limpeza e assabonetado, com cores próprias
 quando eu avalio um perfume, ele aparece na seção "todos" nos meus perfumes
-criar um modal com estatísticas, média de avaliação, acordes preferidos, entre outros.
-
+o toggle de quantidade e avaliação não está clicavel
 
 script-criar-conta.js:25 Modo edição: true
 script-criar-conta.js:85 Carregando dados do usuário: kauankssantos.12@gmail.com
@@ -34,6 +33,7 @@ doTheRequest @ request.ts:114
 
 
 isso é o console qnd tento fazer upload da foto de perfil
+
 
 
 
