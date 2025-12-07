@@ -81,10 +81,10 @@ const ids = ["topo", "coracao", "fundo"];
 
 const acordes = [
   'Abaunilhado', 'Aldeídico', 'Alcoólico', 'Almiscarado', 'Ambarado',
-  'Amadeirado', 'Animálico', 'Aquático', 'Aromático', 'Atalcado',
+  'Amadeirado', 'Animálico', 'Aquático', 'Aromático', 'Assabonetado', 'Atalcado',
   'Balsâmico', 'Chipre', 'Cítrico', 'Couro', 'Cremoso', 'Doce', 'Esfumaçado',
   'Especiado', 'Floral', 'Floral Amarelo', 'Floral Branco', 'Fougère',
-  'Fresco', 'Frutado', 'Gourmand', 'Herbal', 'Lactônico',
+  'Fresco', 'Frutado', 'Gourmand', 'Herbal', 'Lactônico', 'Limpeza',
   'Metálico', 'Resinoso', 'Terroso', 'Tropical', 'Verde'
 ];
 
@@ -102,15 +102,15 @@ const coresAcordes = {
   'Abaunilhado': '#D4A574', 'Aldeídico': '#E8E8E8', 'Alcoólico': '#C9B8A8',
   'Almiscarado': '#F5E6D3', 'Ambarado': '#FFB347', 'Amadeirado': '#8B4513',
   'Animálico': '#654321', 'Aquático': '#4DD0E1', 'Aromático': '#7CB342',
-  'Atalcado': '#E8D5C4', 'Balsâmico': '#8B7355', 'Chipre': '#556B2F', 'Cítrico': '#FFA500',
-  'Couro': '#654321', 'Cremoso': '#FFF8DC', 'Doce': '#FFB6C1',
-  'Esfumaçado': '#696969', 'Especiado': '#CD853F', 'Floral': '#FF69B4',
+  'Assabonetado': '#E0F7FA', 'Atalcado': '#E8D5C4', 'Balsâmico': '#8B7355', 
+  'Chipre': '#556B2F', 'Cítrico': '#FFA500', 'Couro': '#654321', 'Cremoso': '#FFF8DC', 
+  'Doce': '#FFB6C1', 'Esfumaçado': '#696969', 'Especiado': '#CD853F', 'Floral': '#FF69B4',
   'Floral Amarelo': '#FFD700', 'Floral Branco': '#F5F5F5', 'Fougère': '#2E8B57',
   'Fresco': '#87CEEB', 'Frutado': '#FF6347', 'Gourmand': '#D2691E',
-  'Herbal': '#6B8E23', 'Lactônico': '#FFF5EE', 'Metálico': '#B0B0B0', 
-  'Resinoso': '#A0522D', 'Terroso': '#8B7355', 'Tropical': '#FF8C00', 'Verde': '#228B22'
+  'Herbal': '#6B8E23', 'Lactônico': '#FFF5EE', 'Limpeza': '#B2DFDB',
+  'Metálico': '#B0B0B0', 'Resinoso': '#A0522D', 'Terroso': '#8B7355', 
+  'Tropical': '#FF8C00', 'Verde': '#228B22'
 };
-
 const acordesInstance = new TomSelect('#acordes', {
   maxItems: 8,
   create: false,
@@ -619,10 +619,22 @@ async function puxarNotasEAcordesDoOriginal(perfumeOriginalId) {
       }
     }
     
-    // ✅ Copia ACORDES
+    // ✅ Copia ACORDES E INTENSIDADES
     if (perfumeOriginal.acordes && perfumeOriginal.acordes.length > 0) {
       acordesInstance.setValue(perfumeOriginal.acordes);
       console.log('✅ Acordes copiados:', perfumeOriginal.acordes);
+      
+      // ✅ NOVO: Copia também as intensidades dos acordes
+      if (perfumeOriginal.acordesIntensidade) {
+        acordesIntensidade = { ...perfumeOriginal.acordesIntensidade };
+        console.log('✅ Intensidades dos acordes copiadas:', acordesIntensidade);
+        
+        // Atualiza a barra visual após copiar
+        setTimeout(() => {
+          atualizarBarraAcordes();
+        }, 300);
+      }
+      
       algumaCopiaFeita = true;
     }
     

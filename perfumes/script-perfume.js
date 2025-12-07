@@ -13,16 +13,17 @@ let perfumesData = [];
 
 // Cores dos acordes
 const coresAcordes = {
-    'Abaunilhado': '#D4A574', 'Aldeídico': '#E8E8E8', 'Alcoólico': '#C9B8A8',
-    'Almiscarado': '#F5E6D3', 'Ambarado': '#FFB347', 'Amadeirado': '#8B4513',
-    'Animálico': '#654321', 'Aquático': '#4DD0E1', 'Aromático': '#7CB342',
-    'Atalcado': '#E8D5C4', 'Balsâmico': '#8B7355', 'Chipre': '#556B2F', 'Cítrico': '#FFA500',
-    'Couro': '#654321', 'Cremoso': '#FFF8DC', 'Doce': '#FFB6C1',
-    'Esfumaçado': '#696969', 'Especiado': '#CD853F', 'Floral': '#FF69B4',
-    'Floral Amarelo': '#FFD700', 'Floral Branco': '#F5F5F5', 'Fougère': '#2E8B57',
-    'Fresco': '#87CEEB', 'Frutado': '#FF6347', 'Gourmand': '#D2691E',
-    'Herbal': '#6B8E23', 'Lactônico': '#FFF5EE', 'Metálico': '#B0B0B0', 
-    'Resinoso': '#A0522D', 'Terroso': '#8B7355', 'Tropical': '#FF8C00', 'Verde': '#228B22'
+  'Abaunilhado': '#D4A574', 'Aldeídico': '#E8E8E8', 'Alcoólico': '#C9B8A8',
+  'Almiscarado': '#F5E6D3', 'Ambarado': '#FFB347', 'Amadeirado': '#8B4513',
+  'Animálico': '#654321', 'Aquático': '#4DD0E1', 'Aromático': '#7CB342',
+  'Assabonetado': '#E0F7FA', 'Atalcado': '#E8D5C4', 'Balsâmico': '#8B7355', 
+  'Chipre': '#556B2F', 'Cítrico': '#FFA500', 'Couro': '#654321', 'Cremoso': '#FFF8DC', 
+  'Doce': '#FFB6C1', 'Esfumaçado': '#696969', 'Especiado': '#CD853F', 'Floral': '#FF69B4',
+  'Floral Amarelo': '#FFD700', 'Floral Branco': '#F5F5F5', 'Fougère': '#2E8B57',
+  'Fresco': '#87CEEB', 'Frutado': '#FF6347', 'Gourmand': '#D2691E',
+  'Herbal': '#6B8E23', 'Lactônico': '#FFF5EE', 'Limpeza': '#B2DFDB',
+  'Metálico': '#B0B0B0', 'Resinoso': '#A0522D', 'Terroso': '#8B7355', 
+  'Tropical': '#FF8C00', 'Verde': '#228B22'
 };
 
 const urlParams = new URLSearchParams(window.location.search);

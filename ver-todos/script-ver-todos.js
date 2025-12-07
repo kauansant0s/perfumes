@@ -161,11 +161,12 @@ function atualizarVisualizacao() {
 function aplicarFiltrosEOrdenacao() {
     // 1. Filtrar por status
     if (filtroAtual === 'todos') {
-        // ✅ NOVO: Mostra APENAS perfumes com status definido
+        // ✅ Mostra perfumes com status OU que foram avaliados
         perfumesFiltrados = perfumesData.filter(p => 
             p.status === 'tenho' || 
             p.status === 'ja-tive' || 
-            p.status === 'quero-ter'
+            p.status === 'quero-ter' ||
+            (p.avaliacoes && p.avaliacoes.media && p.avaliacoes.media > 0)
         );
     } else {
         perfumesFiltrados = perfumesData.filter(p => p.status === filtroAtual);
