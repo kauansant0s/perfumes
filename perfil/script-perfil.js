@@ -934,6 +934,20 @@ document.getElementById('btn-estatisticas')?.addEventListener('click', async () 
     const stats = await calcularEstatisticas();
     conteudo.innerHTML = renderizarEstatisticas(stats);
     modal.style.display = 'flex';
+    
+    // ✅ NOVO: Adiciona event listeners aos botões de toggle
+    setTimeout(() => {
+      const btnQtd = document.getElementById('btn-marcas-qtd');
+      const btnAval = document.getElementById('btn-marcas-aval');
+      
+      if (btnQtd) {
+        btnQtd.addEventListener('click', () => toggleMarcas('quantidade'));
+      }
+      if (btnAval) {
+        btnAval.addEventListener('click', () => toggleMarcas('avaliacao'));
+      }
+    }, 100);
+    
   } catch (error) {
     console.error('Erro ao carregar estatísticas:', error);
     alert('Erro ao carregar estatísticas');
@@ -1258,10 +1272,10 @@ function renderizarEstatisticas(stats) {
           
           <!-- Toggle de ordenação -->
           <div style="display: flex; gap: 10px;">
-            <button onclick="toggleMarcas('quantidade')" id="btn-marcas-qtd" class="btn-toggle-marcas ativo" style="padding: 8px 16px; background: #C06060; color: #fff; border: 2px solid #C06060; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+            <button id="btn-marcas-qtd" class="btn-toggle-marcas ativo" style="padding: 8px 16px; background: #C06060; color: #fff; border: 2px solid #C06060; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
               Por Quantidade
             </button>
-            <button onclick="toggleMarcas('avaliacao')" id="btn-marcas-aval" class="btn-toggle-marcas" style="padding: 8px 16px; background: transparent; color: #C06060; border: 2px solid #C06060; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+            <button id="btn-marcas-aval" class="btn-toggle-marcas" style="padding: 8px 16px; background: transparent; color: #C06060; border: 2px solid #C06060; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
               Por Avaliação
             </button>
           </div>
@@ -1275,9 +1289,11 @@ function renderizarEstatisticas(stats) {
                 <div style="font-size: 32px; margin-bottom: 8px;">
                   ${idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}
                 </div>
-                <h3 style="font-size: 20px; font-weight: 700; color: ${idx === 0 ? '#C06060' : '#000'}; margin: 0;">
-                  ${marca.nome}
-                </h3>
+                <a href="../marca/marca.html?nome=${encodeURIComponent(marca.nome)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
+                  <h3 style="font-size: 20px; font-weight: 700; color: ${idx === 0 ? '#C06060' : '#000'}; margin: 0; transition: all 0.2s; cursor: pointer;">
+                    ${marca.nome}
+                  </h3>
+                </a>
               </div>
               <div style="text-align: center; font-size: 18px; font-weight: 600; color: #666; margin-bottom: 12px;">
                 ${marca.tenhoJaTive} ${marca.tenhoJaTive === 1 ? 'perfume' : 'perfumes'}
@@ -1308,9 +1324,11 @@ function renderizarEstatisticas(stats) {
                 <div style="font-size: 32px; margin-bottom: 8px;">
                   ${idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}
                 </div>
-                <h3 style="font-size: 20px; font-weight: 700; color: ${idx === 0 ? '#C06060' : '#000'}; margin: 0;">
-                  ${marca.nome}
-                </h3>
+                <a href="../marca/marca.html?nome=${encodeURIComponent(marca.nome)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
+                  <h3 style="font-size: 20px; font-weight: 700; color: ${idx === 0 ? '#C06060' : '#000'}; margin: 0; transition: all 0.2s; cursor: pointer;">
+                    ${marca.nome}
+                  </h3>
+                </a>
               </div>
               <div style="text-align: center; font-size: 18px; font-weight: 600; color: #666; margin-bottom: 12px;">
                 ${marca.qtdAvaliados} ${marca.qtdAvaliados === 1 ? 'avaliado' : 'avaliados'}
@@ -1334,34 +1352,40 @@ function renderizarEstatisticas(stats) {
         </div>
       </div>
     ` : ''}
-
-    <script>
-      function toggleMarcas(tipo) {
-        const btnQtd = document.getElementById('btn-marcas-qtd');
-        const btnAval = document.getElementById('btn-marcas-aval');
-        const divQtd = document.getElementById('marcas-quantidade');
-        const divAval = document.getElementById('marcas-avaliacao');
-        
-        if (tipo === 'quantidade') {
-          btnQtd.classList.add('ativo');
-          btnAval.classList.remove('ativo');
-          btnQtd.style.background = '#C06060';
-          btnQtd.style.color = '#fff';
-          btnAval.style.background = 'transparent';
-          btnAval.style.color = '#C06060';
-          divQtd.style.display = 'grid';
-          divAval.style.display = 'none';
-        } else {
-          btnAval.classList.add('ativo');
-          btnQtd.classList.remove('ativo');
-          btnAval.style.background = '#C06060';
-          btnAval.style.color = '#fff';
-          btnQtd.style.background = 'transparent';
-          btnQtd.style.color = '#C06060';
-          divQtd.style.display = 'none';
-          divAval.style.display = 'grid';
-        }
-      }
-    </script>
   `;
 }
+
+/**
+ * ✅ Toggle entre Top 3 Marcas por Quantidade ou Avaliação
+ */
+function toggleMarcas(tipo) {
+  const btnQtd = document.getElementById('btn-marcas-qtd');
+  const btnAval = document.getElementById('btn-marcas-aval');
+  const divQtd = document.getElementById('marcas-quantidade');
+  const divAval = document.getElementById('marcas-avaliacao');
+  
+  if (!btnQtd || !btnAval || !divQtd || !divAval) return;
+  
+  if (tipo === 'quantidade') {
+    btnQtd.classList.add('ativo');
+    btnAval.classList.remove('ativo');
+    btnQtd.style.background = '#C06060';
+    btnQtd.style.color = '#fff';
+    btnAval.style.background = 'transparent';
+    btnAval.style.color = '#C06060';
+    divQtd.style.display = 'grid';
+    divAval.style.display = 'none';
+  } else {
+    btnAval.classList.add('ativo');
+    btnQtd.classList.remove('ativo');
+    btnAval.style.background = '#C06060';
+    btnAval.style.color = '#fff';
+    btnQtd.style.background = 'transparent';
+    btnQtd.style.color = '#C06060';
+    divQtd.style.display = 'none';
+    divAval.style.display = 'grid';
+  }
+}
+
+// Torna a função disponível globalmente
+window.toggleMarcas = toggleMarcas;

@@ -33,8 +33,3 @@ doTheRequest @ request.ts:114
 
 
 isso é o console qnd tento fazer upload da foto de perfil
-
-
-
-
-
