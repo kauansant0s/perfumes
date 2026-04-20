@@ -238,8 +238,25 @@ function renderizarTop5(top5Ids) {
   const perfumesTop5 = perfumesData.filter(p => top5Ids.includes(p.id));
   
   perfumesTop5.forEach(perfume => {
+    // Wrapper para posicionar o X fora do card
+    const wrapper = document.createElement('div');
+    wrapper.className = 'top5-card-wrapper';
+
     const card = criarCardPerfume(perfume);
-    secao.appendChild(card);
+
+    const btnRemover = document.createElement('button');
+    btnRemover.className = 'top5-remover';
+    btnRemover.innerHTML = '&times;';
+    btnRemover.title = 'Remover do Top 5';
+    btnRemover.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      removerDoTop5(perfume.id);
+    });
+
+    wrapper.appendChild(card);
+    wrapper.appendChild(btnRemover);
+    secao.appendChild(wrapper);
   });
   
   if (perfumesTop5.length < 5) {
@@ -250,6 +267,9 @@ function renderizarTop5(top5Ids) {
     btnAdicionar.onclick = abrirModalTop5;
     secao.appendChild(btnAdicionar);
   }
+
+  // Re-insere o botão editar sempre no final
+  reinserirBtnEditar();
 }
 
 /**
@@ -265,8 +285,73 @@ function renderizarTop5Vazio() {
     btnAdicionar.setAttribute('aria-label', 'Adicionar ao Top 5');
     btnAdicionar.onclick = abrirModalTop5;
     secao.appendChild(btnAdicionar);
+    reinserirBtnEditar();
   }
 }
+
+function reinserirBtnEditar() {
+  const secao = document.getElementById('top5');
+  if (!secao) return;
+  // Remove qualquer botão editar existente antes de re-inserir
+  const existente = secao.querySelector('.btn-editar-top5');
+  if (existente) existente.remove();
+
+  const btn = document.createElement('button');
+  btn.id = 'btn-editar-top5';
+  btn.className = 'btn-editar-top5';
+  btn.title = 'Editar Top 5';
+  btn.innerHTML = `<svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5.125 13.875H6.01562L12.125 7.76562L11.2344 6.875L5.125 12.9844V13.875ZM3.875 15.125V12.4688L12.125 4.23437C12.25 4.11979 12.388 4.03125 12.5391 3.96875C12.6901 3.90625 12.849 3.875 13.0156 3.875C13.1823 3.875 13.3438 3.90625 13.5 3.96875C13.6563 4.03125 13.7917 4.125 13.9063 4.25L14.7656 5.125C14.8906 5.23958 14.9818 5.375 15.0391 5.53125C15.0964 5.6875 15.125 5.84375 15.125 6C15.125 6.16667 15.0964 6.32552 15.0391 6.47656C14.9818 6.6276 14.8906 6.76563 14.7656 6.89063L6.53125 15.125H3.875ZM11.6719 7.32813L11.2344 6.875L12.125 7.76562L11.6719 7.32813Z" fill="currentColor"/>
+    <circle cx="9.5" cy="9.5" r="9" stroke="currentColor"/>
+  </svg>`;
+  btn.addEventListener('click', toggleModoEdicaoTop5);
+  if (modoEdicaoTop5) btn.classList.add('ativo');
+  secao.appendChild(btn);
+}
+
+/**
+ * Liga/desliga modo edição do Top 5
+ */
+let modoEdicaoTop5 = false;
+
+function toggleModoEdicaoTop5() {
+  modoEdicaoTop5 = !modoEdicaoTop5;
+  const secao = document.getElementById('top5');
+  const btn = document.getElementById('btn-editar-top5');
+  if (secao) secao.classList.toggle('modo-edicao', modoEdicaoTop5);
+  if (btn) btn.classList.toggle('ativo', modoEdicaoTop5);
+}
+
+/**
+ * Remove perfume do Top 5
+ */
+async function removerDoTop5(perfumeId) {
+  const top5Atual = preferenciasUsuario?.top5 || [];
+  const novoTop5 = top5Atual.filter(id => id !== perfumeId);
+
+  preferenciasUsuario.top5 = novoTop5;
+
+  // Re-renderiza mantendo modo edição
+  renderizarTop5(novoTop5);
+
+  // Re-adiciona X buttons e mantém modo edição ativo
+  if (modoEdicaoTop5) {
+    const secao = document.getElementById('top5');
+    if (secao) secao.classList.add('modo-edicao');
+  }
+
+  try {
+    await salvarPreferenciasUsuario(usuarioAtual.uid, {
+      ...preferenciasUsuario,
+      top5: novoTop5
+    });
+    console.log('✅ Top 5 atualizado');
+  } catch (error) {
+    console.error('❌ Erro ao salvar top5:', error);
+  }
+}
+
+// Botão editar top5 é gerenciado dinamicamente por reinserirBtnEditar()
 
 /**
  * Define assinatura atual
@@ -935,17 +1020,31 @@ document.getElementById('btn-estatisticas')?.addEventListener('click', async () 
     conteudo.innerHTML = renderizarEstatisticas(stats);
     modal.style.display = 'flex';
     
-    // ✅ NOVO: Adiciona event listeners aos botões de toggle
+    // Adiciona event listeners aos botões de toggle e popups de acordes
     setTimeout(() => {
       const btnQtd = document.getElementById('btn-marcas-qtd');
       const btnAval = document.getElementById('btn-marcas-aval');
-      
-      if (btnQtd) {
-        btnQtd.addEventListener('click', () => toggleMarcas('quantidade'));
-      }
-      if (btnAval) {
-        btnAval.addEventListener('click', () => toggleMarcas('avaliacao'));
-      }
+      if (btnQtd) btnQtd.addEventListener('click', () => toggleMarcas('quantidade'));
+      if (btnAval) btnAval.addEventListener('click', () => toggleMarcas('avaliacao'));
+
+      // Popups dos acordes favoritos
+      document.querySelectorAll('.acorde-clicavel').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const idx = el.dataset.acordeIdx;
+          const popup = document.getElementById(`acorde-popup-${idx}`);
+          // Fecha todos os outros
+          document.querySelectorAll('.acorde-popup').forEach(p => {
+            if (p !== popup) p.style.display = 'none';
+          });
+          popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+        });
+      });
+
+      // Fecha popup ao clicar fora
+      document.getElementById('conteudo-estatisticas').addEventListener('click', () => {
+        document.querySelectorAll('.acorde-popup').forEach(p => p.style.display = 'none');
+      });
     }, 100);
     
   } catch (error) {
@@ -1026,8 +1125,8 @@ const top3MarcasQuantidade = Object.entries(marcas)
       } : null
     };
   })
-  .filter(m => m.tenhoJaTive > 0)
-  .sort((a, b) => b.tenhoJaTive - a.tenhoJaTive)
+  .filter(m => m.qtdAvaliados > 0)
+  .sort((a, b) => b.qtdAvaliados - a.qtdAvaliados)
   .slice(0, 3);
 
 // ✅ Top 3 marcas - Por MELHOR AVALIAÇÃO (mínimo 2 avaliados)
@@ -1057,41 +1156,32 @@ const top3MarcasAvaliacao = Object.entries(marcas)
   .sort((a, b) => b.media - a.media) // ✅ Ordena por média de avaliação
   .slice(0, 3);
   
-  // ✅ NOVO: Acordes favoritos baseados nas avaliações
-  // Calcula a média de avaliação para cada acorde
+  // Acordes favoritos: considera só os 2 primeiros acordes de cada perfume avaliado,
+  // filtra acordes que aparecem menos de 3 vezes, e rankeia por média de avaliação.
   const acordesComAvaliacoes = {};
 
   perfumesAvaliados.forEach(p => {
     if (p.acordes && Array.isArray(p.acordes)) {
-      p.acordes.forEach((acorde, idx) => {
+      p.acordes.slice(0, 2).forEach(acorde => {
         if (!acordesComAvaliacoes[acorde]) {
-          acordesComAvaliacoes[acorde] = {
-            somaAvaliacoes: 0,
-            count: 0,
-            destaque: 0  // ✅ Conta perfumes com esse acorde entre os 2 primeiros
-          };
+          acordesComAvaliacoes[acorde] = { somaAvaliacoes: 0, count: 0, perfumes: [] };
         }
         acordesComAvaliacoes[acorde].somaAvaliacoes += p.avaliacoes.media;
         acordesComAvaliacoes[acorde].count++;
-        
-        // ✅ Se o acorde está entre os 2 primeiros
-        if (idx <= 1) {
-          acordesComAvaliacoes[acorde].destaque++;
-        }
+        acordesComAvaliacoes[acorde].perfumes.push({ id: p.id, nome: p.nome, marca: p.marca, nota: p.avaliacoes.media });
       });
     }
   });
 
-  // Calcula média por acorde e ordena
   const acordesFavoritos = Object.entries(acordesComAvaliacoes)
+    .filter(([, data]) => data.count >= 3)
     .map(([nome, data]) => ({
       nome,
       count: data.count,
-      destaque: data.destaque,  // ✅ Quantidade em destaque
       mediaAvaliacao: data.somaAvaliacoes / data.count,
-      percentual: Math.round((data.count / perfumesAvaliados.length) * 100)
+      perfumes: data.perfumes.sort((a, b) => b.nota - a.nota)
     }))
-    .sort((a, b) => b.mediaAvaliacao - a.mediaAvaliacao) // ✅ Ordena por média de avaliação
+    .sort((a, b) => b.mediaAvaliacao - a.mediaAvaliacao)
     .slice(0, 5);
   
   // Perfume mais caro que tenho
@@ -1214,16 +1304,30 @@ function renderizarEstatisticas(stats) {
           <div style="font-size: 11px; color: #999; margin-bottom: 12px;">
             Baseado nas suas avaliações
           </div>
-          ${stats.acordesFavoritos.map(acorde => `
-            <div class="progress-item">
+          ${stats.acordesFavoritos.map((acorde, idx) => `
+            <div class="progress-item" style="position: relative;">
               <div class="progress-label">
-                <span class="progress-label-name">${acorde.nome}</span>
+                <span class="progress-label-name acorde-clicavel" 
+                      data-acorde-idx="${idx}"
+                      style="cursor: pointer;">
+                  ${acorde.nome}
+                </span>
                 <span class="progress-label-value">
-                  ${acorde.mediaAvaliacao.toFixed(1)} ⭐ • ${acorde.destaque} em destaque
+                  ${acorde.mediaAvaliacao.toFixed(1)} ⭐ • ${acorde.count} ${acorde.count === 1 ? 'perfume' : 'perfumes'}
                 </span>
               </div>
               <div class="progress-bar-container">
                 <div class="progress-bar-fill" style="width: ${(acorde.mediaAvaliacao / 5) * 100}%;"></div>
+              </div>
+              <!-- Popup de perfumes do acorde -->
+              <div class="acorde-popup" id="acorde-popup-${idx}" style="display:none;">
+                <div class="acorde-popup-titulo">${acorde.nome}</div>
+                ${acorde.perfumes.map(p => `
+                  <a href="../perfumes/perfume.html?id=${p.id}" target="_blank" class="acorde-popup-item">
+                    <span class="acorde-popup-nome">${p.nome} <span style="color:#999; font-weight:400;">${p.marca}</span></span>
+                    <span class="acorde-popup-nota">${p.nota.toFixed(1)} ⭐</span>
+                  </a>
+                `).join('')}
               </div>
             </div>
           `).join('')}
@@ -1296,7 +1400,7 @@ function renderizarEstatisticas(stats) {
                 </a>
               </div>
               <div style="text-align: center; font-size: 18px; font-weight: 600; color: #666; margin-bottom: 12px;">
-                ${marca.tenhoJaTive} ${marca.tenhoJaTive === 1 ? 'perfume' : 'perfumes'}
+                ${marca.qtdAvaliados} ${marca.qtdAvaliados === 1 ? 'perfume avaliado' : 'perfumes avaliados'}
               </div>
               <div style="font-size: 14px; color: #666; text-align: center; margin-bottom: 8px;">
                 <strong>Média:</strong> ${marca.media > 0 ? marca.media.toFixed(1) + ' ⭐' : 'Sem avaliações'}
@@ -1330,11 +1434,11 @@ function renderizarEstatisticas(stats) {
                   </h3>
                 </a>
               </div>
-              <div style="text-align: center; font-size: 18px; font-weight: 600; color: #666; margin-bottom: 12px;">
-                ${marca.qtdAvaliados} ${marca.qtdAvaliados === 1 ? 'avaliado' : 'avaliados'}
+              <div style="text-align: center; font-size: 18px; font-weight: 600; color: #666; margin-bottom: 8px;">
+                ${marca.media.toFixed(1)} ⭐
               </div>
               <div style="font-size: 14px; color: #666; text-align: center; margin-bottom: 8px;">
-                <strong>Média:</strong> ${marca.media.toFixed(1)} ⭐
+                ${marca.qtdAvaliados} ${marca.qtdAvaliados === 1 ? 'perfume avaliado' : 'perfumes avaliados'}
               </div>
               ${marca.melhorPerfume ? `
                 <div style="margin-top: 12px; padding: 12px; background: rgba(192, 96, 96, 0.05); border-radius: 8px; text-align: center;">

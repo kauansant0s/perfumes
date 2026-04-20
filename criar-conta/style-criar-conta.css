@@ -28,42 +28,75 @@ h1 {
     margin: 0;
 }
 
-/* Área da foto */
-.foto-area {
+/* Área de avatar */
+.avatar-area {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
 }
 
-.quadrado-foto {
-    background: #d9d9d9;
+.avatar-selecionado {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 3px solid #C06060;
+    overflow: hidden;
+    background: #2a2e2b;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s;
+    box-shadow: 0 0 0 4px rgba(192, 96, 96, 0.25);
 }
 
-.quadrado-foto:hover {
-    background: #c5c5c5;
-    transform: scale(1.05);
-}
-
-.texto-foto {
-    color: #666;
-    font-size: 14px;
-    text-align: center;
-}
-
-#preview-foto {
-    display: none;
+.avatar-selecionado img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.avatar-label {
+    color: #aaa;
+    font-size: 13px;
+    margin: 0;
+}
+
+.avatar-grade {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 340px;
+}
+
+.avatar-opcao {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    overflow: hidden;
+    transition: all 0.2s;
+    background: #2a2e2b;
+}
+
+.avatar-opcao img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.avatar-opcao:hover {
+    border-color: #C06060;
+    transform: scale(1.1);
+}
+
+.avatar-opcao.selecionado {
+    border-color: #C06060;
+    box-shadow: 0 0 0 2px rgba(192, 96, 96, 0.4);
+    transform: scale(1.08);
 }
 
 /* Formulário */

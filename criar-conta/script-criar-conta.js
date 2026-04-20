@@ -90,7 +90,13 @@ if (modoEdicao) {
     }
   });
 } else {
-  // Modo criar conta - verifica se está logado (não deveria estar)
+  // Modo criar conta - mostra campos de senha e torna obrigatórios
+  document.getElementById('campo-senha').style.display = 'block';
+  document.getElementById('campo-confirmar-senha').style.display = 'block';
+  document.getElementById('senha').setAttribute('required', 'required');
+  document.getElementById('confirmar-senha').setAttribute('required', 'required');
+
+  // Verifica se está logado (não deveria estar)
   auth.onAuthStateChanged((user) => {
     if (user) {
       // Se já está logado, redireciona para perfil
@@ -105,38 +111,76 @@ function carregarDadosUsuario(user) {
   document.getElementById('email').value = user.email || '';
   
   if (user.photoURL) {
-    const preview = document.getElementById('preview-foto');
-    const textoFoto = document.getElementById('texto-foto');
-    preview.src = user.photoURL;
-    preview.style.display = 'block';
-    textoFoto.style.display = 'none';
+    avatarSelecionado = user.photoURL;
+    const preview = document.getElementById('preview-avatar');
+    if (preview) preview.src = user.photoURL;
+    
+    // Marca o avatar correspondente como selecionado (se for um dos pré-definidos)
+    const grade = document.getElementById('avatar-grade');
+    if (grade) {
+      grade.querySelectorAll('.avatar-opcao').forEach((el, index) => {
+        el.classList.toggle('selecionado', AVATARES[index] === user.photoURL);
+      });
+    }
   }
   
   console.log('✅ Dados do usuário carregados!');
 }
 
-// Preview da foto
-const quadradoFoto = document.getElementById('quadrado-foto');
-const fotoInput = document.getElementById('foto-perfil');
-const previewFoto = document.getElementById('preview-foto');
-const textoFoto = document.getElementById('texto-foto');
+// ===== SISTEMA DE AVATARES =====
+const AVATARES = [
+  // Adventurer (pessoas ilustradas)
+  'https://api.dicebear.com/7.x/adventurer/svg?seed=Felix&backgroundColor=b6e3f4',
+  'https://api.dicebear.com/7.x/adventurer/svg?seed=Lara&backgroundColor=ffd5dc',
+  'https://api.dicebear.com/7.x/adventurer/svg?seed=Max&backgroundColor=c0aede',
+  'https://api.dicebear.com/7.x/adventurer/svg?seed=Nina&backgroundColor=d1f4d0',
+  'https://api.dicebear.com/7.x/adventurer/svg?seed=Tom&backgroundColor=ffe4c4',
+  // Notionists (estilo notion)
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Rose&backgroundColor=b6e3f4',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Mila&backgroundColor=ffd5dc',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Jake&backgroundColor=c0aede',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Sara&backgroundColor=d1f4d0',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Leo&backgroundColor=ffe4c4',
+  // Bottts (robôs fofos)
+  'https://api.dicebear.com/7.x/bottts/svg?seed=Bolt&backgroundColor=b6e3f4',
+  'https://api.dicebear.com/7.x/bottts/svg?seed=Gizmo&backgroundColor=ffd5dc',
+  'https://api.dicebear.com/7.x/bottts/svg?seed=Pixel&backgroundColor=c0aede',
+  'https://api.dicebear.com/7.x/bottts/svg?seed=Nova&backgroundColor=d1f4d0',
+  'https://api.dicebear.com/7.x/bottts/svg?seed=Spark&backgroundColor=ffe4c4',
+  // Lorelei (retratos elegantes)
+  'https://api.dicebear.com/7.x/lorelei/svg?seed=Alice&backgroundColor=b6e3f4',
+  'https://api.dicebear.com/7.x/lorelei/svg?seed=Bruno&backgroundColor=ffd5dc',
+  'https://api.dicebear.com/7.x/lorelei/svg?seed=Clara&backgroundColor=c0aede',
+  'https://api.dicebear.com/7.x/lorelei/svg?seed=Diego&backgroundColor=d1f4d0',
+  'https://api.dicebear.com/7.x/lorelei/svg?seed=Eva&backgroundColor=ffe4c4',
+];
 
-quadradoFoto.addEventListener('click', () => {
-  fotoInput.click();
-});
+let avatarSelecionado = AVATARES[0];
 
-fotoInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      previewFoto.src = event.target.result;
-      previewFoto.style.display = 'block';
-      textoFoto.style.display = 'none';
-    };
-    reader.readAsDataURL(file);
-  }
-});
+function renderizarAvatares() {
+  const grade = document.getElementById('avatar-grade');
+  const preview = document.getElementById('preview-avatar');
+  
+  // Define avatar inicial
+  preview.src = avatarSelecionado;
+  
+  AVATARES.forEach((url, index) => {
+    const div = document.createElement('div');
+    div.className = 'avatar-opcao' + (index === 0 ? ' selecionado' : '');
+    div.innerHTML = `<img src="${url}" alt="Avatar ${index + 1}" loading="lazy">`;
+    div.addEventListener('click', () => {
+      // Remove seleção anterior
+      grade.querySelectorAll('.avatar-opcao').forEach(el => el.classList.remove('selecionado'));
+      // Seleciona novo
+      div.classList.add('selecionado');
+      avatarSelecionado = url;
+      preview.src = url;
+    });
+    grade.appendChild(div);
+  });
+}
+
+renderizarAvatares();
 
 // Botão Cancelar
 document.getElementById('btn-cancelar').addEventListener('click', () => {
@@ -172,23 +216,7 @@ document.getElementById('form-criar-conta').addEventListener('submit', async (e)
         throw new Error('Usuário não autenticado');
       }
       
-      let photoURL = user.photoURL;
-      
-      // Faz upload da nova foto se houver
-      if (fotoInput.files.length > 0) {
-        const file = fotoInput.files[0];
-        
-        // Valida tamanho (máx 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          throw new Error('Imagem muito grande. Máximo 5MB');
-        }
-        
-        const storageRef = ref(storage, `perfis/${user.uid}`);
-        console.log('📤 Fazendo upload da foto...');
-        await uploadBytes(storageRef, file);
-        photoURL = await getDownloadURL(storageRef);
-        console.log('✅ Foto enviada!');
-      }
+      let photoURL = avatarSelecionado || user.photoURL;
       
       // Atualiza a senha SE os campos estiverem preenchidos
       const senha = document.getElementById('senha').value;
@@ -281,23 +309,7 @@ document.getElementById('form-criar-conta').addEventListener('submit', async (e)
       const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
       const user = userCredential.user;
 
-      let photoURL = null;
-
-      // Faz upload da foto se existir
-      if (fotoInput.files.length > 0) {
-        const file = fotoInput.files[0];
-        
-        // Valida tamanho
-        if (file.size > 5 * 1024 * 1024) {
-          throw new Error('Imagem muito grande. Máximo 5MB');
-        }
-        
-        const storageRef = ref(storage, `perfis/${user.uid}`);
-        console.log('📤 Fazendo upload da foto...');
-        await uploadBytes(storageRef, file);
-        photoURL = await getDownloadURL(storageRef);
-        console.log('✅ Foto enviada!');
-      }
+      let photoURL = avatarSelecionado || AVATARES[0];
 
       // Atualiza o perfil com nome e foto
       await updateProfile(user, {

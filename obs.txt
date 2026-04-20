@@ -3,30 +3,5 @@ poder adicionar mais de um site de compra, ai quando clica no botão do carrinho
 deixar os sliders sempre visiveis na pagina de perfume
 fazer uma tela de review para usuários não-admin similar à do formulário só que só com o necessário para a review
 criar uma página com todos os perfumes, que eu posso pesquisar por acordes notas, perfumistas, marcas, etc
-
-
-script-criar-conta.js:25 Modo edição: true
-script-criar-conta.js:85 Carregando dados do usuário: kauankssantos.12@gmail.com
-script-criar-conta.js:115 ✅ Dados do usuário carregados!
-script-criar-conta.js:187 📤 Fazendo upload da foto...
-kwift.CHROME.js:121 Uncaught TypeError: Cannot convert undefined or null to object
-    at Object.keys (<anonymous>)
-    at Object.isLoginFormAutofilledByDashlane (kwift.CHROME.js:121:44056)
-    at fn (kwift.CHROME.js:121:52304)
-    at Object.debouncedTriggerDataCaptureForForm (kwift.CHROME.js:1:388223)
-    at Object.triggerDataCaptureForForm (kwift.CHROME.js:121:44403)
-    at HTMLFormElement.formSubmitHandler (kwift.CHROME.js:121:53707)
-criar-conta.html?editar=true:1 Access to XMLHttpRequest at 'https://firebasestorage.googleapis.com/v0/b/meus-pefumes.firebasestorage.app/o?name=perfis%2FhWqIGL9HPtbeqsSVaQ6XSCM2oqb2' from origin 'http://127.0.0.1:5500' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.
-firebasestorage.googleapis.com/v0/b/meus-pefumes.firebasestorage.app/o?name=perfis%2FhWqIGL9HPtbeqsSVaQ6XSCM2oqb2:1  Failed to load resource: net::ERR_FAILED
-criar-conta.html?editar=true:1 Access to XMLHttpRequest at 'https://firebasestorage.googleapis.com/v0/b/meus-pefumes.firebasestorage.app/o?name=perfis%2FhWqIGL9HPtbeqsSVaQ6XSCM2oqb2' from origin 'http://127.0.0.1:5500' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.
-firebasestorage.googleapis.com/v0/b/meus-pefumes.firebasestorage.app/o?name=perfis%2FhWqIGL9HPtbeqsSVaQ6XSCM2oqb2:1  Failed to load resource: net::ERR_FAILED
-criar-conta.html?editar=true:1 Access to XMLHttpRequest at 'https://firebasestorage.googleapis.com/v0/b/meus-pefumes.firebasestorage.app/o?name=perfis%2FhWqIGL9HPtbeqsSVaQ6XSCM2oqb2' from origin 'http://127.0.0.1:5500' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.
-firebasestorage.googleapis.com/v0/b/meus-pefumes.firebasestorage.app/o?name=perfis%2FhWqIGL9HPtbeqsSVaQ6XSCM2oqb2:1  Failed to load resource: net::ERR_FAILED
-criar-conta.html?editar=true:1 Access to XMLHttpRequest at 'https://firebasestorage.googleapis.com/v0/b/meus-pefumes.firebasestorage.app/o?name=perfis%2FhWqIGL9HPtbeqsSVaQ6XSCM2oqb2' from origin 'http://127.0.0.1:5500' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.
-connection.ts:88  POST https://firebasestorage.googleapis.com/v0/b/meus-pefumes.firebasestorage.app/o?name=perfis%2FhWqIGL9HPtbeqsSVaQ6XSCM2oqb2 net::ERR_FAILED
-send @ connection.ts:88
-doTheRequest @ request.ts:114
-(anonymous) @ backoff.ts:78
-
-
-isso é o console qnd tento fazer upload da foto de perfil
+poder remover algum perfume do top 5
+poder exportar os perfumes que eu quero e tenho como excel

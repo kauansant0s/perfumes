@@ -1,5 +1,5 @@
 // script-form.js - COMPLETO COM VERIFICAÇÃO DE MARCA NOVA
-import { auth, salvarPerfume, uploadFotoPerfume, buscarMarcas, salvarMarca, buscarPerfumes, invalidarCachePerfumes, buscarPerfumePorId, buscarLinhas, salvarLinha } from './firebase-config.js';import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { auth, salvarPerfume, buscarMarcas, salvarMarca, buscarPerfumes, invalidarCachePerfumes, buscarPerfumePorId, buscarLinhas, salvarLinha } from './firebase-config.js';import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { toggleLoading, tratarErroFirebase } from './utils.js';
 import { verificarAdmin, isAdmin } from './admin-config.js';
@@ -1508,12 +1508,8 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       perfumeData.caracteristicas = caracteristicas;
     }
     
-    const fotoInput = document.getElementById('foto');
     const fotoURL = document.getElementById('foto-url').value.trim();
-    
-    if (fotoInput.files.length > 0) {
-      perfumeData.fotoURL = await uploadFotoPerfume(fotoInput.files[0], usuarioAtual.uid);
-    } else if (fotoURL) {
+    if (fotoURL) {
       perfumeData.fotoURL = fotoURL;
     }
     
@@ -1589,56 +1585,59 @@ document.getElementById('cancelar').addEventListener('click', () => {
   }
 });
 
-// Sistema de upload de foto
-const modal = document.getElementById('modal-foto');
+// Sistema de foto por link
 const quadrado = document.getElementById('quadrado');
 const preview = document.getElementById('preview-foto');
 const textoFoto = document.getElementById('texto-foto');
 const containerUrl = document.getElementById('container-url');
-const fotoInput = document.getElementById('foto');
 const fotoUrlInput = document.getElementById('foto-url');
 
-quadrado.addEventListener('click', () => {
-  modal.style.display = 'flex';
-});
-
-document.getElementById('btn-cancelar-modal').addEventListener('click', () => {
-  modal.style.display = 'none';
-});
-
-document.getElementById('btn-upload').addEventListener('click', () => {
-  modal.style.display = 'none';
-  fotoInput.click();
-});
-
-document.getElementById('btn-link').addEventListener('click', () => {
-  modal.style.display = 'none';
-  containerUrl.style.display = 'block';
+function abrirInputFoto() {
+  containerUrl.style.display = 'flex';
   fotoUrlInput.focus();
-});
+  fotoUrlInput.select();
+}
 
-fotoInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      preview.src = event.target.result;
-      preview.style.display = 'block';
-      textoFoto.style.display = 'none';
-    };
-    reader.readAsDataURL(file);
-  }
-});
+function fecharInputFoto() {
+  containerUrl.style.display = 'none';
+  aplicarUrl(fotoUrlInput.value.trim());
+}
 
-document.getElementById('btn-confirmar-url').addEventListener('click', () => {
-  const url = fotoUrlInput.value.trim();
+function aplicarUrl(url) {
   if (url) {
     preview.src = url;
     preview.style.display = 'block';
     textoFoto.style.display = 'none';
-    containerUrl.style.display = 'none';
+    preview.onerror = () => {
+      preview.style.display = 'none';
+      textoFoto.style.display = 'block';
+    };
   } else {
-    alert('Por favor, cole um link válido!');
+    preview.style.display = 'none';
+    textoFoto.style.display = 'block';
+  }
+}
+
+quadrado.addEventListener('click', (e) => {
+  if (!containerUrl.contains(e.target)) {
+    abrirInputFoto();
+  }
+});
+
+fotoUrlInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.stopPropagation();
+    fecharInputFoto();
+  }
+  if (e.key === 'Escape') {
+    fecharInputFoto();
+  }
+});
+
+// Fecha ao clicar fora do quadrado
+document.addEventListener('click', (e) => {
+  if (!quadrado.contains(e.target)) {
+    fecharInputFoto();
   }
 });
 
