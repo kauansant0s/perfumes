@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfume - Detalhes</title>
+    <link rel="stylesheet" href="style-perfume.css">
+</head>
+<body>
+    <!-- Menu Lateral -->
+    <button class="menu-toggle" id="menu-toggle">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+
+    <!-- Pesquisa Animada -->
+<div class="pesquisa-container">
+    <div class="barra-pesquisa-global" id="barra-pesquisa">
+        <input type="text" 
+               id="input-pesquisa-global" 
+               placeholder="Pesquisar perfumes ou marcas...">
+    </div>
+    <button class="btn-pesquisa-toggle" id="btn-pesquisa-toggle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+        </svg>
+    </button>
+</div>
+
+<!-- Resultados da Pesquisa -->
+<div class="resultados-pesquisa" id="resultados-pesquisa"></div>
+
+<!-- Overlay -->
+<div class="pesquisa-overlay" id="pesquisa-overlay"></div>
+    
+    <div class="menu-lateral" id="menu-lateral">
+        <div class="menu-header">
+            <img id="menu-foto" src="" alt="Foto" class="menu-foto">
+            <span id="menu-nome">Usuário</span>
+        </div>
+        
+        <nav class="menu-nav">
+            <a href="../perfil/perfil.html" class="menu-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Perfil
+            </a>
+        
+            <a href="../ver-todos/ver-todos.html" class="menu-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Meus perfumes
+            </a>
+        
+            <a href="../adicionar-perfume/form-add-perf.html" class="menu-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Cadastrar perfume
+            </a>
+        
+            <a href="#" class="menu-item" id="menu-exportar-excel">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="8" y1="13" x2="16" y2="13"></line>
+                    <line x1="8" y1="17" x2="16" y2="17"></line>
+                </svg>
+                Exportar para Excel
+            </a>
+            
+            <a href="#" class="menu-item" id="menu-logout">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Log out
+            </a>
+        </nav>
+    </div>
+    
+    <div class="menu-overlay" id="menu-overlay"></div>
+    
+    <div class="container">
+        <!-- Coluna Esquerda - Foto e Avaliações -->
+        <aside class="sidebar-left">
+            <div class="foto-perfume">
+                <img id="foto-perfume" src="" alt="Foto do perfume">
+            </div>
+            
+            <div class="avaliacoes" id="avaliacoes-container" style="display: none;">
+                <div class="estrelas-media" id="toggle-avaliacoes">
+                    <div class="estrelas-display"></div>
+                    <span class="nota-media">0,00</span>
+                </div>
+                
+                <!-- Avaliações Detalhadas -->
+                <div class="avaliacoes-detalhadas" id="avaliacoes-detalhadas">
+                    <div class="avaliacao-item">
+                        <span class="avaliacao-label">Cheiro:</span>
+                        <div class="avaliacao-nota">
+                            <div class="mini-estrelas" id="estrelas-cheiro"></div>
+                            <span class="nota-valor" id="nota-cheiro">0.0</span>
+                        </div>
+                    </div>
+                    <div class="avaliacao-item">
+                        <span class="avaliacao-label">Projeção:</span>
+                        <div class="avaliacao-nota">
+                            <div class="mini-estrelas" id="estrelas-projecao"></div>
+                            <span class="nota-valor" id="nota-projecao">0.0</span>
+                        </div>
+                    </div>
+                    <div class="avaliacao-item">
+                        <span class="avaliacao-label">Fixação:</span>
+                        <div class="avaliacao-nota">
+                            <div class="mini-estrelas" id="estrelas-fixacao"></div>
+                            <span class="nota-valor" id="nota-fixacao">0.0</span>
+                        </div>
+                    </div>
+                    <div class="avaliacao-item">
+                        <span class="avaliacao-label">Versatilidade:</span>
+                        <div class="avaliacao-nota">
+                            <div class="mini-estrelas" id="estrelas-versatilidade"></div>
+                            <span class="nota-valor" id="nota-versatilidade">0.0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ✅ Sliders Customizados -->
+                <div class="sliders-info">
+                    <div class="slider-container" id="container-genero" style="display: none;">
+                        <label>Gênero:</label>
+                        <div class="genero-slider-wrapper">
+                            <div class="genero-linha"></div>
+                            <div class="genero-pontos">
+                                <div class="genero-ponto" data-value="masculino">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Masc.</span>
+                                </div>
+                                <div class="genero-ponto" data-value="um-pouco-masculino">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="genero-ponto" data-value="compartilhavel">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Compartilhável</span>
+                                </div>
+                                <div class="genero-ponto" data-value="um-pouco-feminino">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="genero-ponto" data-value="feminino">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Fem.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slider-container" id="container-clima" style="display: none;">
+                        <label>Clima:</label>
+                        <div class="clima-slider-wrapper">
+                            <div class="clima-linha"></div>
+                            <div class="clima-pontos">
+                                <div class="clima-ponto" data-value="0">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Frio</span>
+                                </div>
+                                <div class="clima-ponto" data-value="25">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="clima-ponto" data-value="50">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="clima-ponto" data-value="75">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="clima-ponto" data-value="100">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Calor</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slider-container" id="container-ambiente" style="display: none;">
+                        <label>Ambiente:</label>
+                        <div class="ambiente-slider-wrapper">
+                            <div class="ambiente-linha"></div>
+                            <div class="ambiente-pontos">
+                                <div class="ambiente-ponto" data-value="0">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Informal</span>
+                                </div>
+                                <div class="ambiente-ponto" data-value="25">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="ambiente-ponto" data-value="50">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="ambiente-ponto" data-value="75">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="ambiente-ponto" data-value="100">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Formal</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slider-container" id="container-hora" style="display: none;">
+                        <label>Hora:</label>
+                        <div class="hora-slider-wrapper">
+                            <div class="hora-linha"></div>
+                            <div class="hora-pontos">
+                                <div class="hora-ponto" data-value="0">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Noite</span>
+                                </div>
+                                <div class="hora-ponto" data-value="25">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="hora-ponto" data-value="50">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="hora-ponto" data-value="75">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="hora-ponto" data-value="100">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Dia</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ✅ Status + Carrinho -->
+            <div class="status-carrinho-container">
+                <div class="status-buttons">
+                    <input type="radio" id="tenho" name="status" value="tenho">
+                    <label for="tenho">Tenho</label>
+
+                    <input type="radio" id="ja-tive" name="status" value="ja-tive">
+                    <label for="ja-tive">Já tive</label>
+
+                    <input type="radio" id="quero-ter" name="status" value="quero-ter">
+                    <label for="quero-ter">Quero ter</label>
+                </div>
+                
+                <!-- ✅ NOVO: Botão Carrinho -->
+                <a href="#" id="btn-carrinho" class="btn-carrinho" target="_blank" rel="noopener noreferrer" style="display: none;" title="Ver na loja">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                </a>
+            </div>
+            
+            <button class="btn-editar-icon" id="btn-editar" title="Editar perfume">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+                </svg>
+            </button>
+        </aside>
+        
+        <!-- Coluna Direita - Informações -->
+        <main class="conteudo-principal">
+            <h1 id="nome-perfume">Carregando...</h1>
+            <h2 id="marca-perfume"><a href="#" id="link-marca">Carregando...</a></h2>
+            
+            <p id="descricao-perfume" class="descricao"></p>
+            
+            <hr>
+            
+            <div class="acordes-secao">
+                <h3>Acordes:</h3>
+                <div id="acordes-lista" class="acordes-lista"></div>
+            </div>
+            
+            <hr>
+            
+            <div class="notas-secao">
+                <h3>Notas de topo:</h3>
+                <div id="notas-topo" class="notas-lista"></div>
+                
+                <h3>Notas de Coração:</h3>
+                <div id="notas-coracao" class="notas-lista"></div>
+                
+                <h3>Notas de Fundo:</h3>
+                <div id="notas-fundo" class="notas-lista"></div>
+            </div>
+            
+            <hr>
+            
+            <div class="reviews-secao">
+                <h3>Reviews:</h3>
+                <div id="reviews-container">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <img src="" alt="Foto do usuário" class="review-avatar">
+                            <span class="review-autor">Nome do usuário</span>
+                        </div>
+                        <p class="review-texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Modal Exportar Excel -->
+  <div id="modal-exportar" class="modal-exportar-overlay" style="display:none;">
+    <div class="modal-exportar-content">
+      <button class="modal-exportar-fechar" id="btn-fechar-exportar">&times;</button>
+
+      <div class="modal-exportar-header">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="8" y1="13" x2="16" y2="13"></line>
+          <line x1="8" y1="17" x2="16" y2="17"></line>
+        </svg>
+        <h2>Exportar para Excel</h2>
+      </div>
+
+      <!-- ETAPA 1: Filtro -->
+      <div id="exportar-etapa-1">
+        <p class="modal-exportar-desc">Quais perfumes deseja exportar?</p>
+        <div class="modal-exportar-opcoes">
+          <label class="exportar-opcao">
+            <input type="radio" name="filtro-exportar" value="todos">
+            <span class="exportar-opcao-box">
+              <span class="exportar-opcao-titulo">Todos</span>
+              <span class="exportar-opcao-desc">Todos os perfumes do seu perfil</span>
+            </span>
+          </label>
+          <label class="exportar-opcao">
+            <input type="radio" name="filtro-exportar" value="tenho">
+            <span class="exportar-opcao-box">
+              <span class="exportar-opcao-titulo">Tenho</span>
+              <span class="exportar-opcao-desc">Perfumes que você possui atualmente</span>
+            </span>
+          </label>
+          <label class="exportar-opcao">
+            <input type="radio" name="filtro-exportar" value="ja-tive">
+            <span class="exportar-opcao-box">
+              <span class="exportar-opcao-titulo">Já tive</span>
+              <span class="exportar-opcao-desc">Perfumes que você já possuiu</span>
+            </span>
+          </label>
+          <label class="exportar-opcao">
+            <input type="radio" name="filtro-exportar" value="quero-ter">
+            <span class="exportar-opcao-box">
+              <span class="exportar-opcao-titulo">Quero ter</span>
+              <span class="exportar-opcao-desc">Perfumes na sua lista de desejos</span>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ETAPA 2: Colunas (aparece após selecionar filtro) -->
+      <div id="exportar-etapa-2" style="display:none;">
+        <button class="exportar-voltar" id="btn-exportar-voltar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          Voltar
+        </button>
+        <p class="modal-exportar-desc">Quais informações incluir na planilha?</p>
+
+        <div class="exportar-colunas-grid" id="exportar-colunas-grid">
+          <!-- Gerado pelo JS -->
+        </div>
+
+        <div class="exportar-selecionar-todos">
+          <button id="btn-marcar-todos">Marcar todos</button>
+          <button id="btn-desmarcar-todos">Desmarcar todos</button>
+        </div>
+      </div>
+
+      <div class="modal-exportar-botoes">
+        <button class="btn-exportar-cancelar" id="btn-cancelar-exportar">Cancelar</button>
+        <button class="btn-exportar-confirmar" id="btn-confirmar-exportar" style="display:none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Exportar
+        </button>
+      </div>
+    </div>
+  </div>
+
+    <script type="module" src="script-perfume.js"></script>
+</body>
+</html>

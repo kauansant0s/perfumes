@@ -1,0 +1,265 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    background: #3c423e;
+    font-family: 'Inter';
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 500px;
+    padding: 40px 20px;
+}
+
+h1 {
+    color: #fff;
+    font-size: 36px;
+    font-weight: 400;
+    margin: 0;
+}
+
+/* Área de avatar */
+.avatar-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.avatar-selecionado {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 3px solid #C06060;
+    overflow: hidden;
+    background: #2a2e2b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 4px rgba(192, 96, 96, 0.25);
+}
+
+.avatar-selecionado img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-label {
+    color: #aaa;
+    font-size: 13px;
+    margin: 0;
+}
+
+.avatar-grade {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 340px;
+}
+
+.avatar-opcao {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    overflow: hidden;
+    transition: all 0.2s;
+    background: #2a2e2b;
+}
+
+.avatar-opcao img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.avatar-opcao:hover {
+    border-color: #C06060;
+    transform: scale(1.1);
+}
+
+.avatar-opcao.selecionado {
+    border-color: #C06060;
+    box-shadow: 0 0 0 2px rgba(192, 96, 96, 0.4);
+    transform: scale(1.08);
+}
+
+/* Formulário */
+#form-criar-conta {
+    width: 100%;
+}
+
+.campo-grupo {
+    margin-bottom: 20px;
+}
+
+.campo-grupo label {
+    display: block;
+    margin-bottom: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.campo-texto {
+    width: 100%;
+    border: 1px solid #C06060;
+    border-radius: 8px;
+    height: 45px;
+    padding: 0 15px;
+    background: transparent;
+    color: #fff;
+    font-size: 15px;
+    font-family: 'Inter';
+    box-sizing: border-box;
+    transition: all 0.3s;
+}
+
+.campo-texto:focus {
+    outline: none;
+    border-color: #d69191;
+    box-shadow: 0 0 0 3px rgba(192, 96, 96, 0.2);
+}
+
+.campo-texto::placeholder {
+    color: #999;
+}
+
+/* Botões lado a lado */
+.botoes {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-cancelar,
+.btn-criar {
+    flex: 1;
+    height: 50px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Inter';
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-cancelar {
+    background: transparent;
+    border: 2px solid #C06060;
+    color: #C06060;
+}
+
+.btn-cancelar:hover {
+    background: rgba(192, 96, 96, 0.1);
+    transform: translateY(-2px);
+}
+
+.btn-criar {
+    background: #C06060;
+    border: none;
+    color: #fff;
+}
+
+.btn-criar:hover {
+    background: #a85050;
+    transform: translateY(-2px);
+}
+
+.btn-criar:disabled {
+    background: #999;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    
+    h1 {
+        font-size: 28px;
+    }
+    
+    .quadrado-foto {
+        width: 140px;
+        height: 140px;
+    }
+}
+
+/* ✅ Botão Trocar Senha */
+.btn-trocar-senha {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 2px dashed #C06060;
+    border-radius: 8px;
+    color: #C06060;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'Inter';
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-trocar-senha:hover {
+    background: rgba(192, 96, 96, 0.1);
+    border-style: solid;
+}
+
+.btn-criar:disabled {
+    background: #999;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ✅ Botão Deletar Conta */
+.btn-deletar-conta {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: transparent;
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    color: #dc3545;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Inter';
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-deletar-conta:hover {
+    background: #dc3545;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.btn-deletar-conta svg {
+    width: 16px;
+    height: 16px;
+}

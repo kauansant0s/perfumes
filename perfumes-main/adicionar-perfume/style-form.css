@@ -1,0 +1,775 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    background: #3c423e;
+    font-family: 'Inter';
+    margin-left: 70px;
+    margin-right: 70px;
+    margin-top: 50px;
+}
+#opcoesfoto {
+    font-size: 14px;
+}
+#quadrado {
+    background: #d9d9d9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 235px;
+    height: 235px;
+    border-radius: 32px;
+    cursor: pointer;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+}
+#quadrado:hover {
+    background: #d9d9d9c5;
+}
+#container {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+}
+#foto-coluna {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+#info-perfume{
+    width: 90%;
+}
+.campo{
+    width: 92.5%;
+    border: 1px solid #C06060;
+    border-radius: 8px;
+    height: 28px;
+    margin-bottom: 10px;
+}
+ #acordes,
+ #perfume-original {
+    width: 93%;
+    border: 1px solid #C06060;
+    border-radius: 8px;
+    height: 30px;
+    margin-bottom: 10px;
+}
+.camponotas{
+    width: 100%;
+    border: 1px solid #C06060;
+    border-radius: 8px;
+    height: 35px;
+    overflow: hidden;
+    background: transparent;
+    appearance: auto;
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+}
+.camponotas option:checked {
+    background: #C06060;
+    color: white;
+}
+.label-nota {
+    font-size: 14px;
+}
+
+/* Corrige o dropdown do TomSelect */
+.ts-dropdown {
+    position: absolute !important;
+    z-index: 10000 !important;
+    background: white !important;
+    border: 1px solid #C06060 !important;
+    border-radius: 8px !important;
+    max-height: 300px !important;
+    overflow-y: auto !important;
+}
+
+.ts-dropdown .option {
+    padding: 8px 12px !important;
+    cursor: pointer !important;
+}
+
+.ts-dropdown .option:hover,
+.ts-dropdown .option.active {
+    background: #C0606020 !important;
+}
+
+.ts-control {
+    border: 1px solid #C06060 !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+}
+
+.ts-wrapper.multi .ts-control > div {
+    background: #C06060 !important;
+    color: white !important;
+    border-radius: 4px !important;
+    padding: 3px 8px !important;
+    margin: 2px !important;
+}
+#notas{
+    width: 90%;
+    border: 1px solid #C06060;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: visible;
+    position: relative;
+}
+input[type="text"],
+select{
+    background: transparent;
+    color: black;
+}
+.campotexto{
+    width: 92.5%;
+    border: 1px solid #C06060;
+    border-radius: 8px;
+    height: 50px;
+    margin-bottom: 10px;
+    background: transparent;
+}
+#titulo{
+    width: 92.5%;
+    border: 1px solid #C06060;
+    border-radius: 8px;
+    height: 28px;
+    margin-bottom: 10px;
+    background: transparent;
+}
+#review{
+    width: 92.5%;
+    border: 1px solid #C06060;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background: transparent;
+}
+#adicionar{
+    background: #C06060;
+    border: 0.1px solid #C06060;
+    border-radius: 8px;
+    width: 80px;
+    height: 35px;
+    color: #FFFFFF;
+    font-family: 'Inter';
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+#adicionar:hover {
+    background: #a85050;
+}
+#cancelar{
+    border: 2px solid #C06060;
+    border-radius: 8px;
+    width: 80px;
+    height: 35px;
+    color: #C06060;
+    background: transparent;
+    font-family: 'Inter';
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+#cancelar:hover {
+    background: rgba(192, 96, 96, 0.1);
+}
+
+/* ✅ Avaliação - SEMPRE VISÍVEL, SEM ANIMAÇÕES */
+#avaliacao {
+  padding: 10px;
+  display: block !important;
+  max-width: 235px;
+  position: relative;
+}
+
+#avaliacao hr {
+  border: 0;
+  border-top: 2px solid #C06060;
+  margin: 15px 0;
+}
+
+.linha-avaliacao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.linha-avaliacao label {
+  min-width: 90px;
+}
+.estrelas {
+  display: inline-flex;
+  align-items: center;
+}
+.estrelas svg {
+  width: 100px;
+  height: 22px;
+  cursor: pointer;
+  display: inline-block;
+}
+.estrelas polygon {
+  transition: fill 0.1s;
+}
+
+.slider-container {
+  margin-bottom: 20px;
+}
+
+.slider-container > label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+/* ✅ Estilos compartilhados para todos os sliders customizados */
+.genero-slider-wrapper,
+.clima-slider-wrapper,
+.ambiente-slider-wrapper,
+.hora-slider-wrapper {
+  position: relative;
+  width: 100%;
+  padding: 3px 0 3px;
+}
+
+.genero-linha,
+.clima-linha,
+.ambiente-linha,
+.hora-linha {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: #D9D9D9;
+  border-radius: 3px;
+  transform: translateY(-50%);
+}
+
+/* ✅ Clima com gradiente */
+.clima-linha {
+  background: linear-gradient(to right, #5BA3D0 0%, #E89560 100%);
+}
+
+.genero-pontos,
+.clima-pontos,
+.ambiente-pontos,
+.hora-pontos {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.genero-ponto,
+.clima-ponto,
+.ambiente-ponto,
+.hora-ponto {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.ponto-circulo {
+  width: 18px;
+  height: 18px;
+  background: #D9D9D9;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.genero-ponto:hover .ponto-circulo,
+.clima-ponto:hover .ponto-circulo,
+.ambiente-ponto:hover .ponto-circulo,
+.hora-ponto:hover .ponto-circulo {
+  transform: scale(1.2);
+  background: #B0B0B0;
+}
+
+.genero-ponto.ativo .ponto-circulo,
+.clima-ponto.ativo .ponto-circulo,
+.ambiente-ponto.ativo .ponto-circulo,
+.hora-ponto.ativo .ponto-circulo {
+  background: #5BA3D0;
+  border-color: #fff;
+  transform: scale(1.3);
+  box-shadow: 0 3px 8px rgba(91, 163, 208, 0.4);
+}
+
+.ponto-label {
+  position: absolute;
+  top: 30px;
+  font-size: 11px;
+  color: #000;
+  font-weight: 500;
+  white-space: nowrap;
+  user-select: none;
+  text-align: center;
+}
+
+/* Espaçamento especial para labels dos extremos */
+.genero-ponto:nth-child(1) .ponto-label,
+.clima-ponto:nth-child(1) .ponto-label,
+.ambiente-ponto:nth-child(1) .ponto-label,
+.hora-ponto:nth-child(1) .ponto-label {
+  left: -5px;
+}
+
+.genero-ponto:nth-child(5) .ponto-label,
+.clima-ponto:nth-child(5) .ponto-label,
+.ambiente-ponto:nth-child(5) .ponto-label,
+.hora-ponto:nth-child(5) .ponto-label {
+  right: -5px;
+  left: auto;
+}
+
+/* Label do meio */
+.genero-ponto:nth-child(3) .ponto-label {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Campo Contratipo */
+.campo-contratipo {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.campo-contratipo > label {
+    margin: 0;
+}
+
+.radio-inline {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+}
+
+.radio-inline label {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Campo perfume original - animação */
+.campo-perfume-original {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    margin-bottom: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease, margin-bottom 0.4s ease;
+}
+
+.campo-perfume-original.mostrar {
+    max-height: 100px;
+    opacity: 1;
+    margin-bottom: 10px;
+}
+
+#perfume-original {
+    width: 93%;
+}
+
+.ts-wrapper .ts-control input {
+  color: #000 !important;
+}
+
+.ts-dropdown .option {
+  color: #000 !important;
+}
+
+/* Correção: texto preto no select de perfume original */
+.ts-wrapper .ts-control {
+    color: #000 !important;
+}
+
+.ts-wrapper .ts-control input {
+    color: #000 !important;
+}
+
+.ts-wrapper.single .ts-control .item {
+    color: #000 !important;
+}
+
+/* Dropdown também com texto preto */
+.ts-dropdown .option {
+    color: #000 !important;
+}
+
+.ts-dropdown .option.active {
+    color: #000 !important;
+}
+
+/* Destaque para opção "Cadastrar novo" */
+.option-cadastrar-novo {
+    color: #C06060 !important;
+    font-weight: 600;
+    background: #f5f5f5;
+}
+
+.option-cadastrar-novo:hover {
+    background: #e8e8e8;
+}
+
+/* Feedback visual para radios de status */
+#opcoesfoto label {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+#opcoesfoto label:hover {
+    opacity: 0.7;
+}
+
+#opcoesfoto label:active {
+    transform: scale(0.95);
+}
+
+/* Indicador visual quando nenhum status está selecionado */
+#opcoesfoto:has(input:not(:checked)) {
+    opacity: 0.6;
+}
+
+/* ✅ Modal de Confirmação Customizado */
+.modal-confirmar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-confirmar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-confirmar-content {
+    position: relative;
+    background: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    max-width: 450px;
+    width: 90%;
+    z-index: 10001;
+    animation: slideUp 0.3s ease;
+}
+
+.modal-confirmar-content h3 {
+    margin: 0 0 15px 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+}
+
+.modal-confirmar-content p {
+    margin: 0 0 25px 0;
+    font-size: 16px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.modal-confirmar-content p strong {
+    color: #C06060;
+    font-weight: 600;
+}
+
+.modal-confirmar-botoes {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.btn-modal-nao,
+.btn-modal-sim {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Inter';
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-modal-nao {
+    background: transparent;
+    border: 2px solid #999;
+    color: #666;
+}
+
+.btn-modal-nao:hover {
+    background: #f5f5f5;
+    border-color: #666;
+    color: #333;
+}
+
+.btn-modal-sim {
+    background: #C06060;
+    color: #fff;
+}
+
+.btn-modal-sim:hover {
+    background: #a85050;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(192, 96, 96, 0.3);
+}
+
+/* ✅ Toast de Notificação */
+.toast-notificacao {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2d3436;
+    color: #fff;
+    padding: 16px 32px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    z-index: 10002;
+    font-size: 15px;
+    font-weight: 500;
+    transition: bottom 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toast-notificacao.mostrar {
+    bottom: 40px;
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#botoes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.botoes-esquerda {
+    display: flex;
+    gap: 10px;
+}
+
+/* ✅ NOVO: Botão Deletar */
+.btn-deletar {
+    background: transparent;
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 8px 10px;
+    height: 35px;
+    color: #dc3545;
+    font-family: 'Inter';
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-deletar:hover {
+    background: #dc3545;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.btn-deletar svg {
+    width: 16px;
+    height: 16px;
+}
+
+@media (max-width: 768px) {
+    #botoes {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .botoes-esquerda {
+        width: 100%;
+    }
+    
+    .btn-deletar {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ===== BARRA DE INTENSIDADE DOS ACORDES ===== */
+#acordes-intensidade-container {
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.acordes-barra {
+  position: relative;
+  width: 100%;
+  height: 30px;
+  background: #f0f0f0;
+  border-radius: 8px;
+  display: flex;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.acorde-secao {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  transition: all 0.3s ease;
+  cursor: default;
+  user-select: none;
+  overflow: hidden;
+}
+
+/* ✅ NOVO: Container do conteúdo */
+.acorde-conteudo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 5px;
+  width: 100%;
+}
+
+.acorde-nome {
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 0.1;
+}
+
+.acorde-porcentagem {
+  font-size: 12px;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.acorde-secao:hover {
+  filter: brightness(1.1);
+}
+
+/* Divisor arrastável */
+.acorde-divisor {
+  position: absolute;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: #fff;
+  cursor: ew-resize;
+  z-index: 10;
+  transition: background 0.2s;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.acorde-divisor:hover {
+  background: #f0f0f0;
+  width: 4px;
+}
+
+.acorde-divisor.dragging {
+  background: #e0e0e0;
+  width: 5px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Feedback visual */
+.acorde-secao-highlight {
+  animation: pulseAcorde 0.5s ease;
+}
+
+@keyframes pulseAcorde {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+/* ===== MENSAGENS NA BARRA DE ACORDES ===== */
+.mensagem-vazia,
+.mensagem-aviso,
+.mensagem-erro {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.mensagem-vazia {
+  background: #f0f0f0;
+  color: #999;
+  font-style: italic;
+}
+
+.mensagem-aviso {
+  background: linear-gradient(135deg, #ffd89b 0%, #ffb347 100%);
+  color: #333;
+  animation: pulseAviso 2s ease-in-out infinite;
+}
+
+.mensagem-erro {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: #fff;
+  font-weight: 600;
+  animation: shake 0.5s ease;
+}
+
+@keyframes pulseAviso {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}

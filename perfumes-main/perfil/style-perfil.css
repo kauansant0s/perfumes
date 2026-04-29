@@ -1,0 +1,1535 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ===== MENU TOGGLE BUTTON ===== */
+.menu-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    background: #C06060;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    z-index: 1001;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+    background: #a85050;
+    transform: scale(1.05);
+}
+
+/* ===== MENU LATERAL ===== */
+.menu-lateral {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100vh;
+    background: #3c423e;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1002;
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-lateral.aberto {
+    right: 0;
+}
+
+.menu-header {
+    padding: 30px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.menu-foto {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #d9d9d9;
+}
+
+.menu-header span {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.menu-nav {
+    flex: 1;
+    padding: 20px 0;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 25px;
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.2s;
+    font-size: 16px;
+}
+
+.menu-item:hover {
+    background: rgba(192, 96, 96, 0.2);
+}
+
+.menu-item-ativo {
+    background: rgba(192, 96, 96, 0.3);
+    border-left: 4px solid #C06060;
+}
+
+.menu-item svg {
+    flex-shrink: 0;
+}
+
+/* Overlay */
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.menu-overlay.ativo {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ===== ESTILOS ORIGINAIS ===== */
+body {
+    background: #596A5E;
+    font-family: 'Inter';
+    margin: 0;
+    padding: 40px;
+    color: #000;
+}
+
+.container {
+    display: flex;
+    gap: 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-left: 60px;
+}
+
+/* Sidebar Esquerda */
+.sidebar {
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.foto-usuario {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #d9d9d9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.foto-usuario img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#nome-usuario {
+    font-size: 24px;
+    font-weight: 400;
+    margin: 0;
+    text-align: center;
+    color: #000;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+    width: 100%;
+}
+
+/* Botão Editar Perfil */
+.btn-editar-perfil {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1.5px solid #000000;
+    border-radius: 20px;
+    color: #000000;
+    font-size: 13px;
+    font-family: 'Inter';
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    transition: all 0.2s;
+}
+
+.btn-editar-perfil:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: #313131;
+    color: #313131;
+}
+
+.btn-editar-perfil svg {
+    width: 14px;
+    height: 14px;
+}
+
+.assinatura-atual {
+    width: 100%;
+    text-align: center;
+}
+
+.assinatura-atual h3 {
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 15px;
+    color: #000;
+}
+
+#perfume-assinatura {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.perfume-placeholder,
+.perfume-mini {
+    width: 120px;
+    height: 120px;
+    background: #d9d9d9;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.perfume-placeholder:hover,
+.perfume-mini:hover {
+    background: #d9d9d9c5;
+}
+
+.perfume-placeholder span {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    padding: 10px;
+}
+
+.perfume-mini img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#nome-assinatura {
+    font-size: 14px;
+    color: #000;
+    margin: 0;
+    border-bottom: 2px solid #000;
+    padding-bottom: 8px;
+    width: 100%;
+}
+
+.btn-cadastrar {
+    width: 100%;
+    padding: 12px 20px;
+    background: transparent;
+    border: 2px solid #d68686;
+    border-radius: 8px;
+    color: #d68686;
+    font-size: 16px;
+    font-family: 'Inter';
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.btn-cadastrar:hover {
+    background: #d18b8b70;
+}
+
+.icon-mais {
+    font-size: 20px;
+}
+
+/* Conteúdo Principal */
+.conteudo {
+    flex: 1;
+}
+
+.secao-perfumes {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #000;
+}
+
+.secao-perfumes:last-child {
+    border-bottom: none;
+}
+
+.secao-perfumes h2 {
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 15px;
+    color: #000;
+}
+
+.lista-perfumes {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.perfume-card {
+    width: 70px;
+    height: 70px;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.perfume-card:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s;
+}
+
+.perfume-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.btn-adicionar-perfume {
+    width: 25px;
+    height: 25px;
+    background: #C06060;
+    border: none;
+    border-radius: 15px;
+    color: #fff;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.btn-adicionar-perfume:hover {
+    background: #a85050;
+}
+
+.btn-ver-todos {
+    padding: 8px 20px;
+    background: transparent;
+    border: 2px solid #000;
+    border-radius: 8px;
+    color: #000;
+    font-size: 14px;
+    font-family: 'Inter';
+    cursor: pointer;
+}
+
+.btn-ver-todos:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.close,
+.close-top5 {
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #666;
+}
+
+.close:hover,
+.close-top5:hover {
+    color: #000;
+}
+
+#modal-titulo {
+    margin: 0 0 20px 0;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+/* ✅ Pesquisa no Modal */
+.pesquisa-modal {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.pesquisa-modal input {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    font-size: 15px;
+    font-family: 'Inter';
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+.pesquisa-modal input:focus {
+    outline: none;
+    border-color: #C06060;
+    box-shadow: 0 0 0 3px rgba(192, 96, 96, 0.1);
+}
+
+.pesquisa-modal input::placeholder {
+    color: #999;
+}
+
+.icone-pesquisa-modal {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    pointer-events: none;
+}
+
+/* Mensagem quando não há resultados */
+.sem-resultados-modal {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    font-size: 15px;
+}
+
+.sem-resultados-modal svg {
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+#lista-perfumes-modal,
+#lista-perfumes-top5 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.perfume-modal-card {
+    cursor: pointer;
+    text-align: center;
+}
+
+.perfume-modal-card:hover {
+    opacity: 0.8;
+}
+
+.perfume-modal-img {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #f0f0f0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.perfume-modal-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.perfume-modal-nome {
+    font-size: 12px;
+    color: #333;
+}
+
+.btn-cadastrar-novo {
+    width: 100%;
+    padding: 12px;
+    background: #C06060;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-family: 'Inter';
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-cadastrar-novo:hover {
+    background: #a85050;
+}
+
+/* ✅ Remove linha azul dos links nos cards */
+.perfume-card a {
+    text-decoration: none !important;
+    color: inherit;
+}
+
+.perfume-card a:hover,
+.perfume-card a:visited,
+.perfume-card a:active,
+.perfume-card a:focus {
+    text-decoration: none !important;
+    color: inherit;
+}
+
+/* ✅ Remove linha também dos nomes */
+.perfume-nome {
+    text-decoration: none !important;
+}
+
+/* ✅ Para o grid de ver-todos especificamente */
+.grid-perfumes a {
+    text-decoration: none !important;
+}
+
+/* ✅ Barra de Pesquisa Animada */
+.pesquisa-container {
+    position: fixed;
+    top: 20px;
+    right: 78px;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+}
+
+.btn-pesquisa-toggle {
+    width: 48px;
+    height: 48px;
+    background: #C06060;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative;
+    z-index: 2;
+}
+
+.btn-pesquisa-toggle:hover {
+    background: #a85050;
+    transform: scale(1.05);
+}
+
+.barra-pesquisa-global {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 48px;
+    width: 48px;
+    background: rgba(192, 96, 96, 0.321);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all 0.2s cubic-bezier(0.5, -0.2, 0.2, 1);
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.barra-pesquisa-global.expandida {
+    width: 400px;
+    padding-right: 60px;
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.barra-pesquisa-global input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 15px;
+    font-family: 'Inter';
+    outline: none;
+    opacity: 0;
+    transition: opacity 0.3s 0.1s;
+}
+
+.barra-pesquisa-global.expandida input {
+    opacity: 1;
+}
+
+.barra-pesquisa-global input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Resultados da Pesquisa */
+.resultados-pesquisa {
+    position: fixed;
+    top: 78px;
+    right: 78px;
+    width: 400px;
+    max-height: 500px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.resultados-pesquisa.mostrar {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.resultados-pesquisa::-webkit-scrollbar {
+    width: 8px;
+}
+
+.resultados-pesquisa::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.resultados-pesquisa::-webkit-scrollbar-thumb {
+    background: #C06060;
+    border-radius: 10px;
+}
+
+.secao-resultado {
+    padding: 15px;
+}
+
+.secao-resultado h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.item-resultado {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: #000;
+}
+
+.item-resultado:hover {
+    background: rgba(192, 96, 96, 0.1);
+}
+
+.resultado-foto {
+    width: 50px;
+    height: 50px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.resultado-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.resultado-foto-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #999;
+    text-align: center;
+    padding: 5px;
+}
+
+.resultado-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.resultado-nome {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    margin: 0 0 4px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.resultado-subtitulo {
+    font-size: 12px;
+    color: #666;
+    margin: 0;
+}
+
+.sem-resultados {
+    padding: 30px 20px;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+}
+
+/* Overlay para fechar pesquisa */
+.pesquisa-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    display: none;
+}
+
+.pesquisa-overlay.ativo {
+    display: block;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .barra-pesquisa-global.expandida {
+        width: calc(100vw - 100px);
+    }
+    
+    .resultados-pesquisa {
+        width: calc(100vw - 100px);
+        right: 20px;
+    }
+}
+
+/* ✅ Drag & Drop */
+.perfume-card[draggable="true"] {
+    cursor: move;
+}
+
+.perfume-card.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.lista-perfumes.drag-over {
+    background: rgba(192, 96, 96, 0.1);
+    border: 2px dashed #C06060;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+/* Feedback visual no hover */
+.perfume-card[draggable="true"]:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== BOTÃO ESTATÍSTICAS ===== */
+.btn-estatisticas {
+    width: 100%;
+    padding: 12px 16px;
+    background: #C06060;
+    border: none;
+    border-radius: 20px;
+    color: #ffffff;
+    font-size: 13px;
+    font-family: 'Inter';
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(192, 96, 96, 0.3);
+}
+
+.btn-estatisticas:hover {
+    background: #a85050;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(192, 96, 96, 0.4);
+}
+
+.btn-estatisticas svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* ===== MODAL ESTATÍSTICAS ===== */
+.modal-estatisticas {
+    max-width: 900px !important;
+    max-height: 85vh;
+    padding: 0 !important;
+    overflow-y: hidden !important;
+}
+
+.modal-stats-header {
+    background: linear-gradient(135deg, #C06060 0%, #a85050 100%);
+    color: white;
+    padding: 24px 30px;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.modal-stats-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.close-estatisticas {
+    position: absolute;
+    top: 24px;
+    right: 30px;
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 11;
+}
+
+.close-estatisticas:hover {
+    opacity: 0.8;
+}
+
+#conteudo-estatisticas {
+    padding: 30px;
+    overflow-y: auto;
+    max-height: calc(85vh - 100px);
+}
+
+/* Cards de Estatísticas */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-color: #C06060;
+}
+
+.stat-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.stat-card-icon {
+    color: #C06060;
+}
+
+.stat-card-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #000;
+}
+
+.stat-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    margin-top: 8px;
+}
+
+.stat-card-subtitle {
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+}
+
+/* Seção de Estatísticas */
+.stats-section {
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+    margin-bottom: 20px;
+}
+
+.stats-section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Barra de Progresso */
+.progress-item {
+    margin-bottom: 16px;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.progress-label-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.progress-label-value {
+    color: #666;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 10px;
+    background: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #C06060 0%, #a85050 100%);
+    border-radius: 5px;
+    transition: width 0.5s ease;
+}
+
+/* Destaque especial */
+.stat-highlight {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+    border: 2px solid #C06060;
+}
+
+.stat-highlight .stat-card-value {
+    color: #C06060;
+}
+
+/* Lista de top items */
+.top-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.top-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.top-list-item-rank {
+    font-size: 18px;
+    font-weight: 700;
+    color: #C06060;
+    margin-right: 12px;
+}
+
+.top-list-item-info {
+    flex: 1;
+}
+
+.top-list-item-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+}
+
+.top-list-item-subtitle {
+    font-size: 12px;
+    color: #666;
+}
+
+.top-list-item-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #C06060;
+}
+
+/* Grid de duas colunas */
+.stats-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .modal-estatisticas {
+        max-width: 95% !important;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+    }
+    
+    .stats-grid-2 {
+        grid-template-columns: 1fr;
+    }
+    
+    #conteudo-estatisticas {
+        padding: 20px;
+    }
+}
+
+/* ✅ Hover nas Melhores Avaliações */
+.stats-section a[href*="perfume.html"] > div:hover {
+    background: #e9ecef !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ Hover no nome das marcas */
+.stats-section a[href*="marca.html"] h3:hover {
+    opacity: 0.8;
+    transform: scale(1.02);
+}
+/* ===== BOTÃO EDITAR TOP 5 ===== */
+.btn-editar-top5 {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  color: #000;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-editar-top5:hover {
+  opacity: 0.5;
+}
+
+.btn-editar-top5.ativo {
+  opacity: 0.5;
+}
+
+/* ===== WRAPPER DO CARD NO TOP 5 ===== */
+.top5-card-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+/* ===== X DE REMOVER NO TOP 5 ===== */
+.top5-remover {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  width: 20px;
+  height: 20px;
+  background: #C06060;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  transition: background 0.2s, transform 0.15s;
+}
+
+.top5-remover:hover {
+  background: #a84040;
+  transform: scale(1.15);
+}
+
+/* Modo edição ativo — mostra os X */
+#top5.modo-edicao .top5-remover {
+  display: flex;
+}
+
+/* Modo edição: cards do top5 não são clicáveis */
+#top5.modo-edicao .top5-card-wrapper .perfume-card {
+  cursor: default;
+}
+
+#top5.modo-edicao .top5-card-wrapper .perfume-card a,
+#top5.modo-edicao .top5-card-wrapper .perfume-card * {
+  pointer-events: none;
+}
+
+/* ===== POPUP DE PERFUMES DO ACORDE ===== */
+.acorde-clicavel {
+  display: inline-block;
+  cursor: pointer;
+  transition: transform 0.2s;
+  text-decoration: none !important;
+}
+
+.acorde-clicavel:hover {
+  transform: translateY(-2px);
+}
+
+.acorde-popup {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 6px);
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  z-index: 100;
+  min-width: 220px;
+  max-width: 300px;
+  padding: 8px 0;
+  animation: fadeInPopup 0.15s ease;
+}
+
+@keyframes fadeInPopup {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.acorde-popup-titulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: #C06060;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 14px 8px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 4px;
+}
+
+.acorde-popup-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s;
+}
+
+.acorde-popup-item:hover {
+  background: #fdf5f5;
+}
+
+.acorde-popup-nome {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.acorde-popup-nota {
+  font-size: 13px;
+  font-weight: 700;
+  color: #C06060;
+  white-space: nowrap;
+}
+
+/* ===== MODAL EXPORTAR EXCEL ===== */
+.modal-exportar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-exportar-content {
+  background: #3c423e;
+  border-radius: 16px;
+  padding: 32px;
+  width: 90%;
+  max-width: 480px;
+  position: relative;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  animation: slideUp 0.25s ease;
+}
+
+.modal-exportar-fechar {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 26px;
+  color: #aaa;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-exportar-fechar:hover {
+  color: #fff;
+}
+
+.modal-exportar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.modal-exportar-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.modal-exportar-desc {
+  color: #bbb;
+  font-size: 14px;
+  margin: 0 0 20px;
+}
+
+.modal-exportar-opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.exportar-opcao {
+  display: flex;
+  cursor: pointer;
+}
+
+.exportar-opcao input[type="radio"] {
+  display: none;
+}
+
+.exportar-opcao-box {
+  flex: 1;
+  padding: 14px 16px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+
+.exportar-opcao input:checked + .exportar-opcao-box {
+  border-color: #C06060;
+  background: rgba(192, 96, 96, 0.15);
+}
+
+.exportar-opcao-box:hover {
+  border-color: rgba(255,255,255,0.4);
+}
+
+.exportar-opcao-titulo {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.exportar-opcao-desc {
+  display: block;
+  font-size: 12px;
+  color: #999;
+}
+
+.modal-exportar-botoes {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.btn-exportar-cancelar {
+  padding: 10px 20px;
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #aaa;
+  cursor: pointer;
+  font-family: 'Inter';
+  transition: all 0.2s;
+}
+
+.btn-exportar-cancelar:hover {
+  border-color: rgba(255,255,255,0.5);
+  color: #fff;
+}
+
+.btn-exportar-confirmar {
+  padding: 10px 20px;
+  background: #C06060;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  font-family: 'Inter';
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-exportar-confirmar:hover {
+  background: #a85050;
+  transform: translateY(-1px);
+}
+
+/* ===== EXPORTAR - ETAPA 2 ===== */
+.exportar-voltar {
+  background: none;
+  border: none;
+  color: #C06060;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter';
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  margin-bottom: 12px;
+  transition: opacity 0.2s;
+}
+
+.exportar-voltar:hover { opacity: 0.7; }
+
+.exportar-colunas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.exportar-coluna-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 2px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.exportar-coluna-item:hover {
+  border-color: rgba(255,255,255,0.35);
+}
+
+.exportar-coluna-item.marcado {
+  border-color: #C06060;
+  background: rgba(192, 96, 96, 0.15);
+}
+
+.exportar-coluna-item input[type="checkbox"] {
+  accent-color: #C06060;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.exportar-coluna-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #ddd;
+}
+
+.exportar-selecionar-todos {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.exportar-selecionar-todos button {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  color: #aaa;
+  cursor: pointer;
+  font-family: 'Inter';
+  transition: all 0.15s;
+}
+
+.exportar-selecionar-todos button:hover {
+  border-color: #C06060;
+  color: #C06060;
+}
+
+/* ===== HISTÓRICO DE ASSINATURA ===== */
+.historico-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.historico-item:last-child {
+  border-bottom: none;
+}
+
+.historico-foto {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #555;
+  flex-shrink: 0;
+}
+
+.historico-foto-placeholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #aaa;
+  text-align: center;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.historico-info {
+  flex: 1;
+}
+
+.historico-nome {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 3px;
+}
+
+.historico-periodo {
+  font-size: 12px;
+  color: #999;
+}
+
+.historico-atual-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #C06060;
+  background: rgba(192,96,96,0.15);
+  border: 1px solid rgba(192,96,96,0.3);
+  border-radius: 20px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.historico-vazio {
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+  padding: 24px 0;
+}
+
+.btn-ver-historico {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  padding: 0 0 0 4px;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s;
+  vertical-align: middle;
+}
+
+.btn-ver-historico:hover {
+  color: #fff;
+}

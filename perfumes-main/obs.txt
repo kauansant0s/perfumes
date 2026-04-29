@@ -1,0 +1,2 @@
+poder adicionar mais de um site de compra, ai quando clica no botão do carrinho de compra, abre todos os sites adicionados mostrando o valor, e fica organizado do menor valor a vista ao maior, e por ultimo os que estão fora de estoque
+criar uma página com todos os perfumes, que eu posso pesquisar por acordes notas, perfumistas, marcas, etc
