@@ -225,7 +225,9 @@ select{
 /* ✅ Estilos compartilhados para todos os sliders customizados */
 .genero-slider-wrapper,
 .clima-slider-wrapper,
-.ambiente-slider-wrapper,
+.versatilidade-slider-wrapper,
+.projecao-slider-wrapper,
+.fixacao-slider-wrapper,
 .hora-slider-wrapper {
   position: relative;
   width: 100%;
@@ -234,7 +236,9 @@ select{
 
 .genero-linha,
 .clima-linha,
-.ambiente-linha,
+.versatilidade-linha,
+.projecao-linha,
+.fixacao-linha,
 .hora-linha {
   position: absolute;
   top: 50%;
@@ -253,7 +257,9 @@ select{
 
 .genero-pontos,
 .clima-pontos,
-.ambiente-pontos,
+.versatilidade-pontos,
+.projecao-pontos,
+.fixacao-pontos,
 .hora-pontos {
   position: relative;
   display: flex;
@@ -263,7 +269,9 @@ select{
 
 .genero-ponto,
 .clima-ponto,
-.ambiente-ponto,
+.versatilidade-ponto,
+.projecao-ponto,
+.fixacao-ponto,
 .hora-ponto {
   position: relative;
   flex: 1;
@@ -286,7 +294,9 @@ select{
 
 .genero-ponto:hover .ponto-circulo,
 .clima-ponto:hover .ponto-circulo,
-.ambiente-ponto:hover .ponto-circulo,
+.versatilidade-ponto:hover .ponto-circulo,
+.projecao-ponto:hover .ponto-circulo,
+.fixacao-ponto:hover .ponto-circulo,
 .hora-ponto:hover .ponto-circulo {
   transform: scale(1.2);
   background: #B0B0B0;
@@ -294,7 +304,9 @@ select{
 
 .genero-ponto.ativo .ponto-circulo,
 .clima-ponto.ativo .ponto-circulo,
-.ambiente-ponto.ativo .ponto-circulo,
+.versatilidade-ponto.ativo .ponto-circulo,
+.projecao-ponto.ativo .ponto-circulo,
+.fixacao-ponto.ativo .ponto-circulo,
 .hora-ponto.ativo .ponto-circulo {
   background: #5BA3D0;
   border-color: #fff;
@@ -316,14 +328,18 @@ select{
 /* Espaçamento especial para labels dos extremos */
 .genero-ponto:nth-child(1) .ponto-label,
 .clima-ponto:nth-child(1) .ponto-label,
-.ambiente-ponto:nth-child(1) .ponto-label,
+.versatilidade-ponto:nth-child(1) .ponto-label,
+.projecao-ponto:nth-child(1) .ponto-label,
+.fixacao-ponto:nth-child(1) .ponto-label,
 .hora-ponto:nth-child(1) .ponto-label {
   left: -5px;
 }
 
 .genero-ponto:nth-child(5) .ponto-label,
 .clima-ponto:nth-child(5) .ponto-label,
-.ambiente-ponto:nth-child(5) .ponto-label,
+.versatilidade-ponto:nth-child(5) .ponto-label,
+.projecao-ponto:nth-child(5) .ponto-label,
+.fixacao-ponto:nth-child(5) .ponto-label,
 .hora-ponto:nth-child(5) .ponto-label {
   right: -5px;
   left: auto;

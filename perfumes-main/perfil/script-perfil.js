@@ -596,23 +596,36 @@ async function abrirModalTop5() {
   if (inputPesquisa) {
     inputPesquisa.value = '';
   }
+
+  // Aviso — só perfumes avaliados
+  let avisoEl = document.getElementById('aviso-top5-avaliados');
+  if (!avisoEl) {
+    avisoEl = document.createElement('p');
+    avisoEl.id = 'aviso-top5-avaliados';
+    avisoEl.style.cssText = 'font-size:12px;color:#999;text-align:center;margin:0 0 12px;font-style:italic;';
+    avisoEl.textContent = 'Apenas perfumes que você já avaliou podem entrar no Top 5.';
+    lista.before(avisoEl);
+  }
   
   const top5Atual = preferenciasUsuario?.top5 || [];
+
+  // Só perfumes com avaliação
+  const perfumesAvaliados = perfumesData.filter(p => p.avaliacoes?.media > 0);
   
   // ✅ Função para renderizar perfumes (com filtro opcional)
   function renderizarPerfumesTop5(termoPesquisa = '') {
     lista.innerHTML = '';
     
-    if (perfumesData.length === 0) {
-      lista.innerHTML = '<p style="text-align:center;color:#666;">Você ainda não cadastrou nenhum perfume</p>';
+    if (perfumesAvaliados.length === 0) {
+      lista.innerHTML = '<p style="text-align:center;color:#666;">Você ainda não avaliou nenhum perfume</p>';
       return;
     }
     
     // Filtra perfumes se houver termo de pesquisa
-    let perfumesFiltrados = perfumesData;
+    let perfumesFiltrados = perfumesAvaliados;
     if (termoPesquisa) {
       const termo = termoPesquisa.toLowerCase();
-      perfumesFiltrados = perfumesData.filter(p => 
+      perfumesFiltrados = perfumesAvaliados.filter(p => 
         p.nome.toLowerCase().includes(termo) ||
         p.marca.toLowerCase().includes(termo)
       );

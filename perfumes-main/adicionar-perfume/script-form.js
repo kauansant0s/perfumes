@@ -672,17 +672,17 @@ async function puxarNotasEAcordesDoOriginal(perfumeOriginalId) {
         }
       }
       
-      // Ambiente
-      if (caracteristicas.ambiente !== undefined) {
-        const ambienteInput = document.getElementById('ambiente-value');
-        ambienteInput.value = caracteristicas.ambiente;
-        ambienteInput.dataset.avaliado = 'true';
+      // Versatilidade
+      if (caracteristicas.versatilidade !== undefined) {
+        const versInput = document.getElementById('versatilidade-value');
+        versInput.value = caracteristicas.versatilidade;
+        versInput.dataset.avaliado = 'true';
         
-        document.querySelectorAll('.ambiente-ponto').forEach(p => p.classList.remove('ativo'));
-        const pontoCerto = document.querySelector(`.ambiente-ponto[data-value="${caracteristicas.ambiente}"]`);
+        document.querySelectorAll('.versatilidade-ponto').forEach(p => p.classList.remove('ativo'));
+        const pontoCerto = document.querySelector(`.versatilidade-ponto[data-value="${caracteristicas.versatilidade}"]`);
         if (pontoCerto) {
           pontoCerto.classList.add('ativo');
-          console.log('✅ Ambiente copiado:', caracteristicas.ambiente);
+          console.log('✅ Versatilidade copiada:', caracteristicas.versatilidade);
           algumaCopiaFeita = true;
         }
       }
@@ -790,12 +790,11 @@ function salvarDadosAtuaisEIrParaOriginal() {
     notasCoracao: Array.from(document.getElementById('coracao').selectedOptions).map(opt => opt.value),
     notasFundo: Array.from(document.getElementById('fundo').selectedOptions).map(opt => opt.value),
     acordes: Array.from(document.getElementById('acordes').selectedOptions).map(opt => opt.value),
-    avaliacaoCheiro: document.querySelector('[data-id="cheiro"]')?.dataset.valor || '0',
-    avaliacaoProjecao: document.querySelector('[data-id="projecao"]')?.dataset.valor || '0',
-    avaliacaoFixacao: document.querySelector('[data-id="fixacao"]')?.dataset.valor || '0',
-    avaliacaoVersatilidade: document.querySelector('[data-id="versatilidade"]')?.dataset.valor || '0',
+    avaliacaoGeral: document.querySelector('[data-id="geral"]')?.dataset.valor || '0',
     clima: document.getElementById('clima-value')?.value || '',
-    ambiente: document.getElementById('ambiente-value')?.value || '',
+    versatilidade: document.getElementById('versatilidade-value')?.value || '',
+    projecao: document.getElementById('projecao-value')?.value || '',
+    fixacao: document.getElementById('fixacao-value')?.value || '',
     genero: document.getElementById('genero-value')?.value || '',
     hora: document.getElementById('hora-value')?.value || '',
     modoEdicao: modoEdicao,
@@ -861,10 +860,7 @@ async function restaurarDadosContratipo(perfumeOriginalId, dadosJSON) {
     }, 1000);
     
     setTimeout(() => {
-      document.querySelector('[data-id="cheiro"]').dataset.valor = dados.avaliacaoCheiro;
-      document.querySelector('[data-id="projecao"]').dataset.valor = dados.avaliacaoProjecao;
-      document.querySelector('[data-id="fixacao"]').dataset.valor = dados.avaliacaoFixacao;
-      document.querySelector('[data-id="versatilidade"]').dataset.valor = dados.avaliacaoVersatilidade;
+      document.querySelector('[data-id="geral"]').dataset.valor = dados.avaliacaoGeral || '0';
       
       document.querySelectorAll('.estrelas').forEach(container => {
         const svgAntigo = container.querySelector('svg');
@@ -886,11 +882,11 @@ async function restaurarDadosContratipo(perfumeOriginalId, dadosJSON) {
       if (pontoCerto) pontoCerto.classList.add('ativo');
     }
     
-    if (dados.ambiente) {
-      const ambienteInput = document.getElementById('ambiente-value');
-      ambienteInput.value = dados.ambiente;
-      ambienteInput.dataset.avaliado = 'true';
-      const pontoCerto = document.querySelector(`.ambiente-ponto[data-value="${dados.ambiente}"]`);
+    if (dados.versatilidade) {
+      const versInput2 = document.getElementById('versatilidade-value');
+      versInput2.value = dados.versatilidade;
+      versInput2.dataset.avaliado = 'true';
+      const pontoCerto = document.querySelector(`.versatilidade-ponto[data-value="${dados.versatilidade}"]`);
       if (pontoCerto) pontoCerto.classList.add('ativo');
     }
     
@@ -1039,7 +1035,9 @@ function criarSliderCustomizado(tipoSlider, inputId) {
 
 criarSliderCustomizado('genero', 'genero-value');
 criarSliderCustomizado('clima', 'clima-value');
-criarSliderCustomizado('ambiente', 'ambiente-value');
+criarSliderCustomizado('versatilidade', 'versatilidade-value');
+criarSliderCustomizado('projecao', 'projecao-value');
+criarSliderCustomizado('fixacao', 'fixacao-value');
 criarSliderCustomizado('hora', 'hora-value');
 
 function criarEstrelas(container) {
@@ -1133,7 +1131,7 @@ function criarEstrelas(container) {
   atualizar(valorSelecionado);
 }
 
-document.querySelectorAll('.estrelas').forEach(criarEstrelas);
+criarEstrelas(document.querySelector('.estrelas[data-id="geral"]'));
 
 function atualizarMedia() {
   const elementos = document.querySelectorAll('.estrelas');
@@ -1284,23 +1282,19 @@ async function carregarPerfumeParaEdicao() {
     if (perfume.avaliacoes) {
       console.log('✅ Carregando avaliações:', perfume.avaliacoes);
       
-      document.querySelector('[data-id="cheiro"]').dataset.valor = perfume.avaliacoes.cheiro || 0;
-      document.querySelector('[data-id="projecao"]').dataset.valor = perfume.avaliacoes.projecao || 0;
-      document.querySelector('[data-id="fixacao"]').dataset.valor = perfume.avaliacoes.fixacao || 0;
-      document.querySelector('[data-id="versatilidade"]').dataset.valor = perfume.avaliacoes.versatilidade || 0;
+      const geralEl = document.querySelector('[data-id="geral"]');
+      if (geralEl) geralEl.dataset.valor = perfume.avaliacoes.media || 0;
       
       requestAnimationFrame(() => {
-        document.querySelectorAll('.estrelas').forEach(container => {
-          const svgAntigo = container.querySelector('svg');
-          const spanAntigo = container.querySelector('.nota-valor');
+        const geralContainer = document.querySelector('[data-id="geral"]');
+        if (geralContainer) {
+          const svgAntigo = geralContainer.querySelector('svg');
+          const spanAntigo = geralContainer.querySelector('.nota-valor');
           if (svgAntigo) svgAntigo.remove();
           if (spanAntigo) spanAntigo.remove();
-          
-          criarEstrelas(container);
-        });
-        
-        atualizarMedia();
-        console.log('✅ Avaliações carregadas nas estrelas!');
+          criarEstrelas(geralContainer);
+        }
+        console.log('✅ Avaliação geral carregada!');
       });
     }
     
@@ -1316,14 +1310,36 @@ async function carregarPerfumeParaEdicao() {
         }
       }
       
-      if (perfume.caracteristicas.ambiente !== undefined) {
-        const ambienteInput = document.getElementById('ambiente-value');
-        ambienteInput.value = perfume.caracteristicas.ambiente;
-        ambienteInput.dataset.avaliado = 'true';
-        const pontoCerto = document.querySelector(`.ambiente-ponto[data-value="${perfume.caracteristicas.ambiente}"]`);
+      if (perfume.caracteristicas.versatilidade !== undefined) {
+        const versInput = document.getElementById('versatilidade-value');
+        versInput.value = perfume.caracteristicas.versatilidade;
+        versInput.dataset.avaliado = 'true';
+        const pontoCerto = document.querySelector(`.versatilidade-ponto[data-value="${perfume.caracteristicas.versatilidade}"]`);
         if (pontoCerto) {
           pontoCerto.classList.add('ativo');
-          console.log('✅ Ambiente carregado:', perfume.caracteristicas.ambiente);
+          console.log('✅ Versatilidade carregada:', perfume.caracteristicas.versatilidade);
+        }
+      }
+
+      if (perfume.caracteristicas.projecao !== undefined) {
+        const projecaoInput = document.getElementById('projecao-value');
+        projecaoInput.value = perfume.caracteristicas.projecao;
+        projecaoInput.dataset.avaliado = 'true';
+        const pontoCerto = document.querySelector(`.projecao-ponto[data-value="${perfume.caracteristicas.projecao}"]`);
+        if (pontoCerto) {
+          pontoCerto.classList.add('ativo');
+          console.log('✅ Projeção carregada:', perfume.caracteristicas.projecao);
+        }
+      }
+
+      if (perfume.caracteristicas.fixacao !== undefined) {
+        const fixacaoInput = document.getElementById('fixacao-value');
+        fixacaoInput.value = perfume.caracteristicas.fixacao;
+        fixacaoInput.dataset.avaliado = 'true';
+        const pontoCerto = document.querySelector(`.fixacao-ponto[data-value="${perfume.caracteristicas.fixacao}"]`);
+        if (pontoCerto) {
+          pontoCerto.classList.add('ativo');
+          console.log('✅ Fixação carregada:', perfume.caracteristicas.fixacao);
         }
       }
       
@@ -1461,20 +1477,11 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       }
     }
     
-    const avaliacoes = {
-      cheiro: parseFloat(document.querySelector('[data-id="cheiro"]').dataset.valor || 0),
-      projecao: parseFloat(document.querySelector('[data-id="projecao"]').dataset.valor || 0),
-      fixacao: parseFloat(document.querySelector('[data-id="fixacao"]').dataset.valor || 0),
-      versatilidade: parseFloat(document.querySelector('[data-id="versatilidade"]').dataset.valor || 0)
-    };
-    
-    const temAvaliacaoEstrelas = Object.values(avaliacoes).some(v => v > 0);
-    
-    if (temAvaliacaoEstrelas) {
-      const media = Object.values(avaliacoes).reduce((a, b) => a + b, 0) / 4;
+    const notaGeral = parseFloat(document.querySelector('[data-id="geral"]')?.dataset.valor || 0);
+
+    if (notaGeral > 0) {
       perfumeData.avaliacoes = {
-        ...avaliacoes,
-        media: parseFloat(media.toFixed(1))
+        media: notaGeral
       };
     }
     
@@ -1492,12 +1499,21 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
       console.log('✅ Salvando clima:', climaValue.value);
     }
     
-    const ambienteValue = document.getElementById('ambiente-value');
-    if (ambienteValue.dataset.avaliado === 'true' && ambienteValue.value) {
-      caracteristicas.ambiente = ambienteValue.value;
-      console.log('✅ Salvando ambiente:', ambienteValue.value);
+    const versatValue = document.getElementById('versatilidade-value');
+    if (versatValue.dataset.avaliado === 'true' && versatValue.value) {
+      caracteristicas.versatilidade = versatValue.value;
     }
-    
+
+    const projecaoValue = document.getElementById('projecao-value');
+    if (projecaoValue?.dataset.avaliado === 'true' && projecaoValue.value) {
+      caracteristicas.projecao = projecaoValue.value;
+    }
+
+    const fixacaoValue = document.getElementById('fixacao-value');
+    if (fixacaoValue?.dataset.avaliado === 'true' && fixacaoValue.value) {
+      caracteristicas.fixacao = fixacaoValue.value;
+    }
+
     const horaValue = document.getElementById('hora-value');
     if (horaValue.dataset.avaliado === 'true' && horaValue.value) {
       caracteristicas.hora = horaValue.value;

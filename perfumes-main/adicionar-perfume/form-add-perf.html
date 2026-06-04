@@ -41,29 +41,10 @@
         <!-- Avaliação - SEMPRE VISÍVEL, SEM ANIMAÇÕES -->
         <div id="avaliacao">
           <div class="avaliacao-estrelas">
-            <h3>Avaliação</h3>
-
+            <h3>Avaliação geral:</h3>
             <div class="linha-avaliacao">
-              <label>Cheiro:</label>
-              <div class="estrelas" data-id="cheiro"></div>
+              <div class="estrelas" data-id="geral"></div>
             </div>
-
-            <div class="linha-avaliacao">
-              <label>Projeção:</label>
-              <div class="estrelas" data-id="projecao"></div>
-            </div>
-
-            <div class="linha-avaliacao">
-              <label>Fixação:</label>
-              <div class="estrelas" data-id="fixacao"></div>
-            </div>
-
-            <div class="linha-avaliacao">
-              <label>Versatilidade:</label>
-              <div class="estrelas" data-id="versatilidade"></div>
-            </div>
-
-            <p class="media">Média: <span id="media">0</span></p>
           </div>
 
           <hr>
@@ -131,35 +112,97 @@
               <input type="hidden" id="clima-value" data-avaliado="false">
             </div>
 
-            <!-- ✅ Slider de Ambiente Customizado -->
+            <!-- Slider de Versatilidade -->
             <div class="slider-container">
-              <label>Ambiente:</label>
-              <div class="ambiente-slider-wrapper">
-                <div class="ambiente-linha"></div>
-                <div class="ambiente-pontos">
-                  <div class="ambiente-ponto" data-value="0">
+              <label>Versatilidade:</label>
+              <div class="versatilidade-slider-wrapper">
+                <div class="versatilidade-linha"></div>
+                <div class="versatilidade-pontos">
+                  <div class="versatilidade-ponto" data-value="0">
                     <div class="ponto-circulo"></div>
-                    <span class="ponto-label">Informal</span>
+                    <span class="ponto-label">Situação específica</span>
                   </div>
-                  <div class="ambiente-ponto" data-value="25">
+                  <div class="versatilidade-ponto" data-value="25">
                     <div class="ponto-circulo"></div>
                     <span class="ponto-label"></span>
                   </div>
-                  <div class="ambiente-ponto" data-value="50">
+                  <div class="versatilidade-ponto" data-value="50">
                     <div class="ponto-circulo"></div>
                     <span class="ponto-label"></span>
                   </div>
-                  <div class="ambiente-ponto" data-value="75">
+                  <div class="versatilidade-ponto" data-value="75">
                     <div class="ponto-circulo"></div>
                     <span class="ponto-label"></span>
                   </div>
-                  <div class="ambiente-ponto" data-value="100">
+                  <div class="versatilidade-ponto" data-value="100">
                     <div class="ponto-circulo"></div>
-                    <span class="ponto-label">Formal</span>
+                    <span class="ponto-label">Para tudo</span>
                   </div>
                 </div>
               </div>
-              <input type="hidden" id="ambiente-value" data-avaliado="false">
+              <input type="hidden" id="versatilidade-value" data-avaliado="false">
+            </div>
+
+            <!-- Slider de Projeção -->
+            <div class="slider-container">
+              <label>Projeção:</label>
+              <div class="projecao-slider-wrapper">
+                <div class="projecao-linha"></div>
+                <div class="projecao-pontos">
+                  <div class="projecao-ponto" data-value="0">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label">Menos projeção</span>
+                  </div>
+                  <div class="projecao-ponto" data-value="25">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="projecao-ponto" data-value="50">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="projecao-ponto" data-value="75">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="projecao-ponto" data-value="100">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label">Mais projeção</span>
+                  </div>
+                </div>
+              </div>
+              <input type="hidden" id="projecao-value" data-avaliado="false">
+            </div>
+
+            <!-- Slider de Fixação -->
+            <div class="slider-container">
+              <label>Fixação:</label>
+              <div class="fixacao-slider-wrapper">
+                <div class="fixacao-linha"></div>
+                <div class="fixacao-pontos">
+                  <div class="fixacao-ponto" data-value="0">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label">Menos fixação</span>
+                  </div>
+                  <div class="fixacao-ponto" data-value="25">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="fixacao-ponto" data-value="50">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="fixacao-ponto" data-value="75">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label"></span>
+                  </div>
+                  <div class="fixacao-ponto" data-value="100">
+                    <div class="ponto-circulo"></div>
+                    <span class="ponto-label">Mais fixação</span>
+                  </div>
+                </div>
+              </div>
+              <input type="hidden" id="fixacao-value" data-avaliado="false">
             </div>
 
             <!-- ✅ Slider de Hora Customizado -->
