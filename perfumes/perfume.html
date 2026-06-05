@@ -96,34 +96,13 @@
                     <span class="nota-media">0,00</span>
                 </div>
                 
-                <!-- Avaliações Detalhadas -->
+                <!-- Avaliação Geral -->
                 <div class="avaliacoes-detalhadas" id="avaliacoes-detalhadas">
                     <div class="avaliacao-item">
-                        <span class="avaliacao-label">Cheiro:</span>
+                        <span class="avaliacao-label">Avaliação geral:</span>
                         <div class="avaliacao-nota">
-                            <div class="mini-estrelas" id="estrelas-cheiro"></div>
-                            <span class="nota-valor" id="nota-cheiro">0.0</span>
-                        </div>
-                    </div>
-                    <div class="avaliacao-item">
-                        <span class="avaliacao-label">Projeção:</span>
-                        <div class="avaliacao-nota">
-                            <div class="mini-estrelas" id="estrelas-projecao"></div>
-                            <span class="nota-valor" id="nota-projecao">0.0</span>
-                        </div>
-                    </div>
-                    <div class="avaliacao-item">
-                        <span class="avaliacao-label">Fixação:</span>
-                        <div class="avaliacao-nota">
-                            <div class="mini-estrelas" id="estrelas-fixacao"></div>
-                            <span class="nota-valor" id="nota-fixacao">0.0</span>
-                        </div>
-                    </div>
-                    <div class="avaliacao-item">
-                        <span class="avaliacao-label">Versatilidade:</span>
-                        <div class="avaliacao-nota">
-                            <div class="mini-estrelas" id="estrelas-versatilidade"></div>
-                            <span class="nota-valor" id="nota-versatilidade">0.0</span>
+                            <div class="mini-estrelas" id="estrelas-geral"></div>
+                            <span class="nota-valor" id="nota-geral">-</span>
                         </div>
                     </div>
                 </div>
@@ -183,27 +162,79 @@
                         </div>
                     </div>
 
-                    <div class="slider-container" id="container-ambiente" style="display: none;">
-                        <label>Ambiente:</label>
-                        <div class="ambiente-slider-wrapper">
-                            <div class="ambiente-linha"></div>
-                            <div class="ambiente-pontos">
-                                <div class="ambiente-ponto" data-value="0">
+                    <div class="slider-container" id="container-versatilidade" style="display: none;">
+                        <label>Versatilidade:</label>
+                        <div class="versatilidade-slider-wrapper">
+                            <div class="versatilidade-linha"></div>
+                            <div class="versatilidade-pontos">
+                                <div class="versatilidade-ponto" data-value="0">
                                     <div class="ponto-circulo"></div>
-                                    <span class="ponto-label">Informal</span>
+                                    <span class="ponto-label">Situação específica</span>
                                 </div>
-                                <div class="ambiente-ponto" data-value="25">
-                                    <div class="ponto-circulo"></div>
-                                </div>
-                                <div class="ambiente-ponto" data-value="50">
+                                <div class="versatilidade-ponto" data-value="25">
                                     <div class="ponto-circulo"></div>
                                 </div>
-                                <div class="ambiente-ponto" data-value="75">
+                                <div class="versatilidade-ponto" data-value="50">
                                     <div class="ponto-circulo"></div>
                                 </div>
-                                <div class="ambiente-ponto" data-value="100">
+                                <div class="versatilidade-ponto" data-value="75">
                                     <div class="ponto-circulo"></div>
-                                    <span class="ponto-label">Formal</span>
+                                </div>
+                                <div class="versatilidade-ponto" data-value="100">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Para tudo</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slider-container" id="container-projecao" style="display: none;">
+                        <label>Projeção:</label>
+                        <div class="projecao-slider-wrapper">
+                            <div class="projecao-linha"></div>
+                            <div class="projecao-pontos">
+                                <div class="projecao-ponto" data-value="0">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Menos projeção</span>
+                                </div>
+                                <div class="projecao-ponto" data-value="25">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="projecao-ponto" data-value="50">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="projecao-ponto" data-value="75">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="projecao-ponto" data-value="100">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Mais projeção</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slider-container" id="container-fixacao" style="display: none;">
+                        <label>Fixação:</label>
+                        <div class="fixacao-slider-wrapper">
+                            <div class="fixacao-linha"></div>
+                            <div class="fixacao-pontos">
+                                <div class="fixacao-ponto" data-value="0">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Menos fixação</span>
+                                </div>
+                                <div class="fixacao-ponto" data-value="25">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="fixacao-ponto" data-value="50">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="fixacao-ponto" data-value="75">
+                                    <div class="ponto-circulo"></div>
+                                </div>
+                                <div class="fixacao-ponto" data-value="100">
+                                    <div class="ponto-circulo"></div>
+                                    <span class="ponto-label">Mais fixação</span>
                                 </div>
                             </div>
                         </div>

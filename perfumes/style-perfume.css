@@ -267,7 +267,9 @@ body {
 /* Estilos compartilhados para todos os sliders */
 .genero-slider-wrapper,
 .clima-slider-wrapper,
-.ambiente-slider-wrapper,
+.versatilidade-slider-wrapper,
+.projecao-slider-wrapper,
+.fixacao-slider-wrapper,
 .hora-slider-wrapper {
     position: relative;
     width: 100%;
@@ -277,7 +279,9 @@ body {
 
 .genero-linha,
 .clima-linha,
-.ambiente-linha,
+.versatilidade-linha,
+.projecao-linha,
+.fixacao-linha,
 .hora-linha {
     position: absolute;
     top: 50%;
@@ -295,7 +299,9 @@ body {
 
 .genero-pontos,
 .clima-pontos,
-.ambiente-pontos,
+.versatilidade-pontos,
+.projecao-pontos,
+.fixacao-pontos,
 .hora-pontos {
     position: relative;
     display: flex;
@@ -305,7 +311,9 @@ body {
 
 .genero-ponto,
 .clima-ponto,
-.ambiente-ponto,
+.versatilidade-ponto,
+.projecao-ponto,
+.fixacao-ponto,
 .hora-ponto {
     position: relative;
     flex: 1;
@@ -326,7 +334,9 @@ body {
 
 .genero-ponto.ativo .ponto-circulo,
 .clima-ponto.ativo .ponto-circulo,
-.ambiente-ponto.ativo .ponto-circulo,
+.versatilidade-ponto.ativo .ponto-circulo,
+.projecao-ponto.ativo .ponto-circulo,
+.fixacao-ponto.ativo .ponto-circulo,
 .hora-ponto.ativo .ponto-circulo {
     background: #5BA3D0;
     border-color: #fff;
@@ -347,14 +357,18 @@ body {
 
 .genero-ponto:nth-child(1) .ponto-label,
 .clima-ponto:nth-child(1) .ponto-label,
-.ambiente-ponto:nth-child(1) .ponto-label,
+.versatilidade-ponto:nth-child(1) .ponto-label,
+.projecao-ponto:nth-child(1) .ponto-label,
+.fixacao-ponto:nth-child(1) .ponto-label,
 .hora-ponto:nth-child(1) .ponto-label {
     left: -5px;
 }
 
 .genero-ponto:nth-child(5) .ponto-label,
 .clima-ponto:nth-child(5) .ponto-label,
-.ambiente-ponto:nth-child(5) .ponto-label,
+.versatilidade-ponto:nth-child(5) .ponto-label,
+.projecao-ponto:nth-child(5) .ponto-label,
+.fixacao-ponto:nth-child(5) .ponto-label,
 .hora-ponto:nth-child(5) .ponto-label {
     right: -5px;
     left: auto;

@@ -227,110 +227,138 @@ async function renderizarPerfume() {
 
 // ✅ NOVA FUNÇÃO: Gerar descrição completa
 async function gerarDescricao() {
-    let descricao = `A fragrância ${perfumeData.nome} de ${perfumeData.marca} é um cheiro `;
-    
-    const partes = [];
-    
-    // Gênero
-    if (perfumeData.caracteristicas?.genero) {
-        const generoTexto = obterTextoGenero(perfumeData.caracteristicas.genero);
-        partes.push(generoTexto);
-    }
-    
-    // Hora
-    if (perfumeData.caracteristicas?.hora !== undefined) {
-        const horaTexto = obterTextoHora(perfumeData.caracteristicas.hora);
-        partes.push(horaTexto);
-    }
-    
-    // Junta gênero e hora com vírgula
-    if (partes.length > 0) {
-        descricao += partes.join(', ') + ', ';
-    }
-    
-    // Acordes
-    descricao += 'majoritariamente ';
+    const car = perfumeData.caracteristicas || {};
+    let partes = [];
+
+    // 1. "[Nome] de [Marca] é um cheiro [gênero]"
+    const generoTexto = obterTextoGenero(car.genero);
+
+    // 2. "com um cheiro majoritariamente [acorde1] e [acorde2]"
+    let acordesFrase = '';
     if (perfumeData.acordes && perfumeData.acordes.length > 0) {
-        const primeirosAcordes = perfumeData.acordes.slice(0, 2);
-        if (primeirosAcordes.length === 1) {
-            descricao += primeirosAcordes[0].toLowerCase();
+        const dois = perfumeData.acordes.slice(0, 2).map(a => a.toLowerCase());
+        acordesFrase = 'com um cheiro majoritariamente ' + (dois.length === 1 ? dois[0] : `${dois[0]} e ${dois[1]}`);
+    }
+
+    // 3. Temperatura
+    let climaFrase = '';
+    if (car.clima !== undefined) {
+        const climaMap = {
+            '0':   'geralmente usado no frio',
+            '25':  'geralmente usado mais para o frio',
+            '50':  'geralmente usado no calor e no frio',
+            '75':  'geralmente usado mais para o calor',
+            '100': 'geralmente usado no calor'
+        };
+        climaFrase = climaMap[String(car.clima)] || '';
+    }
+
+    // 4. Versatilidade
+    let versFrase = '';
+    if (car.versatilidade !== undefined) {
+        const versMap = {
+            '0':   'recomendado para situações específicas',
+            '25':  'recomendado para poucas situações',
+            '50':  'recomendado para diversas situações',
+            '75':  'recomendado para a maioria das situações',
+            '100': 'recomendado para qualquer situação'
+        };
+        versFrase = versMap[String(car.versatilidade)] || '';
+    }
+
+    // 5. Projeção
+    let projFrase = '';
+    if (car.projecao !== undefined) {
+        const projMap = {
+            '0':   'com pouca projeção',
+            '25':  'com projeção baixa',
+            '50':  'com projeção moderada',
+            '75':  'com boa projeção',
+            '100': 'com muita projeção'
+        };
+        projFrase = projMap[String(car.projecao)] || '';
+    }
+
+    // 6. Fixação
+    let fixFrase = '';
+    if (car.fixacao !== undefined) {
+        const fixMap = {
+            '0':   'com pouca fixação',
+            '25':  'com fixação baixa',
+            '50':  'com fixação moderada',
+            '75':  'com boa fixação',
+            '100': 'com muita fixação'
+        };
+        fixFrase = fixMap[String(car.fixacao)] || '';
+    }
+
+    // 7. Hora do dia
+    let horaFrase = '';
+    if (car.hora !== undefined) {
+        const horaMap = {
+            '0':   'geralmente sendo usado de noite',
+            '25':  'geralmente sendo usado mais de noite',
+            '50':  'podendo ser usado em qualquer horário',
+            '75':  'geralmente sendo usado mais de dia',
+            '100': 'geralmente sendo usado de dia'
+        };
+        horaFrase = horaMap[String(car.hora)] || '';
+    }
+
+    // Monta o texto corrido
+    let descricao = `${perfumeData.nome}, da casa ${perfumeData.marca}, é uma fragrância`;
+    if (generoTexto) descricao += ` ${generoTexto}`;
+    if (acordesFrase) descricao += `, ${acordesFrase}`;
+    descricao += '.';
+
+    // Agrupa projeção e fixação se forem iguais
+    const nivelMap = { '0': 'pouca', '25': 'baixa', '50': 'moderada', '75': 'boa', '100': 'muita' };
+    const nivelPluralMap = { '0': 'pouca', '25': 'baixas', '50': 'moderadas', '75': 'boas', '100': 'muita' };
+    let projFixFrase = '';
+    if (car.projecao !== undefined && car.fixacao !== undefined) {
+        const pKey = String(car.projecao);
+        const fKey = String(car.fixacao);
+        if (pKey === fKey) {
+            projFixFrase = `com projeção e fixação ${nivelPluralMap[pKey] || ''}`;
         } else {
-            descricao += `${primeirosAcordes[0].toLowerCase()} e ${primeirosAcordes[1].toLowerCase()}`;
+            projFixFrase = `com projeção ${nivelMap[pKey] || ''} e fixação ${nivelMap[fKey] || ''}`;
         }
+    } else if (car.projecao !== undefined) {
+        projFixFrase = projFrase;
+    } else if (car.fixacao !== undefined) {
+        projFixFrase = fixFrase;
     }
-    descricao += '. ';
-    
-    // Ambiente e Temperatura
-    const partesUso = [];
-    
-    if (perfumeData.caracteristicas?.ambiente !== undefined) {
-        const ambienteTexto = obterTextoAmbiente(perfumeData.caracteristicas.ambiente);
-        partesUso.push(`ambientes ${ambienteTexto}`);
+
+    // Segunda frase com clima, versatilidade, projeção+fixação e hora
+    const detalhes = [climaFrase, versFrase, projFixFrase, horaFrase].filter(Boolean);
+    if (detalhes.length > 0) {
+        const [primeiro, ...resto] = detalhes;
+        descricao += ' ' + (primeiro.charAt(0).toUpperCase() + primeiro.slice(1));
+        if (resto.length > 0) descricao += ', ' + resto.join(', ');
+        descricao += '.';
     }
-    
-    if (perfumeData.caracteristicas?.clima !== undefined) {
-        const climaTexto = obterTextoClima(perfumeData.caracteristicas.clima);
-        partesUso.push(`temperaturas ${climaTexto}`);
-    }
-    
-    if (partesUso.length > 0) {
-        descricao += 'Geralmente sendo usado em ' + partesUso.join(' e em ') + '. ';
-    }
-    
-    // Longevidade e Projeção
-    if (perfumeData.avaliacoes) {
-        const fixacao = perfumeData.avaliacoes.fixacao || 0;
-        const projecao = perfumeData.avaliacoes.projecao || 0;
-        
-        if (fixacao > 0 || projecao > 0) {
-            const longevidade = classificarNota(fixacao);
-            const projecaoClass = classificarNota(projecao);
-            
-            if (fixacao > 0 && projecao > 0) {
-                if (longevidade === projecaoClass) {
-                    // Ajusta plural para mediana e alta
-                    const textoPlural = (longevidade === 'mediana' || longevidade === 'alta') 
-                        ? longevidade + 's' 
-                        : longevidade;
-                    descricao += `Com longevidade e projeção ${textoPlural}. `;
-                } else {
-                    descricao += `Com longevidade ${longevidade} e projeção ${projecaoClass}. `;
-                }
-            } else if (fixacao > 0) {
-                descricao += `Com longevidade ${longevidade}. `;
-            } else if (projecao > 0) {
-                descricao += `Com projeção ${projecaoClass}. `;
-            }
-        }
-    }
-    
+
     // Perfumista
     if (perfumeData.perfumista && perfumeData.perfumista.trim() !== '') {
-        descricao += `Assinado por ${perfumeData.perfumista}. `;
+        descricao += ` Fragrância assinada por ${perfumeData.perfumista}.`;
     }
-    
+
     // Contratipo
     if (perfumeData.contratipo && perfumeData.contratipo.eh && perfumeData.contratipo.perfumeOriginal) {
         const perfumeOriginalId = perfumeData.contratipo.perfumeOriginal;
-        
         try {
             const perfumeOriginal = await buscarPerfumePorId(perfumeOriginalId);
-            
             if (perfumeOriginal) {
-                const descricaoElement = document.getElementById('descricao-perfume');
-                
-                const linkPerfume = `<a href="../perfumes/perfume.html?id=${perfumeOriginalId}" style="color: #C06060; text-decoration: none; font-weight: 600; cursor: pointer;" onmouseenter="this.style.textDecoration='underline'" onmouseleave="this.style.textDecoration='none'">${perfumeOriginal.nome}</a>`;
-                
-                const linkMarca = `<a href="../marca/marca.html?nome=${encodeURIComponent(perfumeOriginal.marca)}" style="color: #C06060; text-decoration: none; font-weight: 600; cursor: pointer;" onmouseenter="this.style.textDecoration='underline'" onmouseleave="this.style.textDecoration='none'">${perfumeOriginal.marca}</a>`;
-                
-                descricaoElement.innerHTML = descricao + `É um cheiro inspirado em fragrâncias como ${linkPerfume} de ${linkMarca}.`;
+                const linkPerfume = `<a href="../perfumes/perfume.html?id=${perfumeOriginalId}" style="color:#C06060;text-decoration:none;font-weight:600;" onmouseenter="this.style.textDecoration='underline'" onmouseleave="this.style.textDecoration='none'">${perfumeOriginal.nome}</a>`;
+                const linkMarca   = `<a href="../marca/marca.html?nome=${encodeURIComponent(perfumeOriginal.marca)}" style="color:#C06060;text-decoration:none;font-weight:600;" onmouseenter="this.style.textDecoration='underline'" onmouseleave="this.style.textDecoration='none'">${perfumeOriginal.marca}</a>`;
+                document.getElementById('descricao-perfume').innerHTML = descricao + ` É um cheiro inspirado em fragrâncias como ${linkPerfume} de ${linkMarca}.`;
                 return;
             }
         } catch (error) {
             console.error('Erro ao buscar perfume original:', error);
         }
     }
-    
+
     document.getElementById('descricao-perfume').textContent = descricao;
 }
 
@@ -503,16 +531,13 @@ function renderizarAvaliacoes() {
         estrelasDisplay.appendChild(estrela);
     }
     
-    renderizarAvaliacaoDetalhada('cheiro', perfumeData.avaliacoes.cheiro);
-    renderizarAvaliacaoDetalhada('projecao', perfumeData.avaliacoes.projecao);
-    renderizarAvaliacaoDetalhada('fixacao', perfumeData.avaliacoes.fixacao);
-    renderizarAvaliacaoDetalhada('versatilidade', perfumeData.avaliacoes.versatilidade);
+    renderizarAvaliacaoDetalhada('geral', perfumeData.avaliacoes?.media);
     
     const toggleBtn = document.getElementById('toggle-avaliacoes');
     const avaliacoesDetalhadas = document.getElementById('avaliacoes-detalhadas');
     
-    toggleBtn.addEventListener('click', () => {
-        avaliacoesDetalhadas.classList.toggle('expandido');
+    toggleBtn?.addEventListener('click', () => {
+        avaliacoesDetalhadas?.classList.toggle('expandido');
     });
     
     // ✅ Renderiza sliders customizados
@@ -525,8 +550,16 @@ function renderizarAvaliacoes() {
             mostrarSliderCustomizado('clima', perfumeData.caracteristicas.clima);
         }
         
-        if (perfumeData.caracteristicas.ambiente !== undefined) {
-            mostrarSliderCustomizado('ambiente', perfumeData.caracteristicas.ambiente);
+        if (perfumeData.caracteristicas.versatilidade !== undefined) {
+            mostrarSliderCustomizado('versatilidade', perfumeData.caracteristicas.versatilidade);
+        }
+        
+        if (perfumeData.caracteristicas.projecao !== undefined) {
+            mostrarSliderCustomizado('projecao', perfumeData.caracteristicas.projecao);
+        }
+        
+        if (perfumeData.caracteristicas.fixacao !== undefined) {
+            mostrarSliderCustomizado('fixacao', perfumeData.caracteristicas.fixacao);
         }
         
         if (perfumeData.caracteristicas.hora !== undefined) {
@@ -552,6 +585,12 @@ function renderizarAvaliacaoDetalhada(tipo, nota) {
     const notaElement = document.getElementById(`nota-${tipo}`);
     const estrelasElement = document.getElementById(`estrelas-${tipo}`);
     
+    if (!notaElement || !estrelasElement) return;
+    if (nota === undefined || nota === null || isNaN(nota)) {
+        notaElement.textContent = '-';
+        estrelasElement.innerHTML = '';
+        return;
+    }
     notaElement.textContent = nota.toFixed(1);
     
     estrelasElement.innerHTML = '';

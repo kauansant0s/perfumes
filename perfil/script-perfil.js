@@ -9,6 +9,20 @@ let perfumesData = [];
 let usuarioAtual = null;
 let preferenciasUsuario = null;
 
+const coresAcordes = {
+  'Abaunilhado': '#D4A574', 'Aldeídico': '#E8E8E8', 'Alcoólico': '#C9B8A8',
+  'Almiscarado': '#F5E6D3', 'Ambarado': '#FFB347', 'Amadeirado': '#8B4513',
+  'Animálico': '#654321', 'Aquático': '#4DD0E1', 'Aromático': '#7CB342',
+  'Assabonetado': '#E0F7FA', 'Atalcado': '#E8D5C4', 'Balsâmico': '#8B7355',
+  'Chipre': '#556B2F', 'Cítrico': '#FFA500', 'Couro': '#654321', 'Cremoso': '#FFF8DC',
+  'Doce': '#FFB6C1', 'Esfumaçado': '#696969', 'Especiado': '#CD853F', 'Floral': '#FF69B4',
+  'Floral Amarelo': '#FFD700', 'Floral Branco': '#F5F5F5', 'Fougère': '#2E8B57',
+  'Fresco': '#87CEEB', 'Frutado': '#FF6347', 'Gourmand': '#D2691E',
+  'Herbal': '#6B8E23', 'Lactônico': '#FFF5EE', 'Limpeza': '#B2DFDB',
+  'Metálico': '#B0B0B0', 'Resinoso': '#A0522D', 'Terroso': '#8B7355',
+  'Tropical': '#FF8C00', 'Verde': '#228B22'
+};
+
 // Verifica se o usuário está logado
 onAuthStateChanged(auth, async (user) => {
   console.log('=== onAuthStateChanged disparado ===');
@@ -387,27 +401,37 @@ async function definirAssinaturaAtual(perfume) {
   toggleLoading(true);
   
   try {
+    const agora = new Date().toISOString();
     const novaAssinatura = {
       id: perfume.id,
       nome: perfume.nome,
-      fotoURL: perfume.fotoURL
+      fotoURL: perfume.fotoURL,
+      inicio: agora
     };
-    
-    const dadosParaSalvar = preferenciasUsuario?.top5 
-      ? { 
-          assinaturaAtual: novaAssinatura,
-          top5: preferenciasUsuario.top5
-        }
-      : { 
-          assinaturaAtual: novaAssinatura 
-        };
-    
-    await salvarPreferenciasUsuario(usuarioAtual.uid, dadosParaSalvar);
-    
-    if (!preferenciasUsuario) {
-      preferenciasUsuario = {};
+
+    // Fecha o período da assinatura anterior no histórico
+    const historico = preferenciasUsuario?.historicoAssinatura || [];
+    const anterior = preferenciasUsuario?.assinaturaAtual;
+    if (anterior && anterior.id !== perfume.id) {
+      // Atualiza fim da entrada mais recente desse perfume sem fim definido
+      const idxAnterior = [...historico].reverse().findIndex(h => h.id === anterior.id && !h.fim);
+      if (idxAnterior >= 0) {
+        historico[historico.length - 1 - idxAnterior].fim = agora;
+      }
     }
+
+    // Adiciona nova entrada no histórico
+    historico.push({ id: perfume.id, nome: perfume.nome, fotoURL: perfume.fotoURL, inicio: agora, fim: null });
+
+    await salvarPreferenciasUsuario(usuarioAtual.uid, {
+      ...preferenciasUsuario,
+      assinaturaAtual: novaAssinatura,
+      historicoAssinatura: historico
+    });
+
+    if (!preferenciasUsuario) preferenciasUsuario = {};
     preferenciasUsuario.assinaturaAtual = novaAssinatura;
+    preferenciasUsuario.historicoAssinatura = historico;
     
     console.log('✅ Assinatura salva!');
   } catch (error) {
@@ -444,6 +468,14 @@ function carregarAssinaturaAtual(assinatura) {
     const nome = document.createElement('p');
     nome.id = 'nome-assinatura';
     nome.textContent = assinatura.nome;
+
+    // Botão histórico
+    const btnHistorico = document.createElement('button');
+    btnHistorico.className = 'btn-ver-historico';
+    btnHistorico.title = 'Ver histórico de assinatura';
+    btnHistorico.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`;
+    btnHistorico.addEventListener('click', abrirHistoricoAssinatura);
+    nome.appendChild(btnHistorico);
     
     container.appendChild(miniCard);
     container.appendChild(nome);
@@ -564,23 +596,36 @@ async function abrirModalTop5() {
   if (inputPesquisa) {
     inputPesquisa.value = '';
   }
+
+  // Aviso — só perfumes avaliados
+  let avisoEl = document.getElementById('aviso-top5-avaliados');
+  if (!avisoEl) {
+    avisoEl = document.createElement('p');
+    avisoEl.id = 'aviso-top5-avaliados';
+    avisoEl.style.cssText = 'font-size:12px;color:#999;text-align:center;margin:0 0 12px;font-style:italic;';
+    avisoEl.textContent = 'Apenas perfumes que você já avaliou podem entrar no Top 5.';
+    lista.before(avisoEl);
+  }
   
   const top5Atual = preferenciasUsuario?.top5 || [];
+
+  // Só perfumes com avaliação
+  const perfumesAvaliados = perfumesData.filter(p => p.avaliacoes?.media > 0);
   
   // ✅ Função para renderizar perfumes (com filtro opcional)
   function renderizarPerfumesTop5(termoPesquisa = '') {
     lista.innerHTML = '';
     
-    if (perfumesData.length === 0) {
-      lista.innerHTML = '<p style="text-align:center;color:#666;">Você ainda não cadastrou nenhum perfume</p>';
+    if (perfumesAvaliados.length === 0) {
+      lista.innerHTML = '<p style="text-align:center;color:#666;">Você ainda não avaliou nenhum perfume</p>';
       return;
     }
     
     // Filtra perfumes se houver termo de pesquisa
-    let perfumesFiltrados = perfumesData;
+    let perfumesFiltrados = perfumesAvaliados;
     if (termoPesquisa) {
       const termo = termoPesquisa.toLowerCase();
-      perfumesFiltrados = perfumesData.filter(p => 
+      perfumesFiltrados = perfumesAvaliados.filter(p => 
         p.nome.toLowerCase().includes(termo) ||
         p.marca.toLowerCase().includes(termo)
       );
@@ -1317,7 +1362,7 @@ function renderizarEstatisticas(stats) {
                 </span>
               </div>
               <div class="progress-bar-container">
-                <div class="progress-bar-fill" style="width: ${(acorde.mediaAvaliacao / 5) * 100}%;"></div>
+                <div class="progress-bar-fill" style="width: ${(acorde.mediaAvaliacao / 5) * 100}%; background: ${coresAcordes[acorde.nome] || '#C06060'};"></div>
               </div>
               <!-- Popup de perfumes do acorde -->
               <div class="acorde-popup" id="acorde-popup-${idx}" style="display:none;">
@@ -1493,3 +1538,255 @@ function toggleMarcas(tipo) {
 
 // Torna a função disponível globalmente
 window.toggleMarcas = toggleMarcas;
+// ===== EXPORTAR EXCEL =====
+const COLUNAS_EXPORTAR = [
+  { id: 'nome',        label: 'Nome',              padrao: false },
+  { id: 'marca',       label: 'Marca',             padrao: false },
+  { id: 'linha',       label: 'Linha',             padrao: false },
+  { id: 'status',      label: 'Status',            padrao: false },
+  { id: 'media',       label: 'Nota média',        padrao: false },
+  { id: 'cheiro',      label: 'Cheiro',            padrao: false },
+  { id: 'projecao',    label: 'Projeção',          padrao: false },
+  { id: 'fixacao',     label: 'Fixação',           padrao: false },
+  { id: 'versatilidade', label: 'Versatilidade',  padrao: false },
+  { id: 'acordes',     label: 'Acordes',           padrao: false },
+  { id: 'notasTopo',   label: 'Notas de topo',     padrao: false },
+  { id: 'notasCoracao',label: 'Notas de coração',  padrao: false },
+  { id: 'notasFundo',  label: 'Notas de fundo',    padrao: false },
+  { id: 'perfumista',  label: 'Perfumista',        padrao: false },
+  { id: 'genero',      label: 'Gênero',            padrao: false },
+  { id: 'clima',       label: 'Clima',             padrao: false },
+  { id: 'ambiente',    label: 'Ambiente',          padrao: false },
+  { id: 'hora',        label: 'Hora do dia',       padrao: false },
+  { id: 'contratipo',  label: 'É contratipo?',     padrao: false },
+  { id: 'linkCompra',  label: 'Link de compra',    padrao: false },
+  { id: 'review',      label: 'Review',            padrao: false },
+];
+
+const modalExportar = document.getElementById('modal-exportar');
+
+function abrirModalExportar(e) {
+  e.preventDefault();
+  document.getElementById('menu-lateral')?.classList.remove('aberto');
+  document.getElementById('menu-overlay')?.classList.remove('ativo');
+  // Reset: volta pra etapa 1
+  irParaEtapa1();
+  modalExportar.style.display = 'flex';
+}
+
+function fecharModalExportar() {
+  modalExportar.style.display = 'none';
+}
+
+function irParaEtapa1() {
+  document.getElementById('exportar-etapa-1').style.display = 'block';
+  document.getElementById('exportar-etapa-2').style.display = 'none';
+  document.getElementById('btn-confirmar-exportar').style.display = 'none';
+  // Limpa seleção de filtro
+  document.querySelectorAll('input[name="filtro-exportar"]').forEach(r => r.checked = false);
+  document.querySelectorAll('.exportar-opcao-box').forEach(b => b.parentElement.classList.remove('selecionada'));
+}
+
+function irParaEtapa2() {
+  document.getElementById('exportar-etapa-1').style.display = 'none';
+  document.getElementById('exportar-etapa-2').style.display = 'block';
+  document.getElementById('btn-confirmar-exportar').style.display = 'flex';
+
+  const filtroAtual = document.querySelector('input[name="filtro-exportar"]:checked')?.value || 'todos';
+
+  // Gera checkboxes
+  const grid = document.getElementById('exportar-colunas-grid');
+  grid.innerHTML = '';
+  COLUNAS_EXPORTAR.forEach(col => {
+    // Oculta "Status" quando filtro não é "todos" (seria redundante)
+    if (col.id === 'status' && filtroAtual !== 'todos') return;
+
+    const item = document.createElement('label');
+    item.className = 'exportar-coluna-item';
+    item.innerHTML = `
+      <input type="checkbox" value="${col.id}">
+      <span class="exportar-coluna-label">${col.label}</span>
+    `;
+    const cb = item.querySelector('input');
+    cb.addEventListener('change', () => item.classList.toggle('marcado', cb.checked));
+    grid.appendChild(item);
+  });
+}
+
+// Event listeners
+document.getElementById('menu-exportar-excel')?.addEventListener('click', abrirModalExportar);
+document.getElementById('btn-fechar-exportar')?.addEventListener('click', fecharModalExportar);
+document.getElementById('btn-cancelar-exportar')?.addEventListener('click', fecharModalExportar);
+document.getElementById('btn-exportar-voltar')?.addEventListener('click', irParaEtapa1);
+
+// Clicar num filtro vai direto pra etapa 2
+document.querySelectorAll('input[name="filtro-exportar"]').forEach(radio => {
+  radio.addEventListener('change', () => irParaEtapa2());
+});
+
+// Marcar/desmarcar todos
+document.getElementById('btn-marcar-todos')?.addEventListener('click', () => {
+  document.querySelectorAll('#exportar-colunas-grid input[type="checkbox"]').forEach(cb => {
+    cb.checked = true;
+    cb.closest('.exportar-coluna-item').classList.add('marcado');
+  });
+});
+document.getElementById('btn-desmarcar-todos')?.addEventListener('click', () => {
+  document.querySelectorAll('#exportar-colunas-grid input[type="checkbox"]').forEach(cb => {
+    cb.checked = false;
+    cb.closest('.exportar-coluna-item').classList.remove('marcado');
+  });
+});
+
+// Fecha ao clicar no overlay
+modalExportar?.addEventListener('click', (e) => {
+  if (e.target === modalExportar) fecharModalExportar();
+});
+
+document.getElementById('btn-confirmar-exportar')?.addEventListener('click', () => {
+  const filtro = document.querySelector('input[name="filtro-exportar"]:checked')?.value || 'todos';
+  const colunasSelecionadas = Array.from(document.querySelectorAll('#exportar-colunas-grid input:checked')).map(cb => cb.value);
+
+  if (colunasSelecionadas.length === 0) {
+    alert('Selecione pelo menos uma coluna para exportar.');
+    return;
+  }
+
+  // Filtra perfumes
+  let perfumes = perfumesData;
+  if (filtro !== 'todos') {
+    perfumes = perfumesData.filter(p => p.status === filtro);
+  }
+
+  if (perfumes.length === 0) {
+    alert('Nenhum perfume encontrado para o filtro selecionado.');
+    return;
+  }
+
+  // Mapa de extração de cada campo
+  const STATUS_LABELS = { 'tenho': 'Tenho', 'ja-tive': 'Já tive', 'quero-ter': 'Quero ter', '': '-' };
+  const GENERO_LABELS = { 'masculino': 'Masculino', 'um-pouco-masculino': 'Um pouco masculino', 'compartilhavel': 'Compartilhável', 'um-pouco-feminino': 'Um pouco feminino', 'feminino': 'Feminino' };
+
+  const HORA_LABELS   = { '0': 'Noturno', '25': 'Um pouco mais noturno', '50': 'Versátil', '75': 'Um pouco mais diurno', '100': 'Diurno' };
+  const CLIMA_LABELS  = { '0': 'Frio', '25': 'Um pouco mais frio', '50': 'Versátil', '75': 'Um pouco mais quente', '100': 'Calor' };
+  const AMBIENTE_LABELS = { '0': 'Informal', '25': 'Um pouco mais informal', '50': 'Versátil', '75': 'Um pouco mais formal', '100': 'Formal' };
+
+  const extratores = {
+    nome:          p => p.nome || '',
+    marca:         p => p.marca || '',
+    linha:         p => p.linha || '',
+    status:        p => STATUS_LABELS[p.status] || p.status || '',
+    media:         p => p.avaliacoes?.media ?? '',
+    cheiro:        p => p.avaliacoes?.cheiro ?? '',
+    projecao:      p => p.avaliacoes?.projecao ?? '',
+    fixacao:       p => p.avaliacoes?.fixacao ?? '',
+    versatilidade: p => p.avaliacoes?.versatilidade ?? '',
+    acordes:       p => (p.acordes || []).join(', '),
+    notasTopo:     p => (p.notas?.topo || []).join(', '),
+    notasCoracao:  p => (p.notas?.coracao || []).join(', '),
+    notasFundo:    p => (p.notas?.fundo || []).join(', '),
+    perfumista:    p => p.perfumista || '',
+    genero:        p => GENERO_LABELS[p.caracteristicas?.genero] || p.caracteristicas?.genero || '',
+    clima:         p => CLIMA_LABELS[String(p.caracteristicas?.clima)] || '',
+    ambiente:      p => AMBIENTE_LABELS[String(p.caracteristicas?.ambiente)] || '',
+    hora:          p => HORA_LABELS[String(p.caracteristicas?.hora)] || '',
+    contratipo:    p => {
+      if (!p.contratipo?.eh) return 'Não';
+      const orig = perfumesData.find(x => x.id === p.contratipo.perfumeOriginal);
+      return orig ? `Sim (${orig.nome} de ${orig.marca})` : 'Sim';
+    },
+    linkCompra:    p => p.linkCompra || '',
+    review:        p => p.review?.texto || '',
+  };
+
+  const colunasInfo = COLUNAS_EXPORTAR.filter(col => colunasSelecionadas.includes(col.id));
+  const cabecalhos = colunasInfo.map(col => col.label);
+
+  // Monta linhas
+  const linhas = perfumes.map(p => colunasInfo.map(col => extratores[col.id]?.(p) ?? ''));
+
+  // Carrega SheetJS dinamicamente e exporta
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  script.onload = () => {
+    const wb = XLSX.utils.book_new();
+    const wsData = [cabecalhos, ...linhas];
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+    // Hyperlinks reais para a coluna linkCompra
+    const linkCompraIdx = colunasInfo.findIndex(col => col.id === 'linkCompra');
+    if (linkCompraIdx >= 0) {
+      linhas.forEach((linha, rowIdx) => {
+        const url = linha[linkCompraIdx];
+        if (url && url.startsWith('http')) {
+          const cellRef = XLSX.utils.encode_cell({ r: rowIdx + 1, c: linkCompraIdx });
+          if (ws[cellRef]) {
+            ws[cellRef].l = { Target: url, Tooltip: url };
+          }
+        }
+      });
+    }
+
+    // Largura das colunas
+    ws['!cols'] = cabecalhos.map((h, i) => {
+      const maxLen = Math.max(h.length, ...linhas.map(r => String(r[i] || '').length));
+      return { wch: Math.min(Math.max(maxLen + 2, 12), 50) };
+    });
+
+    const filtroLabel = { todos: 'Todos', tenho: 'Tenho', 'ja-tive': 'Ja tive', 'quero-ter': 'Quero ter' };
+    XLSX.utils.book_append_sheet(wb, ws, filtroLabel[filtro] || 'Perfumes');
+    XLSX.writeFile(wb, `perfumes_${filtro}_${new Date().toISOString().slice(0,10)}.xlsx`);
+    fecharModalExportar();
+  };
+  script.onerror = () => alert('Erro ao carregar biblioteca de exportação. Verifique sua conexão.');
+  document.head.appendChild(script);
+});
+
+
+// ===== HISTÓRICO DE ASSINATURA =====
+function abrirHistoricoAssinatura() {
+  const modal = document.getElementById('modal-historico-assinatura');
+  const lista = document.getElementById('historico-lista');
+  const historico = (preferenciasUsuario?.historicoAssinatura || []).slice().reverse();
+
+  if (historico.length === 0) {
+    lista.innerHTML = '<p class="historico-vazio">Nenhuma assinatura registrada ainda.</p>';
+  } else {
+    lista.innerHTML = historico.map((h, idx) => {
+      const isAtual = idx === 0 && !h.fim;
+      const inicio = formatarDataHistorico(h.inicio);
+      const fim = h.fim ? formatarDataHistorico(h.fim) : null;
+      const periodo = fim ? `${inicio} → ${fim}` : `${inicio} → hoje`;
+      const foto = h.fotoURL && h.fotoURL.trim()
+        ? `<img class="historico-foto" src="${h.fotoURL}" alt="${h.nome}">`
+        : `<div class="historico-foto-placeholder">${h.nome}</div>`;
+
+      return `
+        <div class="historico-item">
+          ${foto}
+          <div class="historico-info">
+            <div class="historico-nome">${h.nome}</div>
+            <div class="historico-periodo">${periodo}</div>
+          </div>
+          ${isAtual ? '<span class="historico-atual-badge">atual</span>' : ''}
+        </div>`;
+    }).join('');
+  }
+
+  modal.style.display = 'flex';
+}
+
+function formatarDataHistorico(iso) {
+  if (!iso) return '-';
+  return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+document.getElementById('btn-fechar-historico')?.addEventListener('click', () => {
+  document.getElementById('modal-historico-assinatura').style.display = 'none';
+});
+
+document.getElementById('modal-historico-assinatura')?.addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal-historico-assinatura')) {
+    document.getElementById('modal-historico-assinatura').style.display = 'none';
+  }
+});

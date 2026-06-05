@@ -70,6 +70,16 @@
                 Cadastrar perfume
             </a>
             
+            <a href="#" class="menu-item" id="menu-exportar-excel">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="8" y1="13" x2="16" y2="13"></line>
+                    <line x1="8" y1="17" x2="16" y2="17"></line>
+                </svg>
+                Exportar para Excel
+            </a>
+            
             <a href="#" class="menu-item" id="menu-logout">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -189,6 +199,90 @@
         </div>
     </div>
     
+    <!-- Modal Exportar Excel -->
+  <div id="modal-exportar" class="modal-exportar-overlay" style="display:none;">
+    <div class="modal-exportar-content">
+      <button class="modal-exportar-fechar" id="btn-fechar-exportar">&times;</button>
+
+      <div class="modal-exportar-header">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="8" y1="13" x2="16" y2="13"></line>
+          <line x1="8" y1="17" x2="16" y2="17"></line>
+        </svg>
+        <h2>Exportar para Excel</h2>
+      </div>
+
+      <!-- ETAPA 1: Filtro -->
+      <div id="exportar-etapa-1">
+        <p class="modal-exportar-desc">Quais perfumes deseja exportar?</p>
+        <div class="modal-exportar-opcoes">
+          <label class="exportar-opcao">
+            <input type="radio" name="filtro-exportar" value="todos">
+            <span class="exportar-opcao-box">
+              <span class="exportar-opcao-titulo">Todos</span>
+              <span class="exportar-opcao-desc">Todos os perfumes do seu perfil</span>
+            </span>
+          </label>
+          <label class="exportar-opcao">
+            <input type="radio" name="filtro-exportar" value="tenho">
+            <span class="exportar-opcao-box">
+              <span class="exportar-opcao-titulo">Tenho</span>
+              <span class="exportar-opcao-desc">Perfumes que você possui atualmente</span>
+            </span>
+          </label>
+          <label class="exportar-opcao">
+            <input type="radio" name="filtro-exportar" value="ja-tive">
+            <span class="exportar-opcao-box">
+              <span class="exportar-opcao-titulo">Já tive</span>
+              <span class="exportar-opcao-desc">Perfumes que você já possuiu</span>
+            </span>
+          </label>
+          <label class="exportar-opcao">
+            <input type="radio" name="filtro-exportar" value="quero-ter">
+            <span class="exportar-opcao-box">
+              <span class="exportar-opcao-titulo">Quero ter</span>
+              <span class="exportar-opcao-desc">Perfumes na sua lista de desejos</span>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ETAPA 2: Colunas (aparece após selecionar filtro) -->
+      <div id="exportar-etapa-2" style="display:none;">
+        <button class="exportar-voltar" id="btn-exportar-voltar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          Voltar
+        </button>
+        <p class="modal-exportar-desc">Quais informações incluir na planilha?</p>
+
+        <div class="exportar-colunas-grid" id="exportar-colunas-grid">
+          <!-- Gerado pelo JS -->
+        </div>
+
+        <div class="exportar-selecionar-todos">
+          <button id="btn-marcar-todos">Marcar todos</button>
+          <button id="btn-desmarcar-todos">Desmarcar todos</button>
+        </div>
+      </div>
+
+      <div class="modal-exportar-botoes">
+        <button class="btn-exportar-cancelar" id="btn-cancelar-exportar">Cancelar</button>
+        <button class="btn-exportar-confirmar" id="btn-confirmar-exportar" style="display:none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Exportar
+        </button>
+      </div>
+    </div>
+  </div>
+
     <script type="module" src="script-marca.js"></script>
 </body>
 </html>

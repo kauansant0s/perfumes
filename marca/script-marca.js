@@ -4,6 +4,7 @@ import { collection, query, where, getDocs, doc, updateDoc } from "https://www.g
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { toggleLoading, criarPlaceholder } from '../adicionar-perfume/utils.js';
 import { verificarAdmin, isAdmin } from '../adicionar-perfume/admin-config.js';
+import { inicializarExportar } from '../adicionar-perfume/exportar-excel.js';
 
 console.log('=== Script marca carregado ===');
 
@@ -151,6 +152,7 @@ async function carregarPerfumesDaMarca() {
         );
         
         console.log(`✅ ${perfumesData.length} perfumes encontrados da marca ${nomeMarca}`);
+        inicializarExportar(() => perfumesData);
         
         await atualizarHeader();
         atualizarEstatisticas();

@@ -1210,3 +1210,326 @@ body {
   color: #C06060;
   white-space: nowrap;
 }
+
+/* ===== MODAL EXPORTAR EXCEL ===== */
+.modal-exportar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-exportar-content {
+  background: #3c423e;
+  border-radius: 16px;
+  padding: 32px;
+  width: 90%;
+  max-width: 480px;
+  position: relative;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  animation: slideUp 0.25s ease;
+}
+
+.modal-exportar-fechar {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 26px;
+  color: #aaa;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-exportar-fechar:hover {
+  color: #fff;
+}
+
+.modal-exportar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.modal-exportar-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.modal-exportar-desc {
+  color: #bbb;
+  font-size: 14px;
+  margin: 0 0 20px;
+}
+
+.modal-exportar-opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.exportar-opcao {
+  display: flex;
+  cursor: pointer;
+}
+
+.exportar-opcao input[type="radio"] {
+  display: none;
+}
+
+.exportar-opcao-box {
+  flex: 1;
+  padding: 14px 16px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+
+.exportar-opcao input:checked + .exportar-opcao-box {
+  border-color: #C06060;
+  background: rgba(192, 96, 96, 0.15);
+}
+
+.exportar-opcao-box:hover {
+  border-color: rgba(255,255,255,0.4);
+}
+
+.exportar-opcao-titulo {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.exportar-opcao-desc {
+  display: block;
+  font-size: 12px;
+  color: #999;
+}
+
+.modal-exportar-botoes {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.btn-exportar-cancelar {
+  padding: 10px 20px;
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #aaa;
+  cursor: pointer;
+  font-family: 'Inter';
+  transition: all 0.2s;
+}
+
+.btn-exportar-cancelar:hover {
+  border-color: rgba(255,255,255,0.5);
+  color: #fff;
+}
+
+.btn-exportar-confirmar {
+  padding: 10px 20px;
+  background: #C06060;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  font-family: 'Inter';
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-exportar-confirmar:hover {
+  background: #a85050;
+  transform: translateY(-1px);
+}
+
+/* ===== EXPORTAR - ETAPA 2 ===== */
+.exportar-voltar {
+  background: none;
+  border: none;
+  color: #C06060;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter';
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  margin-bottom: 12px;
+  transition: opacity 0.2s;
+}
+
+.exportar-voltar:hover { opacity: 0.7; }
+
+.exportar-colunas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.exportar-coluna-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 2px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.exportar-coluna-item:hover {
+  border-color: rgba(255,255,255,0.35);
+}
+
+.exportar-coluna-item.marcado {
+  border-color: #C06060;
+  background: rgba(192, 96, 96, 0.15);
+}
+
+.exportar-coluna-item input[type="checkbox"] {
+  accent-color: #C06060;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.exportar-coluna-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #ddd;
+}
+
+.exportar-selecionar-todos {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.exportar-selecionar-todos button {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  color: #aaa;
+  cursor: pointer;
+  font-family: 'Inter';
+  transition: all 0.15s;
+}
+
+.exportar-selecionar-todos button:hover {
+  border-color: #C06060;
+  color: #C06060;
+}
+
+/* ===== HISTÓRICO DE ASSINATURA ===== */
+.historico-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.historico-item:last-child {
+  border-bottom: none;
+}
+
+.historico-foto {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #555;
+  flex-shrink: 0;
+}
+
+.historico-foto-placeholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #aaa;
+  text-align: center;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.historico-info {
+  flex: 1;
+}
+
+.historico-nome {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 3px;
+}
+
+.historico-periodo {
+  font-size: 12px;
+  color: #999;
+}
+
+.historico-atual-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #C06060;
+  background: rgba(192,96,96,0.15);
+  border: 1px solid rgba(192,96,96,0.3);
+  border-radius: 20px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.historico-vazio {
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+  padding: 24px 0;
+}
+
+.btn-ver-historico {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  padding: 0 0 0 4px;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s;
+  vertical-align: middle;
+}
+
+.btn-ver-historico:hover {
+  color: #fff;
+}
