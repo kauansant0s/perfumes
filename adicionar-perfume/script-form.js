@@ -1036,6 +1036,15 @@ function criarSliderCustomizado(tipoSlider, inputId) {
 criarSliderCustomizado('genero', 'genero-value');
 criarSliderCustomizado('clima', 'clima-value');
 criarSliderCustomizado('versatilidade', 'versatilidade-value');
+
+// Mostra/oculta campo de situação específica conforme valor da versatilidade
+document.querySelectorAll('.versatilidade-ponto').forEach(ponto => {
+  ponto.addEventListener('click', () => {
+    const campSit = document.getElementById('campo-situacao-especifica');
+    if (campSit) campSit.style.display = ponto.dataset.value === '0' ? 'block' : 'none';
+  });
+});
+
 criarSliderCustomizado('projecao', 'projecao-value');
 criarSliderCustomizado('fixacao', 'fixacao-value');
 criarSliderCustomizado('hora', 'hora-value');
@@ -1319,6 +1328,15 @@ async function carregarPerfumeParaEdicao() {
           pontoCerto.classList.add('ativo');
           console.log('✅ Versatilidade carregada:', perfume.caracteristicas.versatilidade);
         }
+        // Mostra campo de situação específica se valor for 0
+        if (String(perfume.caracteristicas.versatilidade) === '0') {
+          const campSit = document.getElementById('campo-situacao-especifica');
+          if (campSit) campSit.style.display = 'block';
+          const sitInput = document.getElementById('situacao-especifica');
+          if (sitInput && perfume.caracteristicas.situacaoEspecifica) {
+            sitInput.value = perfume.caracteristicas.situacaoEspecifica;
+          }
+        }
       }
 
       if (perfume.caracteristicas.projecao !== undefined) {
@@ -1502,6 +1520,10 @@ document.getElementById('info-perfume').addEventListener('submit', async (e) => 
     const versatValue = document.getElementById('versatilidade-value');
     if (versatValue.dataset.avaliado === 'true' && versatValue.value) {
       caracteristicas.versatilidade = versatValue.value;
+      if (versatValue.value === '0') {
+        const sit = document.getElementById('situacao-especifica')?.value.trim();
+        if (sit) caracteristicas.situacaoEspecifica = sit;
+      }
     }
 
     const projecaoValue = document.getElementById('projecao-value');

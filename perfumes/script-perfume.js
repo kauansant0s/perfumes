@@ -256,14 +256,18 @@ async function gerarDescricao() {
     // 4. Versatilidade
     let versFrase = '';
     if (car.versatilidade !== undefined) {
-        const versMap = {
-            '0':   'recomendado para situações específicas',
-            '25':  'recomendado para poucas situações',
-            '50':  'recomendado para diversas situações',
-            '75':  'recomendado para a maioria das situações',
-            '100': 'recomendado para qualquer situação'
-        };
-        versFrase = versMap[String(car.versatilidade)] || '';
+        if (String(car.versatilidade) === '0' && car.situacaoEspecifica && car.situacaoEspecifica.trim() !== '') {
+            versFrase = `recomendado para ${car.situacaoEspecifica.trim()}`;
+        } else {
+            const versMap = {
+                '0':   'recomendado para situações específicas',
+                '25':  'recomendado para poucas situações',
+                '50':  'recomendado para diversas situações',
+                '75':  'recomendado para a maioria das situações',
+                '100': 'recomendado para qualquer situação'
+            };
+            versFrase = versMap[String(car.versatilidade)] || '';
+        }
     }
 
     // 5. Projeção
@@ -312,8 +316,8 @@ async function gerarDescricao() {
     descricao += '.';
 
     // Agrupa projeção e fixação se forem iguais
-    const nivelMap = { '0': 'pouca', '25': 'baixa', '50': 'moderada', '75': 'boa', '100': 'muita' };
-    const nivelPluralMap = { '0': 'pouca', '25': 'baixas', '50': 'moderadas', '75': 'boas', '100': 'muita' };
+    const nivelMap = { '0': 'pouca', '25': 'baixa', '50': 'moderada', '75': 'boa', '100': 'extrema' };
+    const nivelPluralMap = { '0': 'pouca', '25': 'baixas', '50': 'moderadas', '75': 'boas', '100': 'extremas' };
     let projFixFrase = '';
     if (car.projecao !== undefined && car.fixacao !== undefined) {
         const pKey = String(car.projecao);
@@ -365,11 +369,11 @@ async function gerarDescricao() {
 // ✅ Funções de conversão de valores para texto
 function obterTextoGenero(genero) {
     const textos = {
-        'masculino': 'masculino',
-        'um-pouco-masculino': 'um pouco mais masculino',
+        'masculino': 'masculina',
+        'um-pouco-masculino': 'um pouco mais masculina',
         'compartilhavel': 'compartilhável',
-        'um-pouco-feminino': 'um pouco mais feminino',
-        'feminino': 'feminino'
+        'um-pouco-feminino': 'um pouco mais feminina',
+        'feminino': 'feminina'
     };
     return textos[genero] || '';
 }
